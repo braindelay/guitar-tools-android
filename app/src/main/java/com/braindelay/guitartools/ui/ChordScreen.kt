@@ -66,7 +66,6 @@ fun ChordScreen() {
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text("Circle of Fifths", style = MaterialTheme.typography.titleSmall)
             CircleOfFifthsView(
                 selectedNote = selectedNote,
                 onNoteSelected = { selectedNote = it },
