@@ -50,4 +50,4 @@ Add a second section to render chords charts
 Show this entirely in landscape
 
 - On the left show a dropdown of chord types (e.g. major / minor / dom7, maj7, b5 etc) and below it show the circle of fifths
-- When I select a tone on the circle of fifths, and a chord type, then show as many samples of that chord, in different positions, on the right
+- When I select a tone on the circle of fifths, and a chord type, then show reasonable samples of that chord, up to 3 octaves worth, in different positions, on the right. Sort these by fret position, from low to high.

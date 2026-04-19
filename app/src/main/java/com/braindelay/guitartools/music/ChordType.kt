@@ -12,6 +12,7 @@ enum class ChordType(val label: String, val toneOffsets: List<Int>, val noteLabe
     SUS2     ("Sus 2",       listOf(0, 2, 7),      listOf("R", "2",  "5")),
     SUS4     ("Sus 4",       listOf(0, 5, 7),      listOf("R", "4",  "5")),
     MIN7B5   ("Min 7b5",     listOf(0, 3, 6, 10),  listOf("R", "b3", "b5", "b7")),
+    MIN_MAJ7 ("Min/Maj 7",   listOf(0, 3, 7, 11),  listOf("R", "b3", "5", "7")),
     SIX      ("6",           listOf(0, 4, 7, 9),      listOf("R", "3",  "5", "6")),
     NINE     ("9",           listOf(0, 4, 7, 10, 14), listOf("R", "3",  "5", "b7", "9")),
     SIX_NINE ("6/9",         listOf(0, 4, 7, 9, 14),  listOf("R", "3",  "5", "6", "9")),
