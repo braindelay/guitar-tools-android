@@ -37,6 +37,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.braindelay.guitartools.music.ProgressionViewModel
+import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
 import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
@@ -71,6 +74,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainContent() {
     var appMode by rememberSaveable { mutableStateOf(AppMode.SCALES) }
+    val progressionVm: ProgressionViewModel = viewModel()
+    val scaleVm: ScaleViewModel = viewModel()
+
+    LaunchedEffect(progressionVm.playingIndex) {
+        val idx = progressionVm.playingIndex
+        if (idx != null && idx in progressionVm.progression.indices) {
+            val chord = progressionVm.progression[idx]
+            scaleVm.setProgressionChord(chord.note, chord.chordType)
+        } else {
+            scaleVm.clearProgressionChord()
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
