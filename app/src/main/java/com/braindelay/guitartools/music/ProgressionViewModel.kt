@@ -69,8 +69,11 @@ class ProgressionViewModel : ViewModel() {
         stopPlayback()
         playJob = viewModelScope.launch {
             while (isActive) {
-                for (i in progression.indices) {
+                val snapshot = progression
+                if (snapshot.isEmpty()) break
+                for (i in snapshot.indices) {
                     if (!isActive) break
+                    if (i >= progression.size) break
                     playingIndex = i
                     nextChordIndex = null
                     val chord = progression[i]
@@ -78,7 +81,8 @@ class ProgressionViewModel : ViewModel() {
                     if (voicing != null && !isMuted) GuitarAudioEngine.playVoicing(voicing)
                     delay(180_000L / _chordBpm)  // 3 beats
                     if (!isActive) break
-                    nextChordIndex = (i + 1) % progression.size
+                    val currentSize = progression.size
+                    nextChordIndex = if (currentSize > 0) (i + 1) % currentSize else null
                     delay(60_000L / _chordBpm)   // remaining 1 beat
                 }
             }
