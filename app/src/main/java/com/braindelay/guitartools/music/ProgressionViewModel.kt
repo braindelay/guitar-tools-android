@@ -20,6 +20,8 @@ class ProgressionViewModel : ViewModel() {
         private set
     var playingIndex by mutableStateOf<Int?>(null)
         private set
+    var nextChordIndex by mutableStateOf<Int?>(null)
+        private set
 
     private var _chordBpm by mutableIntStateOf(80)
     val chordBpm: Int get() = _chordBpm
@@ -66,10 +68,14 @@ class ProgressionViewModel : ViewModel() {
                 for (i in progression.indices) {
                     if (!isActive) break
                     playingIndex = i
+                    nextChordIndex = null
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
                     if (voicing != null) GuitarAudioEngine.playVoicing(voicing)
-                    delay(60_000L / _chordBpm * 4)  // re-read BPM each chord
+                    delay(180_000L / _chordBpm)  // 3 beats
+                    if (!isActive) break
+                    nextChordIndex = (i + 1) % progression.size
+                    delay(60_000L / _chordBpm)   // remaining 1 beat
                 }
             }
         }
@@ -79,6 +85,7 @@ class ProgressionViewModel : ViewModel() {
         playJob?.cancel()
         playJob = null
         playingIndex = null
+        nextChordIndex = null
     }
 
     override fun onCleared() {
