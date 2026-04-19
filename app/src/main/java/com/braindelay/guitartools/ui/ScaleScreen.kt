@@ -35,13 +35,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -229,7 +226,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        if (vm.selectedFretPosition != null) {
+                        if (vm.selectedFretPosition != null || vm.selectedTriadType != null) {
                             ElevatedButton(onClick = { vm.clearFretSelection() }) {
                                 Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(Modifier.width(8.dp))
@@ -237,7 +234,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                             }
                         }
                     }
-                    
+
                     vm.triadSummary?.let { summary ->
                         OutlinedCard(
                             modifier = Modifier.fillMaxWidth(),
@@ -252,23 +249,57 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                             )
                         }
-                    } ?: run {
-                        Text(
-                            "Tap any highlighted note to explore chord voicings",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
                     }
-                    
-                    HorizontalScrollableFretboard(vm)
-                    
-                    Text(
-                        "Click fretboard to zoom",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
-                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(216.dp)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            TriadType.entries.forEach { triad ->
+                                val isDiatonic = vm.isDiatonic(triad)
+                                FilterChip(
+                                    selected = triad == vm.selectedTriadType,
+                                    onClick = {
+                                        if (vm.selectedTriadType == triad) vm.clearTriadType()
+                                        else vm.selectTriadType(triad)
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    leadingIcon = if (isDiatonic) {
+                                        { Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(14.dp)) }
+                                    } else null,
+                                    label = {
+                                        Text(
+                                            triad.label,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            HorizontalScrollableFretboard(vm)
+                            Text(
+                                "Click fretboard to zoom",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
+                            )
+                        }
+                    }
                 }
             }
             
@@ -278,76 +309,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
         }
     }
 
-    val selectedFretPos = vm.selectedFretPosition
-    if (selectedFretPos != null && vm.selectedTriadType == null) {
-        val noteName = vm.fretPositions[selectedFretPos]?.displayName ?: ""
-        ModalBottomSheet(
-            onDismissRequest = { vm.clearFretSelection() },
-            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 64.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    "Voicings for $noteName",
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Text(
-                    "Suggested diatonic options are highlighted.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    maxItemsInEachRow = 4
-                ) {
-                    TriadType.entries.forEach { triad ->
-                        val isDiatonic = vm.isDiatonic(triad)
-                        ElevatedButton(
-                            onClick = { vm.selectTriadType(triad) },
-                            modifier = Modifier.width(160.dp),
-                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp),
-                            colors = if (isDiatonic) {
-                                androidx.compose.material3.ButtonDefaults.elevatedButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                )
-                            } else {
-                                androidx.compose.material3.ButtonDefaults.elevatedButtonColors()
-                            }
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                if (isDiatonic) {
-                                    Icon(
-                                        Icons.Default.Info, 
-                                        contentDescription = null, 
-                                        modifier = Modifier.size(14.dp)
-                                    )
-                                    Spacer(Modifier.width(4.dp))
-                                }
-                                Text(
-                                    triad.label,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    maxLines = 1,
-                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable

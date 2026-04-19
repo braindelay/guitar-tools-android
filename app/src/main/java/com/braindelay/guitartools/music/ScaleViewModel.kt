@@ -100,8 +100,11 @@ class ScaleViewModel : ViewModel() {
             selectedTriadType = null
         } else {
             selectedFretPosition = pos
-            selectedTriadType = null
         }
+    }
+
+    fun clearTriadType() {
+        selectedTriadType = null
     }
 
     fun clearFretSelection() {

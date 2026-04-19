@@ -2,6 +2,7 @@ package com.braindelay.guitartools.ui
 
 import android.app.Activity
 import android.content.pm.ActivityInfo
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,17 +10,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -35,7 +30,6 @@ import com.braindelay.guitartools.music.ChordType
 import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.StandardChordLibrary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChordScreen() {
     val context = LocalContext.current
@@ -49,57 +43,22 @@ fun ChordScreen() {
     }
 
     var selectedNote by remember { mutableStateOf<Note?>(Note.C) }
-    var selectedChordType by remember { mutableStateOf<ChordType?>(ChordType.DOM7) }
-    var menuExpanded by remember { mutableStateOf(false) }
 
-    val voicings = remember(selectedNote, selectedChordType) {
-        val note = selectedNote
-        val type = selectedChordType
-        if (note != null && type != null) StandardChordLibrary.getVoicings(note, type) else emptyList()
+    val allVoicings = remember(selectedNote) {
+        val note = selectedNote ?: return@remember emptyMap()
+        ChordType.entries.associateWith { type -> StandardChordLibrary.getVoicings(note, type) }
     }
 
     Row(modifier = Modifier.fillMaxSize()) {
-        // Left panel: chord type selector + circle of fifths below
+        // Left panel: circle of fifths
         Column(
             modifier = Modifier
                 .weight(0.38f)
                 .fillMaxHeight()
                 .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text("Chord Type", style = MaterialTheme.typography.titleSmall)
-
-            ExposedDropdownMenuBox(
-                expanded = menuExpanded,
-                onExpandedChange = { menuExpanded = it }
-            ) {
-                OutlinedTextField(
-                    value = selectedChordType?.label ?: "Select chord type…",
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = menuExpanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                )
-                ExposedDropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false }
-                ) {
-                    ChordType.entries.forEach { type ->
-                        DropdownMenuItem(
-                            text = { Text(type.label) },
-                            onClick = {
-                                selectedChordType = type
-                                menuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
             Text("Circle of Fifths", style = MaterialTheme.typography.titleSmall)
-
             CircleOfFifthsView(
                 selectedNote = selectedNote,
                 onNoteSelected = { selectedNote = it },
@@ -109,36 +68,53 @@ fun ChordScreen() {
 
         VerticalDivider()
 
-        // Right panel: chord diagrams
+        // Right panel: all chord types
         Column(
             modifier = Modifier
                 .weight(0.62f)
                 .fillMaxHeight()
                 .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            when {
-                selectedNote == null || selectedChordType == null -> Text(
-                    "Select a chord type and tap a note on the circle of fifths to see chord shapes.",
+            if (selectedNote == null) {
+                Text(
+                    "Tap a note on the circle of fifths to see chord shapes.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                else -> {
-                    val note = selectedNote!!
-                    val type = selectedChordType!!
-                    Text(
-                        "${note.displayName} ${type.label}",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    HorizontalDivider()
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 80.dp),
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(voicings) { v ->
-                            ChordDiagramView(v, note, type)
+            } else {
+                val note = selectedNote!!
+                Text(
+                    note.displayName,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(ChordType.entries) { type ->
+                        val voicings = allVoicings[type] ?: emptyList()
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(type.label, style = MaterialTheme.typography.labelMedium)
+                            HorizontalDivider()
+                            if (voicings.isEmpty()) {
+                                Text(
+                                    "No voicings available",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            } else {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState()),
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    voicings.forEach { v ->
+                                        ChordDiagramView(v, note, type)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
