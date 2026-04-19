@@ -83,6 +83,31 @@ object StandardChordLibrary {
             Shape(1, listOf(null, 0, 1, 2, 1, 3)),          // from A string
             Shape(2, listOf(null, null, 0, 1, 1, 1))        // from D string
         ),
+
+        // 6 chords (e.g. G6 = 355453, C6 = x35555, D6 = xx0202)
+        ChordType.SIX to listOf(
+            Shape(0, listOf(0, 2, 2, 1, 2, 0)),             // E-shape 6
+            Shape(1, listOf(null, 0, 2, 2, 2, 2)),          // A-shape 6
+            Shape(2, listOf(null, null, 0, 2, 0, 2))        // D-shape 6
+        ),
+
+        // 9 chords (e.g. G9 = 353435, C9 = x32333)
+        ChordType.NINE to listOf(
+            Shape(0, listOf(0, 2, 0, 1, 0, 2)),            // E-shape 9
+            Shape(1, listOf(null, 0, -1, 0, 0, 0))         // A-shape 9
+        ),
+
+        // 6/9 chords (e.g. G6/9 = 3x2233, C6/9 = x32233)
+        ChordType.SIX_NINE to listOf(
+            Shape(0, listOf(0, null, -1, -1, 0, 0)),       // E-shape 6/9
+            Shape(1, listOf(null, 0, -1, -1, 0, 0))        // A-shape 6/9
+        ),
+
+        // 13 chords (e.g. G13 = 3x345x, C13 = x32335)
+        ChordType.THIRTEEN to listOf(
+            Shape(0, listOf(0, null, 0, 1, 2, null)),      // E-shape 13
+            Shape(1, listOf(null, 0, -1, 0, 0, 2))         // A-shape 13
+        ),
     )
 
     fun getVoicings(root: Note, chordType: ChordType): List<ChordVoicing> =
