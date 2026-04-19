@@ -22,6 +22,8 @@ class ProgressionViewModel : ViewModel() {
         private set
     var nextChordIndex by mutableStateOf<Int?>(null)
         private set
+    var isMuted by mutableStateOf(false)
+        private set
 
     private var _chordBpm by mutableIntStateOf(80)
     val chordBpm: Int get() = _chordBpm
@@ -56,6 +58,8 @@ class ProgressionViewModel : ViewModel() {
         }
     }
 
+    fun toggleMute() { isMuted = !isMuted }
+
     fun setChordBpm(value: Int) {
         _chordBpm = value.coerceIn(20, 240)
     }
@@ -71,7 +75,7 @@ class ProgressionViewModel : ViewModel() {
                     nextChordIndex = null
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
-                    if (voicing != null) GuitarAudioEngine.playVoicing(voicing)
+                    if (voicing != null && !isMuted) GuitarAudioEngine.playVoicing(voicing)
                     delay(180_000L / _chordBpm)  // 3 beats
                     if (!isActive) break
                     nextChordIndex = (i + 1) % progression.size

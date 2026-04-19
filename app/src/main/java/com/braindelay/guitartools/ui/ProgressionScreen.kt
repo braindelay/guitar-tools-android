@@ -24,6 +24,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,6 +34,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -89,6 +92,17 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
             ) {
                 Text("Progression", style = MaterialTheme.typography.titleMedium)
                 Row {
+                    IconToggleButton(
+                        checked = vm.isMuted,
+                        onCheckedChange = { vm.toggleMute() }
+                    ) {
+                        Icon(
+                            imageVector = if (vm.isMuted) Icons.AutoMirrored.Filled.VolumeOff else Icons.AutoMirrored.Filled.VolumeUp,
+                            contentDescription = if (vm.isMuted) "Unmute" else "Mute",
+                            tint = if (vm.isMuted) MaterialTheme.colorScheme.primary
+                                   else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     IconButton(
                         onClick = { if (vm.isPlaying) vm.stopPlayback() else vm.playProgression() }
                     ) {
