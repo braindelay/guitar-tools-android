@@ -62,7 +62,6 @@ class ProgressionViewModel : ViewModel() {
         if (progression.isEmpty()) return
         stopPlayback()
         playJob = viewModelScope.launch {
-            val durationMs = 60_000L / _chordBpm * 4  // 4 beats per chord
             while (isActive) {
                 for (i in progression.indices) {
                     if (!isActive) break
@@ -70,7 +69,7 @@ class ProgressionViewModel : ViewModel() {
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
                     if (voicing != null) GuitarAudioEngine.playVoicing(voicing)
-                    delay(durationMs)
+                    delay(60_000L / _chordBpm * 4)  // re-read BPM each chord
                 }
             }
         }
