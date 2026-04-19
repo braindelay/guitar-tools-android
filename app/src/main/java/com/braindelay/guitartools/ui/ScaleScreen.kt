@@ -1,10 +1,8 @@
 package com.braindelay.guitartools.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,19 +54,11 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.R
 import com.braindelay.guitartools.audio.GuitarAudioEngine
@@ -77,9 +67,6 @@ import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.Scale
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.music.TriadType
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -198,7 +185,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                                     verticalAlignment = Alignment.Top
                                 ) {
-                                    CircleOfFifthsWheel(
+                                    CircleOfFifthsView(
                                         selectedNote = vm.selectedNote,
                                         onNoteSelected = { vm.selectNote(it) },
                                         modifier = Modifier.size(160.dp)
@@ -389,85 +376,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun CircleOfFifthsWheel(
-    selectedNote: Note,
-    onNoteSelected: (Note) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val circleOfFifths = remember {
-        listOf(
-            Note.C, Note.G, Note.D, Note.A, Note.E, Note.B,
-            Note.F_SHARP, Note.C_SHARP, Note.G_SHARP, Note.D_SHARP, Note.A_SHARP, Note.F
-        )
-    }
-
-    val tertiaryColor    = MaterialTheme.colorScheme.tertiary
-    val onTertiaryColor  = MaterialTheme.colorScheme.onTertiary
-    val surfaceVariant   = MaterialTheme.colorScheme.surfaceVariant
-    val onSurfaceVariant = MaterialTheme.colorScheme.onSurfaceVariant
-    val outlineColor     = MaterialTheme.colorScheme.outline
-    val textMeasurer     = rememberTextMeasurer()
-
-    Canvas(
-        modifier = modifier.pointerInput(Unit) {
-            detectTapGestures { tap ->
-                val cx = size.width / 2f
-                val cy = size.height / 2f
-                val ringRadius = size.width * 0.40f
-                val hitRadius  = size.width * 0.11f
-                circleOfFifths.forEachIndexed { i, note ->
-                    val angle = (-Math.PI / 2.0 + i * 2.0 * Math.PI / 12.0).toFloat()
-                    val nx = cx + ringRadius * cos(angle)
-                    val ny = cy + ringRadius * sin(angle)
-                    val dx = tap.x - nx;  val dy = tap.y - ny
-                    if (sqrt(dx * dx + dy * dy) <= hitRadius) {
-                        onNoteSelected(note)
-                        return@detectTapGestures
-                    }
-                }
-            }
-        }
-    ) {
-        val cx         = size.width / 2f
-        val cy         = size.height / 2f
-        val ringRadius = size.width * 0.40f
-        val noteRadius = size.width * 0.086f
-
-        drawCircle(outlineColor.copy(alpha = 0.10f), ringRadius + noteRadius + 6f, Offset(cx, cy))
-        drawCircle(outlineColor.copy(alpha = 0.18f), ringRadius, Offset(cx, cy), style = Stroke(1.5f))
-
-        circleOfFifths.forEachIndexed { i, note ->
-            val angle      = (-Math.PI / 2.0 + i * 2.0 * Math.PI / 12.0).toFloat()
-            val nx         = cx + ringRadius * cos(angle)
-            val ny         = cy + ringRadius * sin(angle)
-            val isSelected = note == selectedNote
-
-            drawCircle(
-                color  = if (isSelected) tertiaryColor else surfaceVariant,
-                radius = noteRadius,
-                center = Offset(nx, ny)
-            )
-            if (isSelected) {
-                drawCircle(
-                    color  = onTertiaryColor.copy(alpha = 0.4f),
-                    radius = noteRadius,
-                    center = Offset(nx, ny),
-                    style  = Stroke(2.5f)
-                )
-            }
-
-            val style = TextStyle(
-                fontSize   = 8.sp,
-                fontWeight = FontWeight.Bold,
-                color      = if (isSelected) onTertiaryColor else onSurfaceVariant
-            )
-            val m = textMeasurer.measure(note.displayName, style)
-            drawText(m, topLeft = Offset(nx - m.size.width / 2f, ny - m.size.height / 2f))
         }
     }
 }
