@@ -52,9 +52,9 @@ fun ChordScreen() {
         ChordType.entries.associateWith { type -> StandardChordLibrary.getVoicings(note, type) }
     }
 
-    val openChords = remember(selectedNote) {
-        val note = selectedNote ?: return@remember emptyList()
-        OpenChordLibrary.getChords(note)
+    val openChordsMap = remember(selectedNote) {
+        val note = selectedNote ?: return@remember emptyMap()
+        OpenChordLibrary.getChords(note).associate { it.chordType to it.voicing }
     }
 
     Row(modifier = Modifier.fillMaxSize()) {
@@ -94,47 +94,17 @@ fun ChordScreen() {
                 val note = selectedNote!!
                 Text(note.displayName, style = MaterialTheme.typography.titleMedium)
 
-                if (openChords.isNotEmpty()) {
-                    Text("Open Chords", style = MaterialTheme.typography.labelMedium)
-                    HorizontalDivider()
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        openChords.forEach { (type, voicing) ->
-                            Column(
-                                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                Text(
-                                    type.label,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                ChordDiagramView(
-                                    voicing   = voicing,
-                                    root      = note,
-                                    chordType = type,
-                                    onPlay    = { GuitarAudioEngine.playVoicing(voicing) }
-                                )
-                            }
-                        }
-                    }
-                    HorizontalDivider()
-                }
-
                 LazyColumn(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(ChordType.entries) { type ->
                         val voicings = allVoicings[type] ?: emptyList()
+                        val openVoicing = openChordsMap[type]
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(type.label, style = MaterialTheme.typography.labelMedium)
                             HorizontalDivider()
-                            if (voicings.isEmpty()) {
+                            if (openVoicing == null && voicings.isEmpty()) {
                                 Text(
                                     "No voicings available",
                                     style = MaterialTheme.typography.bodySmall,
@@ -147,6 +117,14 @@ fun ChordScreen() {
                                         .horizontalScroll(rememberScrollState()),
                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
+                                    if (openVoicing != null) {
+                                        ChordDiagramView(
+                                            voicing   = openVoicing,
+                                            root      = note,
+                                            chordType = type,
+                                            onPlay    = { GuitarAudioEngine.playVoicing(openVoicing) }
+                                        )
+                                    }
                                     voicings.forEach { v ->
                                         ChordDiagramView(
                                             voicing   = v,
