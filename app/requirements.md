@@ -37,3 +37,18 @@ When I press a note on the fretboard
 Use guitar_lessons.jpeg as the app icon
 
 If I click anywhere else on the fretboard, then show only the fretboard, and an option to go back to thge normal view. Below the fretboard, when it's not zoomed, say "Click fretboard to zoom"
+
+
+
+Add a second section to render chords charts
+
+
+- add an initial menu to choose between scales and chords
+- if I pick scales then show the current features
+- if I pick chords, then show me the new feature I will describe below
+
+Show this entirely in landscape
+
+- On the left show the circle of fifths
+- On the right show a dropdown of chord types (e.g. major / minor / dom7, maj7, b5 etc)
+- When I select a tone on the circle of fifths, and a chord type, then show as many samples of that chord, in different positions, on the right, below the chord selector 
