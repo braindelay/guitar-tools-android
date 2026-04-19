@@ -390,6 +390,7 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
             positions        = vm.fretPositions,
             selectedPosition = vm.selectedFretPosition,
             triadNotes       = vm.activeOverlay,
+            nextChordNotes   = vm.nextProgressionArpeggioNotes,
             onFretTapped     = { pos -> vm.selectFretPosition(pos) },
             onOtherTapped    = { vm.enterFullscreen() },
             scaleFactor      = scaleFactor,

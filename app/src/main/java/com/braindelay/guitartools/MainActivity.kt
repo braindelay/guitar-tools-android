@@ -87,6 +87,16 @@ fun MainContent() {
         }
     }
 
+    LaunchedEffect(progressionVm.nextChordIndex) {
+        val idx = progressionVm.nextChordIndex
+        if (idx != null && idx in progressionVm.progression.indices) {
+            val chord = progressionVm.progression[idx]
+            scaleVm.setNextProgressionChord(chord.note, chord.chordType)
+        } else {
+            scaleVm.clearNextProgressionChord()
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (appMode) {

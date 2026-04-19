@@ -25,6 +25,8 @@ class ScaleViewModel : ViewModel() {
         private set
     var progressionChord by mutableStateOf<Pair<Note, ChordType>?>(null)
         private set
+    var nextProgressionChord by mutableStateOf<Pair<Note, ChordType>?>(null)
+        private set
 
     private val fretboard = Fretboard(fretCount = 19)
 
@@ -65,11 +67,24 @@ class ScaleViewModel : ViewModel() {
     val activeOverlay: Map<Note, String>?
         get() = triadNotes ?: progressionArpeggioNotes ?: arpeggioNotes
 
+    val nextProgressionArpeggioNotes: Map<Note, String>?
+        get() {
+            val (note, type) = nextProgressionChord ?: return null
+            return type.toneOffsets.zip(type.noteLabels).associate { (offset, label) ->
+                note.transpose(offset) to label
+            }
+        }
+
     val fretPositions: Map<FretPosition, Note>
         get() {
             val s = scale
             val overlay = activeOverlay
-            val allNotes = if (overlay != null) s.notes + overlay.keys else s.notes
+            val nextOverlay = nextProgressionArpeggioNotes
+            val allNotes = buildSet {
+                addAll(s.notes)
+                overlay?.keys?.let { addAll(it) }
+                nextOverlay?.keys?.let { addAll(it) }
+            }
             return fretboard.positionsForNotes(allNotes)
         }
 
@@ -158,6 +173,8 @@ class ScaleViewModel : ViewModel() {
 
     fun setProgressionChord(note: Note, chordType: ChordType) { progressionChord = Pair(note, chordType) }
     fun clearProgressionChord() { progressionChord = null }
+    fun setNextProgressionChord(note: Note, chordType: ChordType) { nextProgressionChord = Pair(note, chordType) }
+    fun clearNextProgressionChord() { nextProgressionChord = null }
 
     fun noteAt(pos: FretPosition) = fretboard.noteAt(pos.string, pos.fret)
 

@@ -41,6 +41,7 @@ fun FretboardView(
     positions: Map<FretPosition, Note>,
     selectedPosition: FretPosition?,
     triadNotes: Map<Note, String>?,
+    nextChordNotes: Map<Note, String>? = null,
     onFretTapped: (FretPosition) -> Unit,
     onOtherTapped: () -> Unit,
     modifier: Modifier = Modifier,
@@ -185,6 +186,30 @@ fun FretboardView(
 
             if (pos == selectedPosition) {
                 drawCircle(Color.White, nr + 4f, Offset(x, y), style = Stroke(width = 3f))
+            }
+        }
+
+        // Anticipation overlay: next chord notes semi-transparent
+        if (nextChordNotes != null) {
+            val anticipationAlpha = 0.38f
+            for ((pos, note) in positions) {
+                val nextLabel = nextChordNotes[note] ?: continue
+                if (triadNotes?.containsKey(note) == true) continue  // already shown fully
+                val x = noteX(pos.fret)
+                val y = stringY(pos.string)
+                val fill = when {
+                    nextLabel.contains("R") -> tertiaryColor.copy(alpha = anticipationAlpha)
+                    nextLabel.contains("3") -> primaryColor.copy(alpha = anticipationAlpha)
+                    else                   -> secondaryColor.copy(alpha = anticipationAlpha)
+                }
+                drawCircle(fill, nr, Offset(x, y))
+                val style = TextStyle(
+                    fontSize = (10 * scaleFactor).sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = anticipationAlpha * 1.8f)
+                )
+                val m = textMeasurer.measure(nextLabel, style)
+                drawText(m, topLeft = Offset(x - m.size.width / 2f, y - m.size.height / 2f))
             }
         }
     }
