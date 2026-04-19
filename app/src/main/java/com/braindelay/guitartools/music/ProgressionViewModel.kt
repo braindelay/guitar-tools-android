@@ -72,10 +72,10 @@ class ProgressionViewModel : ViewModel() {
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
                     if (voicing != null) GuitarAudioEngine.playVoicing(voicing)
-                    delay(210_000L / _chordBpm)  // 3.5 beats
+                    delay(180_000L / _chordBpm)  // 3 beats
                     if (!isActive) break
                     nextChordIndex = (i + 1) % progression.size
-                    delay(30_000L / _chordBpm)   // remaining 0.5 beat
+                    delay(60_000L / _chordBpm)   // remaining 1 beat
                 }
             }
         }

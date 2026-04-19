@@ -8,47 +8,49 @@ A bottom navigation bar switches between three modes: **Scales**, **Chords**, an
 
 ## Scales
 
-### Scale selection
+### Top bar
 
-- Select any tone from the western 12-tone chromatic scale.
-- Select a mode from:
-  - Major
-  - Minor
-  - Harmonic Minor
-  - Melodic Minor
-  - Dorian, Phrygian, Lydian, Mixolydian, Locrian (church modes)
-
-The selection panel can be expanded or collapsed. The toggle button in the top bar shows:
-- "Choose scale" (with a down-arrow icon) when collapsed
-- "Close" (with an up-arrow icon) when expanded
-
-Two icon toggle buttons also appear in the top bar:
+Two icon toggle buttons appear in the top bar:
 - **SwapHoriz** — toggles left-handed mode (mirrors the fretboard horizontally)
 - **TextFields** — toggles label mode between Roman numerals / interval names and actual note names (C, C#, G…)
 
+An expand/collapse toggle button also appears in the top bar showing:
+- "Choose scale" (with a down-arrow icon) when collapsed
+- "Close" (with an up-arrow icon) when expanded
+
+### Expandable panel
+
+When expanded, the panel shows two cards (both collapse and expand together):
+
+1. **Hero banner** — a 180 dp tall image card with the text "Master Your Fretboard" and "Visualise scales and diatonic chords" overlaid at the bottom.
+
+2. **Root & Scale card** — a side-by-side layout:
+   - **Left**: A 160 dp Circle of Fifths wheel (same component as the Chords screen). Tap any segment to select that note as the scale root.
+   - **Right**: Mode filter chips in a wrapping flow row. Available modes: Major, Minor, Harmonic Minor, Melodic Minor, Dorian, Phrygian, Lydian, Mixolydian, Locrian.
+
 ### Fretboard
+
+Below the expandable panel, a "Fretboard" heading shows the currently selected note and mode (e.g. "Highlighting: C Major").
 
 A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII) by default, or note names when the label toggle is active. Root notes are drawn in the tertiary colour; all other scale notes in the primary colour. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
 
 In left-handed mode the entire fretboard is mirrored: the nut moves to the right and fret numbering increases from right to left. Tap detection mirrors accordingly.
 
-Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fretboard fills the screen with a "Go Back" button. Below the normal-view fretboard the label "Click fretboard to zoom" is shown.
+Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fretboard fills the screen scaled to fit the screen height, with a "Go Back" button. Below the normal-view fretboard the hint "Tap a note to pick chord type · tap fretboard to zoom" is shown.
 
-### Diatonic chords and arpeggio overlays
+### Diatonic chord sidebar
 
-Below the scale selector, a card lists the diatonic chords for the current scale (e.g. "I: C Maj", "II: D Min") as selectable filter chips. Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard, with colour-coded degree labels (R, 3, 5, 7…). A summary card shows the chord name, quality, and constituent notes. Tapping the same chip again clears the overlay.
+To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) lists the 7 diatonic chords for the current scale as filter chips (e.g. "I: C Maj", "II: D Min"). Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard with colour-coded degree labels (R, 3, 5, 7…). Tapping the active chip again clears the overlay.
 
-### Chord voicings
+### Chord voicing bottom sheet
 
-To the left of the fretboard a scrollable column (120 dp wide, matching the fretboard height) lists all 10 voicing types:
+Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — choose chord type" containing all 10 voicing types as filter chips:
 
 - Major Triad, Minor Triad, Diminished, Augmented
 - Suspended 2, Suspended 4
 - Dom 7 Shell, Maj 7 Shell, Min 7 Shell, Min 7b5 Shell
 
-Selecting a voicing type persists across fret taps. When a fret position is also selected, the fretboard overlays the chord tones in colour with degree labels (R, 3, 5, b7…) and a summary card shows the chord name and its constituent notes. A **Play ▶** icon button appears next to the Clear button and plays the chord tones using Karplus-Strong synthesis. Tapping the active voicing chip deselects it. Tapping the same fret again clears both the fret selection and the voicing. The **Clear** button resets all active selections.
-
-Diatonic voicings for the currently selected fret are highlighted with an info icon in the left column.
+Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). A **Play ▶** icon button appears in the title row and plays the chord tones using Karplus-Strong synthesis. Tapping the active voicing chip deselects it. The **Clear** button resets all active selections.
 
 Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (chord overlay mode) are mutually exclusive; activating one clears the other.
 
@@ -85,6 +87,8 @@ Select a chord type from the scrollable chip list and tap a note on the Circle o
 ### Playback
 
 A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). The play/pause button loops through the progression continuously, highlighting the active chord and playing its first voicing via Karplus-Strong synthesis. Stop ends playback.
+
+When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay. On beat 3, the next chord's arpeggio is previewed on the fretboard in a semi-transparent overlay so the player can anticipate the upcoming change.
 
 ---
 

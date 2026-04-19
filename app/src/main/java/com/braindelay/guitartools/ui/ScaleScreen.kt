@@ -266,18 +266,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                         }
                     }
 
-                    vm.triadSummary?.let { summary ->
-                        OutlinedCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = androidx.compose.material3.CardDefaults.outlinedCardColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                            )
-                        ) {
-                            Text(summary, modifier = Modifier.padding(16.dp),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer)
-                        }
-                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
