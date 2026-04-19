@@ -141,39 +141,39 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
             verticalArrangement = if (isFullscreen) Arrangement.Center else Arrangement.spacedBy(20.dp)
         ) {
             if (!isFullscreen) {
-                // Hero image
-                OutlinedCard(modifier = Modifier.fillMaxWidth().height(180.dp)) {
-                    Box {
-                        Image(
-                            painter = painterResource(id = R.drawable.guitar_lessons),
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
-                                        startY = 100f
-                                    )
-                                ),
-                            contentAlignment = Alignment.BottomStart
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text("Master Your Fretboard",
-                                    style = MaterialTheme.typography.headlineSmall, color = Color.White)
-                                Text("Visualise scales and diatonic chords",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.8f))
-                            }
-                        }
-                    }
-                }
-
                 AnimatedVisibility(visible = expanded) {
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        // Hero image
+                        OutlinedCard(modifier = Modifier.fillMaxWidth().height(180.dp)) {
+                            Box {
+                                Image(
+                                    painter = painterResource(id = R.drawable.guitar_lessons),
+                                    contentDescription = null,
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .background(
+                                            Brush.verticalGradient(
+                                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                                                startY = 100f
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.BottomStart
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp)) {
+                                        Text("Master Your Fretboard",
+                                            style = MaterialTheme.typography.headlineSmall, color = Color.White)
+                                        Text("Visualise scales and diatonic chords",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.White.copy(alpha = 0.8f))
+                                    }
+                                }
+                            }
+                        }
+
                         OutlinedCard(modifier = Modifier.fillMaxWidth()) {
                             Column(
                                 modifier = Modifier.padding(16.dp),
