@@ -206,27 +206,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                             }
                         }
 
-                        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text("Diatonic Chords — tap to overlay arpeggio",
-                                    style = MaterialTheme.typography.titleMedium)
-                                FlowRow(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement   = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    vm.diatonicChords.forEachIndexed { idx, chord ->
-                                        FilterChip(
-                                            selected = vm.arpeggioChordIndex == idx,
-                                            onClick  = { vm.selectArpeggioChord(idx) },
-                                            label    = { Text(chord) }
-                                        )
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -299,14 +278,47 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                         }
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        HorizontalScrollableFretboard(vm)
-                        Text(
-                            "Tap a note to pick chord type · tap fretboard to zoom",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
-                        )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .width(120.dp)
+                                .height(216.dp)
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            vm.diatonicChords.forEachIndexed { idx, chord ->
+                                FilterChip(
+                                    selected = vm.arpeggioChordIndex == idx,
+                                    onClick  = { vm.selectArpeggioChord(idx) },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    label    = {
+                                        Text(
+                                            chord,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            HorizontalScrollableFretboard(vm)
+                            Text(
+                                "Tap a note to pick chord type · tap fretboard to zoom",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
+                            )
+                        }
                     }
                 }
             }
