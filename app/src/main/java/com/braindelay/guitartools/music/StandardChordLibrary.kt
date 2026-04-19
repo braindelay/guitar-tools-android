@@ -84,6 +84,13 @@ object StandardChordLibrary {
             Shape(2, listOf(null, null, 0, 1, 1, 1))        // from D string
         ),
 
+        // Em(maj7) = 021000, Am(maj7) = x02110, Dm(maj7) = xx0221
+        ChordType.MIN_MAJ7 to listOf(
+            Shape(0, listOf(0, 2, 1, 0, 0, 0)),             // E-shape m(maj7)
+            Shape(1, listOf(null, 0, 2, 1, 1, 0)),          // A-shape m(maj7)
+            Shape(2, listOf(null, null, 0, 2, 2, 1))        // D-shape m(maj7)
+        ),
+
         // 6 chords (e.g. G6 = 355453, C6 = x35555, D6 = xx0202)
         ChordType.SIX to listOf(
             Shape(0, listOf(0, 2, 2, 1, 2, 0)),             // E-shape 6
@@ -110,13 +117,23 @@ object StandardChordLibrary {
         ),
     )
 
-    fun getVoicings(root: Note, chordType: ChordType): List<ChordVoicing> =
-        (shapes[chordType] ?: emptyList()).map { toVoicing(root, it) }
-
-    private fun toVoicing(root: Note, shape: Shape): ChordVoicing {
-        val rootFret = (root.semitone - OPEN[shape.rootString] + 12) % 12
-        val frets = shape.offsets.map { offset -> offset?.let { rootFret + it } }
-        val baseFret = frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
-        return ChordVoicing(frets, baseFret)
+    fun getVoicings(root: Note, chordType: ChordType): List<ChordVoicing> {
+        val voicings = mutableListOf<ChordVoicing>()
+        for (shape in shapes[chordType] ?: emptyList()) {
+            val baseRootFret = (root.semitone - OPEN[shape.rootString] + 12) % 12
+            for (octave in 0..2) {
+                val rootFret = baseRootFret + octave * 12
+                val frets = shape.offsets.map { offset -> offset?.let { rootFret + it } }
+                
+                val maxFret = frets.filterNotNull().maxOrNull() ?: -1
+                val minFret = frets.filterNotNull().minOrNull() ?: 0
+                
+                if (minFret >= 0 && maxFret <= 19) {
+                    val baseFret = frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
+                    voicings.add(ChordVoicing(frets, baseFret))
+                }
+            }
+        }
+        return voicings.distinct().sortedBy { it.baseFret }
     }
 }
