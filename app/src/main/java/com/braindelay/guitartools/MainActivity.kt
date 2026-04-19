@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
@@ -39,13 +38,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.braindelay.guitartools.ui.ChordScreen
-import com.braindelay.guitartools.ui.MetronomeScreen
 import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS, METRONOME, PROGRESSION }
+enum class AppMode { SCALES, CHORDS, PROGRESSION }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +77,6 @@ fun MainContent() {
             when (appMode) {
                 AppMode.SCALES      -> ScaleScreen()
                 AppMode.CHORDS      -> ChordScreen()
-                AppMode.METRONOME   -> MetronomeScreen()
                 AppMode.PROGRESSION -> ProgressionScreen()
             }
         }
@@ -95,12 +92,6 @@ fun MainContent() {
                 onClick  = { appMode = AppMode.CHORDS },
                 icon     = { Icon(Icons.Default.Piano, contentDescription = null) },
                 label    = { Text("Chords") }
-            )
-            NavigationBarItem(
-                selected = appMode == AppMode.METRONOME,
-                onClick  = { appMode = AppMode.METRONOME },
-                icon     = { Icon(Icons.Default.Album, contentDescription = null) },
-                label    = { Text("Metronome") }
             )
             NavigationBarItem(
                 selected = appMode == AppMode.PROGRESSION,
