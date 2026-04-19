@@ -51,3 +51,11 @@ Show this entirely in landscape
 
 - On the left show a dropdown of chord types (e.g. major / minor / dom7, maj7, b5 etc) and below it show the circle of fifths
 - When I select a tone on the circle of fifths, and a chord type, then show reasonable samples of that chord, up to 3 octaves worth, in different positions, on the right. Sort these by fret position, from low to high.
+
+## Future Enhancements & Ideas
+- **Audio Playback**: Allow the user to tap on a chord voicing or a scale to hear it played back via synthesized audio or samples, aiding in ear training.
+- **Left-Handed Mode**: Provide a toggle to flip the fretboard layout horizontally for left-handed players.
+- **Interval/Degree Labels**: Give the option to toggle the labels on the fretboard markers between note names (C, D, E) and intervals relative to the root (R, b3, 5, b7).
+- **Arpeggio Overlays**: In the scale view, add the ability to highlight the arpeggio shapes (1, 3, 5, 7) of the underlying diatonic chords directly over the scale patterns.
+- **Metronome & Practice Mode**: Build a simple metronome directly into the tool with a feature that guides the user through scale runs at configurable tempos.
+- **Chord Progression Builder**: Allow users to drag and drop chords to build custom progressions (e.g., ii-V-I) and visualize them sequentially on the fretboard.
