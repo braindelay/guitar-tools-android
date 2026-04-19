@@ -70,9 +70,9 @@ import com.braindelay.guitartools.music.TriadType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
+fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean = false) {
     val scale = vm.scale
-    var expanded by rememberSaveable { mutableStateOf(true) }
+    var expanded by rememberSaveable { mutableStateOf(!isProgressionPlaying) }
     val isFullscreen = vm.isFullscreen
     val chordSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showChordSheet by remember { mutableStateOf(false) }
