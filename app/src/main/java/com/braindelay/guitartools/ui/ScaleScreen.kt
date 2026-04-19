@@ -27,6 +27,9 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +37,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
@@ -53,6 +57,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.R
+import com.braindelay.guitartools.audio.GuitarAudioEngine
 import com.braindelay.guitartools.music.Mode
 import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.Scale
@@ -73,6 +78,30 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                     title = { Text("braindelay guitar tools") },
                     actions = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Left-handed toggle
+                            IconToggleButton(
+                                checked = vm.isLeftHanded,
+                                onCheckedChange = { vm.toggleLeftHanded() }
+                            ) {
+                                Icon(
+                                    Icons.Default.SwapHoriz,
+                                    contentDescription = "Left-handed mode",
+                                    tint = if (vm.isLeftHanded) MaterialTheme.colorScheme.primary
+                                           else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            // Note-name label toggle
+                            IconToggleButton(
+                                checked = vm.showNoteNames,
+                                onCheckedChange = { vm.toggleLabelMode() }
+                            ) {
+                                Icon(
+                                    Icons.Default.TextFields,
+                                    contentDescription = "Show note names",
+                                    tint = if (vm.showNoteNames) MaterialTheme.colorScheme.primary
+                                           else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                             Text(
                                 text = if (expanded) "Close" else "Choose scale",
                                 style = MaterialTheme.typography.bodySmall,
@@ -82,7 +111,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 Icon(
                                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
                                                   else Icons.Default.KeyboardArrowDown,
-                                    contentDescription = if (expanded) "Collapse options" else "Expand options"
+                                    contentDescription = if (expanded) "Collapse" else "Expand"
                                 )
                             }
                         }
@@ -96,16 +125,13 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                 .padding(if (isFullscreen) androidx.compose.foundation.layout.PaddingValues(0.dp) else innerPadding)
                 .then(if (isFullscreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth())
                 .then(if (!isFullscreen) Modifier.verticalScroll(rememberScrollState()) else Modifier)
-                .padding(horizontal = if (isFullscreen) 0.dp else 16.dp, vertical = if (isFullscreen) 0.dp else 12.dp),
+                .padding(horizontal = if (isFullscreen) 0.dp else 16.dp,
+                         vertical   = if (isFullscreen) 0.dp else 12.dp),
             verticalArrangement = if (isFullscreen) Arrangement.Center else Arrangement.spacedBy(20.dp)
         ) {
             if (!isFullscreen) {
-                // Hero Image Banner
-                OutlinedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                ) {
+                // Hero image
+                OutlinedCard(modifier = Modifier.fillMaxWidth().height(180.dp)) {
                     Box {
                         Image(
                             painter = painterResource(id = R.drawable.guitar_lessons),
@@ -113,7 +139,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
-                        // Gradient overlay for text readability
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -126,16 +151,11 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                             contentAlignment = Alignment.BottomStart
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    "Master Your Fretboard",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = Color.White
-                                )
-                                Text(
-                                    "Visualise scales and diatonic chords",
+                                Text("Master Your Fretboard",
+                                    style = MaterialTheme.typography.headlineSmall, color = Color.White)
+                                Text("Visualise scales and diatonic chords",
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.8f)
-                                )
+                                    color = Color.White.copy(alpha = 0.8f))
                             }
                         }
                     }
@@ -149,26 +169,24 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Text("Root & Scale", style = MaterialTheme.typography.titleMedium)
-                                
                                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                     items(Note.entries) { note ->
                                         FilterChip(
                                             selected = note == vm.selectedNote,
-                                            onClick = { vm.selectNote(note) },
-                                            label = { Text(note.displayName) }
+                                            onClick  = { vm.selectNote(note) },
+                                            label    = { Text(note.displayName) }
                                         )
                                     }
                                 }
-
                                 FlowRow(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement   = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Mode.entries.forEach { mode ->
                                         FilterChip(
                                             selected = mode == vm.selectedMode,
-                                            onClick = { vm.selectMode(mode) },
-                                            label = { Text(mode.displayName) }
+                                            onClick  = { vm.selectMode(mode) },
+                                            label    = { Text(mode.displayName) }
                                         )
                                     }
                                 }
@@ -180,15 +198,17 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 modifier = Modifier.padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text("Diatonic Chords", style = MaterialTheme.typography.titleMedium)
+                                Text("Diatonic Chords — tap to overlay arpeggio",
+                                    style = MaterialTheme.typography.titleMedium)
                                 FlowRow(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    verticalArrangement   = Arrangement.spacedBy(4.dp)
                                 ) {
-                                    vm.diatonicChords.forEach { chord ->
-                                        AssistChip(
-                                            onClick = { },
-                                            label = { Text(chord) }
+                                    vm.diatonicChords.forEachIndexed { idx, chord ->
+                                        FilterChip(
+                                            selected = vm.arpeggioChordIndex == idx,
+                                            onClick  = { vm.selectArpeggioChord(idx) },
+                                            label    = { Text(chord) }
                                         )
                                     }
                                 }
@@ -204,15 +224,12 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                     HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor)
                     ElevatedButton(
                         onClick = { vm.exitFullscreen() },
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(16.dp)
-                    ) {
-                        Text("Go Back")
-                    }
+                        modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    ) { Text("Go Back") }
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    // Title row
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -226,11 +243,32 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        if (vm.selectedFretPosition != null || vm.selectedTriadType != null) {
-                            ElevatedButton(onClick = { vm.clearFretSelection() }) {
-                                Icon(Icons.Default.Clear, contentDescription = null, modifier = Modifier.size(16.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text("Clear")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Play button when chord/arpeggio is active
+                            val triad = vm.triadNotes
+                            if (triad != null) {
+                                val pos = vm.selectedFretPosition
+                                val triadType = vm.selectedTriadType
+                                if (pos != null && triadType != null) {
+                                    IconButton(onClick = {
+                                        val rootMidi = GuitarAudioEngine.midiFromPosition(pos.string, pos.fret)
+                                        GuitarAudioEngine.playMidis(triadType.toneOffsets.map { rootMidi + it })
+                                    }) {
+                                        Icon(Icons.Default.PlayArrow, contentDescription = "Play chord")
+                                    }
+                                }
+                            }
+                            if (vm.selectedFretPosition != null || vm.selectedTriadType != null
+                                || vm.arpeggioChordIndex != null) {
+                                ElevatedButton(onClick = {
+                                    vm.clearFretSelection()
+                                    vm.arpeggioChordIndex?.let { vm.selectArpeggioChord(it) }
+                                }) {
+                                    Icon(Icons.Default.Clear, contentDescription = null,
+                                        modifier = Modifier.size(16.dp))
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("Clear")
+                                }
                             }
                         }
                     }
@@ -242,12 +280,9 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                             )
                         ) {
-                            Text(
-                                summary,
-                                modifier = Modifier.padding(16.dp),
+                            Text(summary, modifier = Modifier.padding(16.dp),
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                                color = MaterialTheme.colorScheme.onPrimaryContainer)
                         }
                     }
 
@@ -256,6 +291,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.Top
                     ) {
+                        // Chord type selector panel
                         Column(
                             modifier = Modifier
                                 .width(120.dp)
@@ -267,13 +303,13 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                                 val isDiatonic = vm.isDiatonic(triad)
                                 FilterChip(
                                     selected = triad == vm.selectedTriadType,
-                                    onClick = {
+                                    onClick  = {
                                         if (vm.selectedTriadType == triad) vm.clearTriadType()
                                         else vm.selectTriadType(triad)
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                     leadingIcon = if (isDiatonic) {
-                                        { Icon(Icons.Default.Info, contentDescription = null, modifier = Modifier.size(14.dp)) }
+                                        { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
                                     } else null,
                                     label = {
                                         Text(
@@ -287,6 +323,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                             }
                         }
 
+                        // Fretboard
                         Column(
                             modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -302,31 +339,28 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                     }
                 }
             }
-            
-            if (!isFullscreen) {
-                Spacer(Modifier.height(40.dp))
-            }
+
+            if (!isFullscreen) Spacer(Modifier.height(40.dp))
         }
     }
-
 }
 
 @Composable
 fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
     val scrollState = rememberScrollState()
     androidx.compose.foundation.layout.Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .horizontalScroll(scrollState)
+        modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState)
     ) {
         FretboardView(
-            scale = vm.scale,
-            positions = vm.fretPositions,
+            scale            = vm.scale,
+            positions        = vm.fretPositions,
             selectedPosition = vm.selectedFretPosition,
-            triadNotes = vm.triadNotes,
-            onFretTapped = { pos -> vm.selectFretPosition(pos) },
-            onOtherTapped = { vm.enterFullscreen() },
-            scaleFactor = scaleFactor
+            triadNotes       = vm.activeOverlay,
+            onFretTapped     = { pos -> vm.selectFretPosition(pos) },
+            onOtherTapped    = { vm.enterFullscreen() },
+            scaleFactor      = scaleFactor,
+            isLeftHanded     = vm.isLeftHanded,
+            showNoteNames    = vm.showNoteNames
         )
     }
 }

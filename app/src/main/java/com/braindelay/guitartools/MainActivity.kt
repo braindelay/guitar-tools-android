@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Album
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
+import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -37,11 +39,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.braindelay.guitartools.ui.ChordScreen
+import com.braindelay.guitartools.ui.MetronomeScreen
+import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS }
+enum class AppMode { SCALES, CHORDS, METRONOME, PROGRESSION }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,22 +54,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             GuitarToolsTheme {
                 var isLoading by remember { mutableStateOf(true) }
-
                 LaunchedEffect(Unit) {
                     delay(2000)
                     isLoading = false
                 }
-
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Crossfade(targetState = isLoading, animationSpec = tween(500), label = "loading_fade") { loading ->
-                        if (loading) {
-                            LoadingScreen()
-                        } else {
-                            MainContent()
-                        }
+                Surface(modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background) {
+                    Crossfade(targetState = isLoading,
+                        animationSpec = tween(500), label = "loading_fade") { loading ->
+                        if (loading) LoadingScreen() else MainContent()
                     }
                 }
             }
@@ -80,22 +77,36 @@ fun MainContent() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (appMode) {
-                AppMode.SCALES -> ScaleScreen()
-                AppMode.CHORDS -> ChordScreen()
+                AppMode.SCALES      -> ScaleScreen()
+                AppMode.CHORDS      -> ChordScreen()
+                AppMode.METRONOME   -> MetronomeScreen()
+                AppMode.PROGRESSION -> ProgressionScreen()
             }
         }
         NavigationBar {
             NavigationBarItem(
                 selected = appMode == AppMode.SCALES,
-                onClick = { appMode = AppMode.SCALES },
-                icon = { Icon(Icons.Default.MusicNote, contentDescription = null) },
-                label = { Text("Scales") }
+                onClick  = { appMode = AppMode.SCALES },
+                icon     = { Icon(Icons.Default.MusicNote, contentDescription = null) },
+                label    = { Text("Scales") }
             )
             NavigationBarItem(
                 selected = appMode == AppMode.CHORDS,
-                onClick = { appMode = AppMode.CHORDS },
-                icon = { Icon(Icons.Default.Piano, contentDescription = null) },
-                label = { Text("Chords") }
+                onClick  = { appMode = AppMode.CHORDS },
+                icon     = { Icon(Icons.Default.Piano, contentDescription = null) },
+                label    = { Text("Chords") }
+            )
+            NavigationBarItem(
+                selected = appMode == AppMode.METRONOME,
+                onClick  = { appMode = AppMode.METRONOME },
+                icon     = { Icon(Icons.Default.Album, contentDescription = null) },
+                label    = { Text("Metronome") }
+            )
+            NavigationBarItem(
+                selected = appMode == AppMode.PROGRESSION,
+                onClick  = { appMode = AppMode.PROGRESSION },
+                icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
+                label    = { Text("Progression") }
             )
         }
     }

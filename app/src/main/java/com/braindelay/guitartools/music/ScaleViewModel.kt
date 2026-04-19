@@ -9,17 +9,19 @@ class ScaleViewModel : ViewModel() {
 
     var selectedNote by mutableStateOf(Note.C)
         private set
-
     var selectedMode by mutableStateOf(Mode.MAJOR)
         private set
-
     var selectedTriadType by mutableStateOf<TriadType?>(null)
         private set
-
     var selectedFretPosition by mutableStateOf<FretPosition?>(null)
         private set
-
     var isFullscreen by mutableStateOf(false)
+        private set
+    var isLeftHanded by mutableStateOf(false)
+        private set
+    var showNoteNames by mutableStateOf(false)
+        private set
+    var arpeggioChordIndex by mutableStateOf<Int?>(null)
         private set
 
     private val fretboard = Fretboard(fretCount = 19)
@@ -41,7 +43,6 @@ class ScaleViewModel : ViewModel() {
         val rootNote = fretboard.noteAt(pos.string, pos.fret)
         val degree = s.notes.indexOf(rootNote).takeIf { it >= 0 } ?: return false
         val type = s.getDiatonicTriadTypes()[degree]
-        
         return when (type) {
             "Maj" -> triad == TriadType.MAJOR_TRIAD || triad == TriadType.MAJ_7_SHELL || triad == TriadType.DOM_7_SHELL
             "Min" -> triad == TriadType.MINOR_TRIAD || triad == TriadType.MIN_7_SHELL
@@ -50,15 +51,18 @@ class ScaleViewModel : ViewModel() {
         }
     }
 
+    // Notes → interval label for active chord/arpeggio overlay
+    val activeOverlay: Map<Note, String>?
+        get() = triadNotes ?: arpeggioNotes
+
     val fretPositions: Map<FretPosition, Note>
         get() {
             val s = scale
-            val triad = triadNotes
-            val allNotes = if (triad != null) s.notes + triad.keys else s.notes
+            val overlay = activeOverlay
+            val allNotes = if (overlay != null) s.notes + overlay.keys else s.notes
             return fretboard.positionsForNotes(allNotes)
         }
 
-    // Note → chord-tone label ("R", "3", "5", "7") for the selected triad, or null
     val triadNotes: Map<Note, String>?
         get() {
             val pos = selectedFretPosition ?: return null
@@ -69,15 +73,38 @@ class ScaleViewModel : ViewModel() {
             }
         }
 
+    // Arpeggio tones for the selected diatonic chord degree, derived from scale positions
+    val arpeggioNotes: Map<Note, String>?
+        get() {
+            val idx = arpeggioChordIndex ?: return null
+            val s = scale
+            val n = s.notes
+            val quality = s.getDiatonicTriadTypes()[idx]
+            val root   = n[idx]
+            val third  = n[(idx + 2) % 7]
+            val fifth  = n[(idx + 4) % 7]
+            val seventh = n[(idx + 6) % 7]
+            val thirdLabel  = if (quality == "Maj") "3" else "b3"
+            val fifthLabel  = when (quality) { "Dim" -> "b5"; "Aug" -> "#5"; else -> "5" }
+            val seventhLabel = when (quality) { "Maj" -> "7"; "Min" -> "b7"; "Dim" -> "bb7"; else -> "7" }
+            return mapOf(root to "R", third to thirdLabel, fifth to fifthLabel, seventh to seventhLabel)
+        }
+
     val triadSummary: String?
         get() {
+            val arpIdx = arpeggioChordIndex
+            if (arpIdx != null) {
+                val s = scale
+                val rootNote = s.notes[arpIdx]
+                val quality = s.getDiatonicTriadTypes()[arpIdx]
+                val notes = arpeggioNotes?.keys?.map { it.displayName }?.joinToString(", ") ?: ""
+                return "${Scale.ROMAN_NUMERALS[arpIdx]}: ${rootNote.displayName} $quality arpeggio — $notes"
+            }
             val pos = selectedFretPosition ?: return null
             val triad = selectedTriadType ?: return null
             val rootNote = fretboard.noteAt(pos.string, pos.fret)
-            val notes = triad.toneOffsets.map { offset ->
-                rootNote.transpose(offset).displayName
-            }
-            return "${rootNote.displayName} ${triad.label.split(" (").getOrNull(0) ?: ""}: ${notes.joinToString(", ")}"
+            val notes = triad.toneOffsets.map { offset -> rootNote.transpose(offset).displayName }
+            return "${rootNote.displayName} ${triad.label.split(" (").first()}: ${notes.joinToString(", ")}"
         }
 
     fun selectNote(note: Note) {
@@ -92,6 +119,7 @@ class ScaleViewModel : ViewModel() {
 
     fun selectTriadType(type: TriadType) {
         selectedTriadType = type
+        arpeggioChordIndex = null
     }
 
     fun selectFretPosition(pos: FretPosition) {
@@ -112,11 +140,15 @@ class ScaleViewModel : ViewModel() {
         selectedTriadType = null
     }
 
-    fun enterFullscreen() {
-        isFullscreen = true
+    fun selectArpeggioChord(index: Int) {
+        arpeggioChordIndex = if (arpeggioChordIndex == index) null else index
+        selectedFretPosition = null
+        selectedTriadType = null
     }
 
-    fun exitFullscreen() {
-        isFullscreen = false
-    }
+    fun toggleLeftHanded() { isLeftHanded = !isLeftHanded }
+    fun toggleLabelMode()   { showNoteNames = !showNoteNames }
+
+    fun enterFullscreen() { isFullscreen = true }
+    fun exitFullscreen()  { isFullscreen = false }
 }

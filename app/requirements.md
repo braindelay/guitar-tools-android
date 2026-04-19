@@ -1,56 +1,65 @@
-# Guitar tools
+# Guitar Tools
 
-Using the underlying android example project
+A guitar training tool for learning scales and diatonic chord voicings.
 
-Build a guitar training tool to teach me how to play scales, and diatonic chords
+A bottom navigation bar switches between two modes: **Scales** and **Chords**.
 
+---
 
-Allow me to select the following:
+## Scales
 
+### Scale selection
 
-- Any tone in the western 12 tone scale
-- A mode from the list:
+- Select any tone from the western 12-tone chromatic scale.
+- Select a mode from:
   - Major
   - Minor
-  - Harmonic and melodic minor
-  - Other church modes
-  
+  - Harmonic Minor
+  - Melodic Minor
+  - Dorian, Phrygian, Lydian, Mixolydian, Locrian (church modes)
 
-Give me the option to then see, on a visual representation of a guitar fretboard
+The selection panel can be expanded or collapsed. The toggle button in the top bar shows:
+- "Choose scale" (with a down-arrow icon) when collapsed
+- "Close" (with an up-arrow icon) when expanded
 
-- Every note in that scale
-- Indicating the tone scale in roman numerals
-- Add fretboard markings at the following frets: 1, 3, 5, 7, 9, 12, 15, 17, 19
+### Fretboard
 
-Allow me to expand / collapse the selection options, so I can just see the fretboard.
+A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII). Root notes are drawn in the tertiary colour; all other scale notes in the primary colour. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
 
-In small text to the left of the icon that controls the selection options:
-- When closed: "Choose scale"
-- When open: "Close"
+Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fretboard fills the screen with a "Go Back" button. Below the normal-view fretboard the label "Click fretboard to zoom" is shown.
 
-When I press a note on the fretboard
-- Open a menu to offer a list of reasonable shell voicings for triads
-- When one is selected, then colour the notes on the fretboard for the notes in that triad
-- Include the name of the tone in the triad in the summary 
-- Layout the triads in the menu as a grid, so they all fit on the screen 
+### Diatonic chords
 
-Use guitar_lessons.jpeg as the app icon
+Below the scale selector, a card lists the diatonic chords for the current scale (e.g. "I: C Maj", "II: D Min").
 
-If I click anywhere else on the fretboard, then show only the fretboard, and an option to go back to thge normal view. Below the fretboard, when it's not zoomed, say "Click fretboard to zoom"
+### Chord voicings
 
+To the left of the fretboard a scrollable column (120 dp wide, matching the fretboard height) lists all 10 voicing types:
 
+- Major Triad, Minor Triad, Diminished, Augmented
+- Suspended 2, Suspended 4
+- Dom 7 Shell, Maj 7 Shell, Min 7 Shell, Min 7b5 Shell
 
-Add a second section to render chords charts
+Selecting a voicing type from this column persists across fret taps. When a fret position is also selected, the fretboard overlays the chord tones in colour with degree labels (R, 3, 5, b7 …) and a summary card shows the chord name and its constituent notes. Tapping the active voicing chip deselects it. Tapping the same fret again clears both the fret selection and the voicing. The **Clear** button (visible whenever a fret or voicing is selected) resets both.
 
+Diatonic voicings for the currently selected fret are highlighted with an info icon in the left column.
 
-- add a bottom navigation bar to switch between scales and chords
-- if I pick scales then show the current features
-- if I pick chords, then show me the new feature I will describe below
+---
 
-Show this entirely in landscape
+## Chords
 
-- On the left show a dropdown of chord types (e.g. major / minor / dom7, maj7, b5 etc) and below it show the circle of fifths
-- When I select a tone on the circle of fifths, and a chord type, then show reasonable samples of that chord, up to 3 octaves worth, in different positions, on the right. Sort these by fret position, from low to high.
+The chords screen is displayed in **landscape orientation**.
+
+### Layout
+
+- **Left panel (38%)**: Circle of Fifths. Tap any note to select the root.
+- **Right panel (62%)**: All 16 chord types are shown at once in a scrollable list. Each section shows the chord type name, a divider, and a horizontally scrollable row of chord diagrams for that type.
+
+### Chord diagrams
+
+Each diagram renders a 4-fret window of the guitar neck showing fingering positions for one voicing. Notes are colour-coded by chord degree (root, third, other). Muted strings are shown with a red X. Up to 3 octaves of voicings are generated per chord type, sorted by fret position from low to high.
+
+---
 
 ## Future Enhancements & Ideas
 - **Audio Playback**: Allow the user to tap on a chord voicing or a scale to hear it played back via synthesized audio or samples, aiding in ear training.
