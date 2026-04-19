@@ -1,61 +1,93 @@
-# Guitar tools
+# Guitar Tools
 
-Using the underlying android example project
+A guitar training tool for learning scales, diatonic chord voicings, and chord progressions.
 
-Build a guitar training tool to teach me how to play scales, and diatonic chords
+A bottom navigation bar switches between three modes: **Scales**, **Chords**, and **Progression**.
 
+---
 
-Allow me to select the following:
+## Scales
 
+### Scale selection
 
-- Any tone in the western 12 tone scale
-- A mode from the list:
+- Select any tone from the western 12-tone chromatic scale.
+- Select a mode from:
   - Major
   - Minor
-  - Harmonic and melodic minor
-  - Other church modes
-  
+  - Harmonic Minor
+  - Melodic Minor
+  - Dorian, Phrygian, Lydian, Mixolydian, Locrian (church modes)
 
-Give me the option to then see, on a visual representation of a guitar fretboard
+The selection panel can be expanded or collapsed. The toggle button in the top bar shows:
+- "Choose scale" (with a down-arrow icon) when collapsed
+- "Close" (with an up-arrow icon) when expanded
 
-- Every note in that scale
-- Indicating the tone scale in roman numerals
-- Add fretboard markings at the following frets: 1, 3, 5, 7, 9, 12, 15, 17, 19
+Two icon toggle buttons also appear in the top bar:
+- **SwapHoriz** — toggles left-handed mode (mirrors the fretboard horizontally)
+- **TextFields** — toggles label mode between Roman numerals / interval names and actual note names (C, C#, G…)
 
-Allow me to expand / collapse the selection options, so I can just see the fretboard.
+### Fretboard
 
-In small text to the left of the icon that controls the selection options:
-- When closed: "Choose scale"
-- When open: "Close"
+A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII) by default, or note names when the label toggle is active. Root notes are drawn in the tertiary colour; all other scale notes in the primary colour. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
 
-When I press a note on the fretboard
-- Open a menu to offer a list of reasonable shell voicings for triads
-- When one is selected, then colour the notes on the fretboard for the notes in that triad
-- Include the name of the tone in the triad in the summary 
-- Layout the triads in the menu as a grid, so they all fit on the screen 
+In left-handed mode the entire fretboard is mirrored: the nut moves to the right and fret numbering increases from right to left. Tap detection mirrors accordingly.
 
-Use guitar_lessons.jpeg as the app icon
+Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fretboard fills the screen with a "Go Back" button. Below the normal-view fretboard the label "Click fretboard to zoom" is shown.
 
-If I click anywhere else on the fretboard, then show only the fretboard, and an option to go back to thge normal view. Below the fretboard, when it's not zoomed, say "Click fretboard to zoom"
+### Diatonic chords and arpeggio overlays
 
+Below the scale selector, a card lists the diatonic chords for the current scale (e.g. "I: C Maj", "II: D Min") as selectable filter chips. Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard, with colour-coded degree labels (R, 3, 5, 7…). A summary card shows the chord name, quality, and constituent notes. Tapping the same chip again clears the overlay.
 
+### Chord voicings
 
-Add a second section to render chords charts
+To the left of the fretboard a scrollable column (120 dp wide, matching the fretboard height) lists all 10 voicing types:
 
+- Major Triad, Minor Triad, Diminished, Augmented
+- Suspended 2, Suspended 4
+- Dom 7 Shell, Maj 7 Shell, Min 7 Shell, Min 7b5 Shell
 
-- add a bottom navigation bar to switch between scales and chords
-- if I pick scales then show the current features
-- if I pick chords, then show me the new feature I will describe below
+Selecting a voicing type persists across fret taps. When a fret position is also selected, the fretboard overlays the chord tones in colour with degree labels (R, 3, 5, b7…) and a summary card shows the chord name and its constituent notes. A **Play ▶** icon button appears next to the Clear button and plays the chord tones using Karplus-Strong synthesis. Tapping the active voicing chip deselects it. Tapping the same fret again clears both the fret selection and the voicing. The **Clear** button resets all active selections.
 
-Show this entirely in landscape
+Diatonic voicings for the currently selected fret are highlighted with an info icon in the left column.
 
-- On the left show a dropdown of chord types (e.g. major / minor / dom7, maj7, b5 etc) and below it show the circle of fifths
-- When I select a tone on the circle of fifths, and a chord type, then show reasonable samples of that chord, up to 3 octaves worth, in different positions, on the right. Sort these by fret position, from low to high.
+Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (chord overlay mode) are mutually exclusive; activating one clears the other.
 
-## Future Enhancements & Ideas
-- **Audio Playback**: Allow the user to tap on a chord voicing or a scale to hear it played back via synthesized audio or samples, aiding in ear training.
-- **Left-Handed Mode**: Provide a toggle to flip the fretboard layout horizontally for left-handed players.
-- **Interval/Degree Labels**: Give the option to toggle the labels on the fretboard markers between note names (C, D, E) and intervals relative to the root (R, b3, 5, b7).
-- **Arpeggio Overlays**: In the scale view, add the ability to highlight the arpeggio shapes (1, 3, 5, 7) of the underlying diatonic chords directly over the scale patterns.
-- **Metronome & Practice Mode**: Build a simple metronome directly into the tool with a feature that guides the user through scale runs at configurable tempos.
-- **Chord Progression Builder**: Allow users to drag and drop chords to build custom progressions (e.g., ii-V-I) and visualize them sequentially on the fretboard.
+---
+
+## Chords
+
+The chords screen is displayed in **landscape orientation**.
+
+### Layout
+
+- **Left panel (38%)**: Circle of Fifths. Tap any note to select the root.
+- **Right panel (62%)**: All 16 chord types are shown at once in a scrollable list. Each section shows the chord type name, a divider, and a horizontally scrollable row of chord diagrams for that type.
+
+### Chord diagrams
+
+Each diagram renders a 4-fret window of the guitar neck showing fingering positions for one voicing. Notes are colour-coded by chord degree (root, third, other). Muted strings are shown with a red X. Up to 3 octaves of voicings are generated per chord type, sorted by fret position from low to high. Tapping a diagram plays the voicing using Karplus-Strong synthesis.
+
+---
+
+## Progression
+
+The progression screen is displayed in **landscape orientation**.
+
+### Layout
+
+- **Left panel (38%)**: Progression list with playback controls.
+- **Right panel (62%)**: Chord picker — chord type filter chips (scrollable column), Circle of Fifths, and a voicings preview for the current selection.
+
+### Building a progression
+
+Select a chord type from the scrollable chip list and tap a note on the Circle of Fifths, then press **Add** to append the chord to the progression. Each chord in the list shows its name with left/right reorder buttons and a delete button.
+
+### Playback
+
+A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). The play/pause button loops through the progression continuously, highlighting the active chord and playing its first voicing via Karplus-Strong synthesis. Stop ends playback.
+
+---
+
+## Audio
+
+All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. Audio runs on background threads; no Android permissions are required.
