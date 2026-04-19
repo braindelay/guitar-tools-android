@@ -100,7 +100,7 @@ fun MainContent() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1f)) {
             when (appMode) {
-                AppMode.SCALES      -> ScaleScreen()
+                AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
                 AppMode.PROGRESSION -> ProgressionScreen()
             }
