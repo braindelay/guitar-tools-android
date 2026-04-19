@@ -39,15 +39,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -70,6 +76,13 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
     val scale = vm.scale
     var expanded by rememberSaveable { mutableStateOf(true) }
     val isFullscreen = vm.isFullscreen
+    val chordSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showChordSheet by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(vm.selectedFretPosition) {
+        if (vm.selectedFretPosition != null) showChordSheet = true
+    }
 
     Scaffold(
         topBar = {
@@ -286,61 +299,70 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel()) {
                         }
                     }
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
-                        // Chord type selector panel
-                        Column(
-                            modifier = Modifier
-                                .width(120.dp)
-                                .height(216.dp)
-                                .verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            TriadType.entries.forEach { triad ->
-                                val isDiatonic = vm.isDiatonic(triad)
-                                FilterChip(
-                                    selected = triad == vm.selectedTriadType,
-                                    onClick  = {
-                                        if (vm.selectedTriadType == triad) vm.clearTriadType()
-                                        else vm.selectTriadType(triad)
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    leadingIcon = if (isDiatonic) {
-                                        { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
-                                    } else null,
-                                    label = {
-                                        Text(
-                                            triad.label,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
-                            }
-                        }
-
-                        // Fretboard
-                        Column(
-                            modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            HorizontalScrollableFretboard(vm)
-                            Text(
-                                "Click fretboard to zoom",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
-                            )
-                        }
+                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        HorizontalScrollableFretboard(vm)
+                        Text(
+                            "Tap a note to pick chord type · tap fretboard to zoom",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
+                        )
                     }
                 }
             }
 
             if (!isFullscreen) Spacer(Modifier.height(40.dp))
+        }
+    }
+
+    val selectedPos = vm.selectedFretPosition
+    if (showChordSheet && selectedPos != null) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showChordSheet = false
+                vm.clearFretSelection()
+            },
+            sheetState = chordSheetState
+        ) {
+            val rootNote = vm.noteAt(selectedPos)
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    "${rootNote.displayName} — choose chord type",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement   = Arrangement.spacedBy(8.dp)
+                ) {
+                    TriadType.entries.forEach { triad ->
+                        val isDiatonic = vm.isDiatonic(triad)
+                        FilterChip(
+                            selected = triad == vm.selectedTriadType,
+                            onClick  = {
+                                if (vm.selectedTriadType == triad) {
+                                    vm.clearTriadType()
+                                } else {
+                                    vm.selectTriadType(triad)
+                                    coroutineScope.launch {
+                                        chordSheetState.hide()
+                                    }.invokeOnCompletion {
+                                        if (!chordSheetState.isVisible) showChordSheet = false
+                                    }
+                                }
+                            },
+                            leadingIcon = if (isDiatonic) {
+                                { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
+                            } else null,
+                            label = { Text(triad.label) }
+                        )
+                    }
+                }
+            }
         }
     }
 }

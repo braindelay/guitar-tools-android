@@ -146,6 +146,8 @@ class ScaleViewModel : ViewModel() {
         selectedTriadType = null
     }
 
+    fun noteAt(pos: FretPosition) = fretboard.noteAt(pos.string, pos.fret)
+
     fun toggleLeftHanded() { isLeftHanded = !isLeftHanded }
     fun toggleLabelMode()   { showNoteNames = !showNoteNames }
 
