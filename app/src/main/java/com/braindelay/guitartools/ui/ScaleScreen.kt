@@ -82,6 +82,15 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
         if (vm.selectedFretPosition != null) showChordSheet = true
     }
 
+    LaunchedEffect(isProgressionPlaying) {
+        if (isProgressionPlaying) {
+            expanded = false
+            vm.enterFullscreen()
+        } else {
+            vm.exitFullscreen()
+        }
+    }
+
     Scaffold(
         topBar = {
             if (!isFullscreen) {
