@@ -1,32 +1,6 @@
 # Braindelay Guitar Tools
 
-<table>
-<tr>
-<td><img src="./app/src/main/res/drawable/guitar_lessons.jpeg" alt="Guitar Tools" width="200"/></td>
-<td>An Android app for guitarists learning scales, chord voicings, and progressions. Visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, and build chord progressions with audio playback.</td>
-</tr>
-</table>
-
----
-
-## Screenshots
-
-<table>
-<tr>
-<td align="center"><img src="./screenshots/01_scale_selector.png" width="380"/><br><em>Root &amp; Scale selector</em></td>
-<td align="center"><img src="./screenshots/02_fretboard.png" width="380"/><br><em>Fretboard — C Major scale</em></td>
-</tr>
-<tr>
-<td align="center"><img src="./screenshots/04_voicing_picker.png" width="380"/><br><em>Voicing type picker</em></td>
-<td align="center"><img src="./screenshots/03_chord_overlay.png" width="380"/><br><em>Chord tone overlay (R / 3 / 5 / 7)</em></td>
-</tr>
-<tr>
-<td align="center"><img src="./screenshots/05_chords.png" width="380"/><br><em>Chords screen — voicing diagrams</em></td>
-<td align="center"><img src="./screenshots/06_progression.png" width="380"/><br><em>Progression builder</em></td>
-</tr>
-</table>
-
----
+A tool to help guitarists to learn scales, chord voicings, and progressions. You can use it to visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, and build chord progressions with audio playback.
 
 ## Usage Guide
 
@@ -99,23 +73,4 @@ The Progression screen is landscape-only.
 2. Press **▶** to start looping through the progression. The active chord is highlighted.
 3. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
 4. Press **⏸** to stop.
-
----
-
-## Building
-
-```bash
-# Debug APK
-./gradlew assembleDebug
-
-# Release APK
-./gradlew assembleRelease
-
-# Unit tests
-./gradlew test
-
-# Lint
-./gradlew lint
-```
-
-Requires Android Studio with min SDK 24 / target SDK 36.
+5. While it is playing, you can go back to the scales view, to see the arpeggios being rendered in real time.

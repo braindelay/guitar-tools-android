@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
@@ -41,12 +42,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
+import com.braindelay.guitartools.ui.HelpScreen
 import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS, PROGRESSION }
+enum class AppMode { SCALES, CHORDS, PROGRESSION, HELP }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,6 +105,7 @@ fun MainContent() {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
                 AppMode.PROGRESSION -> ProgressionScreen()
+                AppMode.HELP        -> HelpScreen()
             }
         }
         NavigationBar {
@@ -123,6 +126,12 @@ fun MainContent() {
                 onClick  = { appMode = AppMode.PROGRESSION },
                 icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
                 label    = { Text("Progression") }
+            )
+            NavigationBarItem(
+                selected = appMode == AppMode.HELP,
+                onClick  = { appMode = AppMode.HELP },
+                icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
+                label    = { Text("Help") }
             )
         }
     }
