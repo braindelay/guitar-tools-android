@@ -2,7 +2,7 @@
 
 A guitar training tool for learning scales, diatonic chord voicings, and chord progressions.
 
-A bottom navigation bar switches between three modes: **Scales**, **Chords**, and **Progression**.
+A bottom navigation bar switches between four modes: **Scales**, **Chords**, **Progression**, and **Help**.
 
 ---
 
@@ -32,7 +32,7 @@ When expanded, the panel shows two cards (both collapse and expand together):
 
 Below the expandable panel, a "Fretboard" heading shows the currently selected note and mode (e.g. "Highlighting: C Major").
 
-A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII) by default, or note names when the label toggle is active. Root notes are drawn in the tertiary colour; all other scale notes in the primary colour. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
+A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII) by default, or note names when the label toggle is active. Each scale degree is drawn in a distinct theme colour: I → tertiary, II → primary, III → secondary, IV → tertiaryContainer, V → primaryContainer, VI → secondaryContainer, VII → error. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
 
 In left-handed mode the entire fretboard is mirrored: the nut moves to the right and fret numbering increases from right to left. Tap detection mirrors accordingly.
 
@@ -40,7 +40,7 @@ Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fret
 
 ### Diatonic chord sidebar
 
-To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) lists the 7 diatonic chords for the current scale as filter chips (e.g. "I: C Maj", "II: D Min"). Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard with colour-coded degree labels (R, 3, 5, 7…). Tapping the active chip again clears the overlay.
+To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) lists the 7 diatonic chords for the current scale as filter chips (e.g. "I: C Maj", "II: D Min"). Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard; each arpeggio note is coloured by its scale degree using the same colour scheme as the plain scale view, and labelled with its interval (R, 3, 5, 7…). Tapping the active chip again clears the overlay.
 
 ### Chord voicing bottom sheet
 
@@ -58,8 +58,6 @@ Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (ch
 
 ## Chords
 
-The chords screen is displayed in **landscape orientation**.
-
 ### Layout
 
 - **Left panel (38%)**: Circle of Fifths. Tap any note to select the root.
@@ -72,8 +70,6 @@ Each diagram renders a 4-fret window of the guitar neck showing fingering positi
 ---
 
 ## Progression
-
-The progression screen is displayed in **landscape orientation**.
 
 ### Layout
 
@@ -88,7 +84,17 @@ Select a chord type from the scrollable chip list and tap a note on the Circle o
 
 A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). The play/pause button loops through the progression continuously, highlighting the active chord and playing its first voicing via Karplus-Strong synthesis. Stop ends playback.
 
-When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay. On beat 3, the next chord's arpeggio is previewed on the fretboard in a semi-transparent overlay so the player can anticipate the upcoming change.
+When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view. On beat 3, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
+
+---
+
+## Help
+
+A scrollable help screen with a search bar at the top. Typing filters sections by title and keywords; an empty-state message is shown when no sections match.
+
+Content mirrors the README Usage Guide (excluding the build instructions), organised into sections: an intro paragraph, Scales, Fretboard Options, Chord Voicings, Arpeggio Overlays, Fullscreen Mode, Chords, and Progression. Screenshots from the `drawable-nodpi` resource folder are embedded inline. Key terms are rendered in bold.
+
+The Scales section includes a degree colour legend — a row of seven labelled chips (I–VII) each filled with its corresponding scale degree colour — so users can cross-reference the fretboard colours without leaving the help screen.
 
 ---
 
