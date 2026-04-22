@@ -239,6 +239,10 @@ private fun ChordPicker(
             modifier = Modifier.weight(1f).fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
+            // Spacer aligns the Add button with the top of the Minor chip:
+            // labelSmall(16) + gap(4) + Major chip(32) + gap(4) = 56dp
+            // minus this column's spacedBy(6) gap = 50dp
+            Spacer(Modifier.height(50.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
