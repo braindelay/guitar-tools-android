@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GuitarToolsTheme {
-                var isLoading by remember { mutableStateOf(true) }
+                var isLoading by rememberSaveable { mutableStateOf(true) }
                 LaunchedEffect(Unit) {
                     delay(2000)
                     isLoading = false

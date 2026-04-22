@@ -1,7 +1,5 @@
 package com.braindelay.guitartools.ui
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,13 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.braindelay.guitartools.audio.GuitarAudioEngine
 import com.braindelay.guitartools.music.ChordType
@@ -35,16 +31,6 @@ import com.braindelay.guitartools.music.StandardChordLibrary
 
 @Composable
 fun ChordScreen() {
-    val context = LocalContext.current
-    DisposableEffect(Unit) {
-        val activity = context as? Activity
-        val prev = activity?.requestedOrientation
-        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        onDispose {
-            activity?.requestedOrientation = prev ?: ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
-    }
-
     var selectedNote by remember { mutableStateOf<Note?>(Note.C) }
 
     val allVoicings = remember(selectedNote) {
