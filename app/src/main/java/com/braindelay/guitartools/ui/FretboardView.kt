@@ -41,6 +41,7 @@ fun FretboardView(
     positions: Map<FretPosition, Note>,
     selectedPosition: FretPosition?,
     triadNotes: Map<Note, String>?,
+    isScaleDegreeOverlay: Boolean = false,
     nextChordNotes: Map<Note, String>? = null,
     onFretTapped: (FretPosition) -> Unit,
     onOtherTapped: () -> Unit,
@@ -57,13 +58,32 @@ fun FretboardView(
     val nutColor     = Color(0xFFEFEBE9)
     val markerColor  = Color(0xFFF5F5F5).copy(alpha = 0.6f)
 
-    val primaryColor     = MaterialTheme.colorScheme.primary
-    val onPrimaryColor   = MaterialTheme.colorScheme.onPrimary
-    val secondaryColor   = MaterialTheme.colorScheme.secondary
-    val onSecondaryColor = MaterialTheme.colorScheme.onSecondary
-    val tertiaryColor    = MaterialTheme.colorScheme.tertiary
-    val onTertiaryColor  = MaterialTheme.colorScheme.onTertiary
-    val dimNoteColor     = Color.White.copy(alpha = 0.2f)
+    val primaryColor              = MaterialTheme.colorScheme.primary
+    val onPrimaryColor            = MaterialTheme.colorScheme.onPrimary
+    val primaryContainerColor     = MaterialTheme.colorScheme.primaryContainer
+    val onPrimaryContainerColor   = MaterialTheme.colorScheme.onPrimaryContainer
+    val secondaryColor            = MaterialTheme.colorScheme.secondary
+    val onSecondaryColor          = MaterialTheme.colorScheme.onSecondary
+    val secondaryContainerColor   = MaterialTheme.colorScheme.secondaryContainer
+    val onSecondaryContainerColor = MaterialTheme.colorScheme.onSecondaryContainer
+    val tertiaryColor             = MaterialTheme.colorScheme.tertiary
+    val onTertiaryColor           = MaterialTheme.colorScheme.onTertiary
+    val tertiaryContainerColor    = MaterialTheme.colorScheme.tertiaryContainer
+    val onTertiaryContainerColor  = MaterialTheme.colorScheme.onTertiaryContainer
+    val errorColor                = MaterialTheme.colorScheme.error
+    val onErrorColor              = MaterialTheme.colorScheme.onError
+    val dimNoteColor              = Color.White.copy(alpha = 0.2f)
+
+    // One distinct color per scale degree — must match DegreeLegend in HelpScreen
+    val degreeColors = listOf(
+        tertiaryColor           to onTertiaryColor,
+        primaryColor            to onPrimaryColor,
+        secondaryColor          to onSecondaryColor,
+        tertiaryContainerColor  to onTertiaryContainerColor,
+        primaryContainerColor   to onPrimaryContainerColor,
+        secondaryContainerColor to onSecondaryContainerColor,
+        errorColor              to onErrorColor,
+    )
 
     val cellWidthDp     = 64.dp * scaleFactor
     val stringSpacingDp = 32.dp * scaleFactor
@@ -153,10 +173,14 @@ fun FretboardView(
                 triadNotes != null -> {
                     val tLabel = triadNotes[note]
                     if (tLabel != null) {
-                        val (f, t) = when {
-                            tLabel.contains("R")  -> tertiaryColor  to onTertiaryColor
-                            tLabel.contains("3")  -> primaryColor   to onPrimaryColor
-                            else                  -> secondaryColor to onSecondaryColor
+                        val (f, t) = if (isScaleDegreeOverlay) {
+                            degreeColors[scale.notes.indexOf(note).coerceAtLeast(0)]
+                        } else {
+                            when {
+                                tLabel.contains("R")  -> tertiaryColor  to onTertiaryColor
+                                tLabel.contains("3")  -> primaryColor   to onPrimaryColor
+                                else                  -> secondaryColor to onSecondaryColor
+                            }
                         }
                         val display = if (showNoteNames) note.displayName else tLabel
                         Triple(f, t, display)
@@ -166,13 +190,10 @@ fun FretboardView(
                 }
                 else -> {
                     val roman = scale.romanNumeral(note) ?: continue
-                    val isRoot = roman == "I"
+                    val degree = scale.notes.indexOf(note)
                     val display = if (showNoteNames) note.displayName else roman
-                    Triple(
-                        if (isRoot) tertiaryColor else primaryColor,
-                        if (isRoot) onTertiaryColor else onPrimaryColor,
-                        display
-                    )
+                    val (f, t) = degreeColors[degree]
+                    Triple(f, t, display)
                 }
             }
 

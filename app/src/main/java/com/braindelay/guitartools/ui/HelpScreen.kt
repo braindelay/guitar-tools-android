@@ -131,6 +131,7 @@ private fun SectionBlock(id: String) {
                 "The fretboard updates immediately, showing every scale note labelled with Roman numeral degrees (I–VII). Root notes appear in a distinct colour.",
                 "**Collapse the selector** — tap the arrow in the top bar to hide the Root & Scale panel and focus on the fretboard. Tap again to restore it."
             ))
+            DegreeLegend()
         }
         "fretboard_options" -> Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             SectionHeader("Fretboard Options")
@@ -307,6 +308,41 @@ private fun OptionRow(icon: ImageVector, description: String) {
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+@Composable
+private fun DegreeLegend() {
+    val cs = MaterialTheme.colorScheme
+    val degrees = listOf(
+        "I"   to (cs.tertiary           to cs.onTertiary),
+        "II"  to (cs.primary            to cs.onPrimary),
+        "III" to (cs.secondary          to cs.onSecondary),
+        "IV"  to (cs.tertiaryContainer  to cs.onTertiaryContainer),
+        "V"   to (cs.primaryContainer   to cs.onPrimaryContainer),
+        "VI"  to (cs.secondaryContainer to cs.onSecondaryContainer),
+        "VII" to (cs.error              to cs.onError),
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            "Scale degree colours:",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            degrees.forEach { (degree, colors) ->
+                val (bg, fg) = colors
+                Surface(shape = MaterialTheme.shapes.extraSmall, color = bg) {
+                    Text(
+                        degree,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = fg,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
