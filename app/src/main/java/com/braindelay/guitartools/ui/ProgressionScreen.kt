@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -67,8 +70,9 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     if (isLandscape) {
-        Row(Modifier.fillMaxSize()) {
+        Row(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
             ProgressionList(vm, Modifier.weight(0.38f).fillMaxHeight())
             VerticalDivider()
             ChordPicker(
@@ -82,7 +86,7 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
             )
         }
     } else {
-        Column(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
             ChordPicker(
                 selectedNote      = selectedNote,
                 selectedChordType = selectedChordType,

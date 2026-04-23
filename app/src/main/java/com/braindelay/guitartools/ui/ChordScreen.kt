@@ -4,10 +4,13 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,7 +46,8 @@ fun ChordScreen() {
         OpenChordLibrary.getChords(note).associate { it.chordType to it.voicing }
     }
 
-    Row(modifier = Modifier.fillMaxSize()) {
+    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    Row(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
         // Left panel: circle of fifths
         Column(
             modifier = Modifier
