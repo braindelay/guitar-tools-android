@@ -238,14 +238,24 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             if (isFullscreen) {
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     val scaleFactor = maxHeight / 216.dp
-                    val chordLabel = vm.progressionChord?.let { (note, type) ->
-                        "${note.displayName} ${type.label}"
-                    }
-                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, chordLabel = chordLabel)
+                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor)
                     ElevatedButton(
                         onClick = { vm.exitFullscreen() },
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
                     ) { Text("Go Back") }
+                    val chordLabel = vm.progressionChord?.let { (note, type) ->
+                        "${note.displayName} ${type.label}"
+                    }
+                    if (chordLabel != null) {
+                        Text(
+                            text = chordLabel,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = Color.White,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(start = 16.dp, top = 10.dp)
+                        )
+                    }
                 }
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -396,7 +406,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
 }
 
 @Composable
-fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, chordLabel: String? = null) {
+fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
     val scrollState = rememberScrollState()
     androidx.compose.foundation.layout.Box(
         modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState)
@@ -412,8 +422,7 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, c
             onOtherTapped        = { vm.enterFullscreen() },
             scaleFactor          = scaleFactor,
             isLeftHanded         = vm.isLeftHanded,
-            showNoteNames        = vm.showNoteNames,
-            chordLabel           = chordLabel
+            showNoteNames        = vm.showNoteNames
         )
     }
 }

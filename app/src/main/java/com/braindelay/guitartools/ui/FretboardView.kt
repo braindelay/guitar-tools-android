@@ -48,8 +48,7 @@ fun FretboardView(
     modifier: Modifier = Modifier,
     scaleFactor: Float = 1f,
     isLeftHanded: Boolean = false,
-    showNoteNames: Boolean = false,
-    chordLabel: String? = null
+    showNoteNames: Boolean = false
 ) {
     val textMeasurer = rememberTextMeasurer()
 
@@ -209,17 +208,6 @@ fun FretboardView(
             if (pos == selectedPosition) {
                 drawCircle(Color.White, nr + 4f, Offset(x, y), style = Stroke(width = 3f))
             }
-        }
-
-        // Chord name label in fullscreen/progression mode
-        if (chordLabel != null) {
-            val labelX = fretLineX(if (isLeftHanded) NUM_FRETS else 1) + 8f
-            val shadowStyle = TextStyle(fontSize = (14 * scaleFactor).sp, fontWeight = FontWeight.Bold, color = Color.Black.copy(alpha = 0.6f))
-            val labelStyle  = TextStyle(fontSize = (14 * scaleFactor).sp, fontWeight = FontWeight.Bold, color = Color.White)
-            val m = textMeasurer.measure(chordLabel, labelStyle)
-            val ms = textMeasurer.measure(chordLabel, shadowStyle)
-            drawText(ms, topLeft = Offset(labelX + 1f, 9f))
-            drawText(m,  topLeft = Offset(labelX, 8f))
         }
 
         // Anticipation overlay: next chord notes semi-transparent
