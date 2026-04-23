@@ -4,14 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.MusicNote
@@ -78,6 +83,11 @@ fun MainContent() {
     var appMode by rememberSaveable { mutableStateOf(AppMode.SCALES) }
     val progressionVm: ProgressionViewModel = viewModel()
     val scaleVm: ScaleViewModel = viewModel()
+    val isFullscreen = scaleVm.isFullscreen
+    val hideNavBar = isFullscreen && appMode == AppMode.SCALES
+    var navBarVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(hideNavBar) { navBarVisible = !hideNavBar }
 
     LaunchedEffect(progressionVm.playingIndex) {
         val idx = progressionVm.playingIndex
@@ -100,7 +110,27 @@ fun MainContent() {
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(1f)) {
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .pointerInput(hideNavBar) {
+                    if (!hideNavBar) return@pointerInput
+                    var accumulated = 0f
+                    detectVerticalDragGestures(
+                        onDragStart = { accumulated = 0f },
+                        onVerticalDrag = { _, amount ->
+                            accumulated += amount
+                            if (accumulated < -100f) {
+                                navBarVisible = true
+                                accumulated = 0f
+                            } else if (accumulated > 100f) {
+                                navBarVisible = false
+                                accumulated = 0f
+                            }
+                        }
+                    )
+                }
+        ) {
             when (appMode) {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
@@ -108,31 +138,37 @@ fun MainContent() {
                 AppMode.HELP        -> HelpScreen()
             }
         }
-        NavigationBar {
-            NavigationBarItem(
-                selected = appMode == AppMode.SCALES,
-                onClick  = { appMode = AppMode.SCALES },
-                icon     = { Icon(Icons.Default.MusicNote, contentDescription = null) },
-                label    = { Text("Scales") }
-            )
-            NavigationBarItem(
-                selected = appMode == AppMode.CHORDS,
-                onClick  = { appMode = AppMode.CHORDS },
-                icon     = { Icon(Icons.Default.Piano, contentDescription = null) },
-                label    = { Text("Chords") }
-            )
-            NavigationBarItem(
-                selected = appMode == AppMode.PROGRESSION,
-                onClick  = { appMode = AppMode.PROGRESSION },
-                icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
-                label    = { Text("Progression") }
-            )
-            NavigationBarItem(
-                selected = appMode == AppMode.HELP,
-                onClick  = { appMode = AppMode.HELP },
-                icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
-                label    = { Text("Help") }
-            )
+        AnimatedVisibility(
+            visible = navBarVisible,
+            enter = slideInVertically { it },
+            exit  = slideOutVertically { it }
+        ) {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = appMode == AppMode.SCALES,
+                    onClick  = { appMode = AppMode.SCALES },
+                    icon     = { Icon(Icons.Default.MusicNote, contentDescription = null) },
+                    label    = { Text("Scales") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.CHORDS,
+                    onClick  = { appMode = AppMode.CHORDS },
+                    icon     = { Icon(Icons.Default.Piano, contentDescription = null) },
+                    label    = { Text("Chords") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.PROGRESSION,
+                    onClick  = { appMode = AppMode.PROGRESSION },
+                    icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
+                    label    = { Text("Progression") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.HELP,
+                    onClick  = { appMode = AppMode.HELP },
+                    icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
+                    label    = { Text("Help") }
+                )
+            }
         }
     }
 }
