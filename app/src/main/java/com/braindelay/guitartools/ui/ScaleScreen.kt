@@ -238,7 +238,10 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             if (isFullscreen) {
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     val scaleFactor = maxHeight / 216.dp
-                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor)
+                    val chordLabel = vm.progressionChord?.let { (note, type) ->
+                        "${note.displayName} ${type.label}"
+                    }
+                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, chordLabel = chordLabel)
                     ElevatedButton(
                         onClick = { vm.exitFullscreen() },
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
@@ -393,23 +396,24 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
 }
 
 @Composable
-fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
+fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, chordLabel: String? = null) {
     val scrollState = rememberScrollState()
     androidx.compose.foundation.layout.Box(
         modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState)
     ) {
         FretboardView(
-            scale            = vm.scale,
-            positions        = vm.fretPositions,
-            selectedPosition = vm.selectedFretPosition,
-            triadNotes            = vm.activeOverlay,
-            isScaleDegreeOverlay  = vm.triadNotes == null,
-            nextChordNotes        = vm.nextProgressionArpeggioNotes,
-            onFretTapped     = { pos -> vm.selectFretPosition(pos) },
-            onOtherTapped    = { vm.enterFullscreen() },
-            scaleFactor      = scaleFactor,
-            isLeftHanded     = vm.isLeftHanded,
-            showNoteNames    = vm.showNoteNames
+            scale                = vm.scale,
+            positions            = vm.fretPositions,
+            selectedPosition     = vm.selectedFretPosition,
+            triadNotes           = vm.activeOverlay,
+            isScaleDegreeOverlay = vm.triadNotes == null,
+            nextChordNotes       = vm.nextProgressionArpeggioNotes,
+            onFretTapped         = { pos -> vm.selectFretPosition(pos) },
+            onOtherTapped        = { vm.enterFullscreen() },
+            scaleFactor          = scaleFactor,
+            isLeftHanded         = vm.isLeftHanded,
+            showNoteNames        = vm.showNoteNames,
+            chordLabel           = chordLabel
         )
     }
 }
