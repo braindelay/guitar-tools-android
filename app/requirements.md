@@ -36,7 +36,11 @@ A 19-fret visual fretboard shows every note in the selected scale, labelled with
 
 In left-handed mode the entire fretboard is mirrored: the nut moves to the right and fret numbering increases from right to left. Tap detection mirrors accordingly.
 
-Tapping anywhere outside a highlighted note enters **fullscreen mode**: the fretboard fills the screen scaled to fit the screen height, with a "Go Back" button. Below the normal-view fretboard the hint "Tap a note to pick chord type · tap fretboard to zoom" is shown.
+**Pinching in** on the fretboard enters **fullscreen mode**: the fretboard fills the screen scaled to fit the screen height. Pinch out to return to normal view. Below the normal-view fretboard the hint "Tap a note to pick chord type · pinch to zoom" is shown.
+
+When the Scales screen is in fullscreen, the bottom navigation bar is hidden. Swipe up to reveal it; swipe down to hide it again.
+
+In fullscreen, swiping right from the left edge of the screen slides in a **Diatonic Chords** drawer (160 dp wide). Tapping a chord chip overlays the arpeggio and closes the drawer. Swipe the drawer left or tap outside it to dismiss without selecting.
 
 ### Diatonic chord sidebar
 
@@ -50,7 +54,11 @@ Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — c
 - Suspended 2, Suspended 4
 - Dom 7 Shell, Maj 7 Shell, Min 7 Shell, Min 7b5 Shell
 
-Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). A **Play ▶** icon button appears in the title row and plays the chord tones using Karplus-Strong synthesis. Tapping the active voicing chip deselects it. The **Clear** button resets all active selections.
+Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). Tapping the active voicing chip deselects it.
+
+### Fretboard title row controls
+
+When a chord voicing is active, a **Play ▶** icon button appears in the fretboard title row and plays the chord tones using Karplus-Strong synthesis. A **Clear** button is shown whenever a fret selection, voicing, or arpeggio overlay is active; pressing it resets all active selections.
 
 Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (chord overlay mode) are mutually exclusive; activating one clears the other.
 
@@ -60,8 +68,11 @@ Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (ch
 
 ### Layout
 
+In landscape:
 - **Left panel (38%)**: Circle of Fifths. Tap any note to select the root.
-- **Right panel (62%)**: All 16 chord types are shown at once in a scrollable list. Each section shows the chord type name, a divider, and a horizontally scrollable row of chord diagrams for that type.
+- **Right panel (62%)**: All 16 chord types are shown at once in a scrollable list.
+
+In portrait, the Circle of Fifths is on top (45% height) and the chord list is below (55% height), stacked vertically.
 
 ### Chord diagrams
 
@@ -73,8 +84,11 @@ Each diagram renders a 4-fret window of the guitar neck showing fingering positi
 
 ### Layout
 
-- **Left panel (38%)**: Progression list with playback controls.
-- **Right panel (62%)**: Chord picker — chord type filter chips (scrollable column), Circle of Fifths, and a voicings preview for the current selection.
+In landscape:
+- **Left panel (62%)**: Chord picker — Circle of Fifths, chord type filter chips (scrollable column), and a voicings preview for the current selection.
+- **Right panel (38%)**: Progression list with playback controls.
+
+In portrait, the chord picker is on top (50%) and the progression list is below (50%), stacked vertically.
 
 ### Building a progression
 
@@ -82,9 +96,9 @@ Select a chord type from the scrollable chip list and tap a note on the Circle o
 
 ### Playback
 
-A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). The play/pause button loops through the progression continuously, highlighting the active chord and playing its first voicing via Karplus-Strong synthesis. Stop ends playback.
+A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). A **play/pause** toggle button starts and stops looping through the progression; the active chord is highlighted and its first voicing is played via Karplus-Strong synthesis. A **mute** toggle silences audio playback without stopping the progression. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
 
-When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view. On beat 3, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
+When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view. On beat 4, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
 
 ---
 
@@ -100,4 +114,4 @@ The Scales section includes a degree colour legend — a row of seven labelled c
 
 ## Audio
 
-All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. Audio runs on background threads; no Android permissions are required.
+All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on beats 2–4) plays during progression playback. Audio runs on background threads; no Android permissions are required.
