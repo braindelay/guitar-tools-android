@@ -2,8 +2,12 @@ package com.braindelay.guitartools.ui
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,12 +17,15 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -57,10 +64,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -231,27 +240,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
 
             if (isFullscreen) {
                 val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
-                BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                    val scaleFactor = if (isPortrait) maxWidth / 216.dp else maxHeight / 216.dp
-                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, portraitRotated = isPortrait)
-                    ElevatedButton(
-                        onClick = { vm.exitFullscreen() },
-                        modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
-                    ) { Text("Go Back") }
-                    val chordLabel = vm.progressionChord?.let { (note, type) ->
-                        "${note.displayName} ${type.label}"
-                    }
-                    if (chordLabel != null) {
-                        Text(
-                            text = chordLabel,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = Color.White,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(start = 16.dp, top = 10.dp)
-                        )
-                    }
-                }
+                FullscreenContent(vm, isPortrait)
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     // Title row
@@ -396,6 +385,105 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
+    // BoxWithConstraints owns its own scope — no ColumnScope leaks in from the call site,
+    // so AnimatedVisibility resolves to the top-level overload rather than ColumnScope's.
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val scaleFactor = if (isPortrait) maxWidth / 216.dp else maxHeight / 216.dp
+        var chordDrawerOpen by remember { mutableStateOf(false) }
+
+        HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, portraitRotated = isPortrait)
+
+        // Thin left-edge strip — rightward drag opens the chord drawer
+        if (!chordDrawerOpen) {
+            Box(
+                modifier = Modifier
+                    .width(32.dp)
+                    .fillMaxHeight()
+                    .align(Alignment.TopStart)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures { _, dragAmount ->
+                            if (dragAmount > 0f) chordDrawerOpen = true
+                        }
+                    }
+            )
+        }
+
+        // Scrim — tap anywhere outside the open drawer to close it
+        if (chordDrawerOpen) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) { detectTapGestures { chordDrawerOpen = false } }
+            )
+        }
+
+        // Chord drawer panel — slides in from the left
+        AnimatedVisibility(
+            visible  = chordDrawerOpen,
+            enter    = slideInHorizontally { -it },
+            exit     = slideOutHorizontally { -it },
+            modifier = Modifier.align(Alignment.TopStart)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(160.dp)
+                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
+                    .padding(12.dp)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures { _, dragAmount ->
+                            if (dragAmount < 0f) chordDrawerOpen = false
+                        }
+                    },
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    "Diatonic Chords",
+                    style    = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                LazyColumn(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    itemsIndexed(vm.diatonicChords) { idx, chord ->
+                        FilterChip(
+                            selected = vm.arpeggioChordIndex == idx,
+                            onClick  = { vm.selectArpeggioChord(idx); chordDrawerOpen = false },
+                            modifier = Modifier.fillMaxWidth(),
+                            label    = {
+                                Text(
+                                    chord,
+                                    style    = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
+        ElevatedButton(
+            onClick  = { vm.exitFullscreen() },
+            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+        ) { Text("Go Back") }
+
+        val chordLabel = vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
+        if (chordLabel != null) {
+            Text(
+                text     = chordLabel,
+                style    = MaterialTheme.typography.titleLarge,
+                color    = Color.White,
+                modifier = Modifier.align(Alignment.TopStart).padding(start = 16.dp, top = 10.dp)
+            )
         }
     }
 }
