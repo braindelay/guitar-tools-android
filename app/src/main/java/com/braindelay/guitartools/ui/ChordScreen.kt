@@ -1,5 +1,6 @@
 package com.braindelay.guitartools.ui
 
+import android.content.res.Configuration
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import com.braindelay.guitartools.audio.GuitarAudioEngine
 import com.braindelay.guitartools.music.ChordType
@@ -46,31 +48,12 @@ fun ChordScreen() {
         OpenChordLibrary.getChords(note).associate { it.chordType to it.voicing }
     }
 
+    val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    Row(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
-        // Left panel: circle of fifths
-        Column(
-            modifier = Modifier
-                .weight(0.38f)
-                .fillMaxHeight()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            CircleOfFifthsView(
-                selectedNote = selectedNote,
-                onNoteSelected = { selectedNote = it },
-                modifier = Modifier.weight(1f).fillMaxWidth()
-            )
-        }
 
-        VerticalDivider()
-
-        // Right panel: all chord types
+    val chordListContent: @Composable (Modifier) -> Unit = { modifier ->
         Column(
-            modifier = Modifier
-                .weight(0.62f)
-                .fillMaxHeight()
-                .padding(12.dp),
+            modifier = modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             if (selectedNote == null) {
@@ -128,6 +111,47 @@ fun ChordScreen() {
                     }
                 }
             }
+        }
+    }
+
+    if (isPortrait) {
+        Column(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+            CircleOfFifthsView(
+                selectedNote = selectedNote,
+                onNoteSelected = { selectedNote = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.45f)
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+            )
+            HorizontalDivider()
+            chordListContent(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(0.55f)
+            )
+        }
+    } else {
+        Row(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+            Column(
+                modifier = Modifier
+                    .weight(0.38f)
+                    .fillMaxHeight()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                CircleOfFifthsView(
+                    selectedNote = selectedNote,
+                    onNoteSelected = { selectedNote = it },
+                    modifier = Modifier.weight(1f).fillMaxWidth()
+                )
+            }
+            VerticalDivider()
+            chordListContent(
+                Modifier
+                    .weight(0.62f)
+                    .fillMaxHeight()
+            )
         }
     }
 }
