@@ -1,6 +1,7 @@
 package com.braindelay.guitartools.ui
 
 import android.content.res.Configuration
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,8 +27,11 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,9 +42,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,12 +64,21 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.music.ChordType
 import com.braindelay.guitartools.music.ChordVoicing
 import com.braindelay.guitartools.music.Note
+import com.braindelay.guitartools.music.ProgressionChord
+import com.braindelay.guitartools.music.ProgressionTemplate
+import com.braindelay.guitartools.music.ProgressionTemplates
 import com.braindelay.guitartools.music.ProgressionViewModel
+import com.braindelay.guitartools.music.SavedProgression
+import com.braindelay.guitartools.music.Scale
+import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.music.StandardChordLibrary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
+fun ProgressionScreen(
+    vm: ProgressionViewModel = viewModel(),
+    scaleVm: ScaleViewModel = viewModel()
+) {
     var selectedNote      by remember { mutableStateOf<Note?>(Note.C) }
     var selectedChordType by remember { mutableStateOf(ChordType.MAJOR) }
     val voicings = remember(selectedNote, selectedChordType) {
@@ -83,7 +101,7 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
                 modifier          = Modifier.weight(0.62f).fillMaxHeight()
             )
             VerticalDivider()
-            ProgressionList(vm, Modifier.weight(0.38f).fillMaxHeight())
+            ProgressionList(vm, scaleVm.scale, Modifier.weight(0.38f).fillMaxHeight())
         }
     } else {
         Column(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
@@ -97,13 +115,24 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
                 modifier          = Modifier.weight(0.5f).fillMaxWidth()
             )
             HorizontalDivider()
-            ProgressionList(vm, Modifier.weight(0.5f).fillMaxWidth())
+            ProgressionList(vm, scaleVm.scale, Modifier.weight(0.5f).fillMaxWidth())
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProgressionList(vm: ProgressionViewModel, modifier: Modifier = Modifier) {
+private fun ProgressionList(
+    vm: ProgressionViewModel,
+    scale: Scale,
+    modifier: Modifier = Modifier
+) {
+    var showTemplates by remember { mutableStateOf(false) }
+    var showSaveDialog by remember { mutableStateOf(false) }
+    var savedExpanded by remember { mutableStateOf(true) }
+    var loadConfirmTarget by remember { mutableStateOf<SavedProgression?>(null) }
+    var renamingTarget by remember { mutableStateOf<SavedProgression?>(null) }
+
     Column(
         modifier = modifier.padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -113,7 +142,21 @@ private fun ProgressionList(vm: ProgressionViewModel, modifier: Modifier = Modif
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Progression", style = MaterialTheme.typography.titleMedium)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Progression", style = MaterialTheme.typography.titleMedium)
+                TextButton(
+                    onClick = { showTemplates = true },
+                    modifier = Modifier.padding(start = 4.dp)
+                ) {
+                    Text("Templates", style = MaterialTheme.typography.labelSmall)
+                }
+                TextButton(
+                    onClick = { showSaveDialog = true },
+                    enabled = vm.progression.isNotEmpty()
+                ) {
+                    Text("Save", style = MaterialTheme.typography.labelSmall)
+                }
+            }
             Row {
                 IconToggleButton(
                     checked = vm.isMuted,
@@ -153,6 +196,60 @@ private fun ProgressionList(vm: ProgressionViewModel, modifier: Modifier = Modif
         }
 
         HorizontalDivider()
+
+        if (vm.savedProgressions.isNotEmpty()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .combinedClickable(onClick = { savedExpanded = !savedExpanded }),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "Saved",
+                    style = MaterialTheme.typography.labelMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Icon(
+                    imageVector = if (savedExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
+            if (savedExpanded) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    vm.savedProgressions.forEach { saved ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .combinedClickable(
+                                    onClick = {
+                                        if (vm.progression.isEmpty()) vm.loadTemplate(saved.chords)
+                                        else loadConfirmTarget = saved
+                                    },
+                                    onLongClick = { renamingTarget = saved }
+                                )
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                saved.name,
+                                modifier = Modifier.weight(1f),
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            IconButton(
+                                onClick = { vm.deleteSaved(saved.name) },
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = "Delete", Modifier.size(14.dp))
+                            }
+                        }
+                    }
+                }
+                HorizontalDivider()
+            }
+        }
 
         if (vm.progression.isEmpty()) {
             Text(
@@ -197,6 +294,146 @@ private fun ProgressionList(vm: ProgressionViewModel, modifier: Modifier = Modif
                             Icon(Icons.Default.Close, null, Modifier.size(14.dp))
                         }
                     }
+                }
+            }
+        }
+    }
+
+    if (showTemplates) {
+        TemplatesBottomSheet(
+            scale = scale,
+            onLoad = { vm.loadTemplate(it) },
+            onAppend = { vm.appendTemplate(it) },
+            onDismiss = { showTemplates = false }
+        )
+    }
+
+    if (showSaveDialog) {
+        var name by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { showSaveDialog = false },
+            title = { Text("Save Progression") },
+            text = {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { vm.saveProgression(name.trim()); showSaveDialog = false },
+                    enabled = name.isNotBlank()
+                ) { Text("Save") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSaveDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    loadConfirmTarget?.let { target ->
+        AlertDialog(
+            onDismissRequest = { loadConfirmTarget = null },
+            title = { Text("Load \"${target.name}\"?") },
+            text = { Text("This will replace the current progression.") },
+            confirmButton = {
+                TextButton(onClick = { vm.loadTemplate(target.chords); loadConfirmTarget = null }) {
+                    Text("Load")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { loadConfirmTarget = null }) { Text("Cancel") }
+            }
+        )
+    }
+
+    renamingTarget?.let { target ->
+        var name by remember(target) { mutableStateOf(target.name) }
+        AlertDialog(
+            onDismissRequest = { renamingTarget = null },
+            title = { Text("Rename") },
+            text = {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Name") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { vm.renameSaved(target.name, name.trim()); renamingTarget = null },
+                    enabled = name.isNotBlank() && name.trim() != target.name
+                ) { Text("Rename") }
+            },
+            dismissButton = {
+                TextButton(onClick = { renamingTarget = null }) { Text("Cancel") }
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TemplatesBottomSheet(
+    scale: Scale,
+    onLoad: (List<ProgressionChord>) -> Unit,
+    onAppend: (List<ProgressionChord>) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var selected by remember { mutableStateOf<ProgressionTemplate?>(null) }
+    val sheetState = rememberModalBottomSheetState()
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Templates", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Key: ${scale.root.displayName} ${scale.mode.displayName}",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            ProgressionTemplates.all.forEach { template ->
+                val isSelected = template == selected
+                FilterChip(
+                    selected = isSelected,
+                    onClick = { selected = if (isSelected) null else template },
+                    label = { Text(template.name) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            selected?.let { template ->
+                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                val chords = remember(template, scale) { template.resolve(scale) }
+                Text(
+                    chords.joinToString("  →  ") { "${it.note.displayName} ${it.chordType.label}" },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(4.dp))
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(
+                        onClick = { onLoad(chords); onDismiss() },
+                        modifier = Modifier.weight(1f)
+                    ) { Text("Load") }
+                    OutlinedButton(
+                        onClick = { onAppend(chords); onDismiss() },
+                        modifier = Modifier.weight(1f)
+                    ) { Text("Append") }
                 }
             }
         }

@@ -1,10 +1,11 @@
 package com.braindelay.guitartools.music
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.braindelay.guitartools.audio.GuitarAudioEngine
 import kotlinx.coroutines.Job
@@ -14,7 +15,9 @@ import kotlinx.coroutines.launch
 
 data class ProgressionChord(val note: Note, val chordType: ChordType)
 
-class ProgressionViewModel : ViewModel() {
+class ProgressionViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repo = SavedProgressionsRepository(application)
 
     var progression by mutableStateOf<List<ProgressionChord>>(emptyList())
         private set
@@ -24,6 +27,8 @@ class ProgressionViewModel : ViewModel() {
         private set
     var isMuted by mutableStateOf(false)
         private set
+    var savedProgressions by mutableStateOf<List<SavedProgression>>(emptyList())
+        private set
 
     private var _chordBpm by mutableIntStateOf(80)
     val chordBpm: Int get() = _chordBpm
@@ -31,6 +36,12 @@ class ProgressionViewModel : ViewModel() {
     private var playJob: Job? = null
 
     val isPlaying: Boolean get() = playingIndex != null
+
+    init {
+        viewModelScope.launch {
+            repo.savedProgressions.collect { savedProgressions = it }
+        }
+    }
 
     fun addChord(note: Note, chordType: ChordType) {
         progression = progression + ProgressionChord(note, chordType)
@@ -56,6 +67,27 @@ class ProgressionViewModel : ViewModel() {
             val tmp = m[index]; m[index] = m[index + 1]; m[index + 1] = tmp
             progression = m
         }
+    }
+
+    fun loadTemplate(chords: List<ProgressionChord>) {
+        stopPlayback()
+        progression = chords
+    }
+
+    fun appendTemplate(chords: List<ProgressionChord>) {
+        progression = progression + chords
+    }
+
+    fun saveProgression(name: String) {
+        viewModelScope.launch { repo.save(name, progression) }
+    }
+
+    fun deleteSaved(name: String) {
+        viewModelScope.launch { repo.delete(name) }
+    }
+
+    fun renameSaved(oldName: String, newName: String) {
+        viewModelScope.launch { repo.rename(oldName, newName) }
     }
 
     fun toggleMute() { isMuted = !isMuted }

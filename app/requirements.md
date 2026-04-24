@@ -115,3 +115,51 @@ The Scales section includes a degree colour legend — a row of seven labelled c
 ## Audio
 
 All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on beats 2–4) plays during progression playback. Audio runs on background threads; no Android permissions are required.
+
+---
+
+## Proposed Requirements
+
+---
+
+### Capo Support (Scales screen)
+
+A capo position selector appears in the Scales top bar or Root & Scale card. The user picks a fret (0–7, default 0; 0 = no capo). When set to fret N:
+
+- The fretboard is rendered starting at fret N. Fret N is shown as a thick coloured bar representing the capo; frets below it are greyed out and non-interactive.
+- All note and scale calculations are unchanged — the capo simply shifts which physical positions are visible and tappable. A fret number in the diagram is rendered relative to the capo position (so the first open-position fret after the capo is labelled as fret 1 in the capo view, or the absolute fret number is shown with the capo label alongside — either convention is acceptable).
+- The capo value persists while the user changes root and mode, and resets when the user sets it back to 0.
+- Chord voicing overlays and arpeggio overlays continue to work; positions below the capo are not shown.
+
+---
+
+### Progression Templates (Progression screen)
+
+A **Templates** button in the Progression list panel opens a bottom sheet of named chord sequence templates. Each template is defined in Roman numerals and is instantiated in the key/mode currently selected on the Scales screen when the button is tapped.
+
+Built-in templates (minimum set):
+
+| Name | Roman numeral sequence |
+|---|---|
+| Pop I–V–vi–IV | I Maj — V Maj — vi Min — IV Maj |
+| Blues I–IV–V | I Dom7 — IV Dom7 — I Dom7 — IV Dom7 — I Dom7 — V Dom7 — IV Dom7 — I Dom7 |
+| Jazz ii–V–I | ii Min7 — V Dom7 — I Maj7 |
+| Minor i–VII–VI–VII | i Min — VII Maj — VI Maj — VII Maj |
+
+Tapping a template shows a preview of the chord names it would generate in the current key. A **Load** button replaces the current progression with the template chords; a **Append** button adds them to the end of the existing list.
+
+---
+
+### Saved Progressions (Progression screen)
+
+The Progression list panel includes a **Save** button. Tapping it opens a dialog where the user types a name for the current progression; confirming writes it to local storage (DataStore or Room).
+
+A **Saved** expandable section below the playback controls lists all saved progressions by name. Tapping a saved progression loads it into the builder (replacing the current list after a confirmation prompt if the list is non-empty). Each saved entry has a delete (✕) button; a long-press renames it.
+
+Saved progressions survive app restarts. There is no hard cap on the number of saved progressions.
+
+---
+
+### Per-Chord Beat Count (Progression screen)
+
+Each chord entry in the progression list displays its beat count alongside its name (default 4). Tapping the beat count label cycles through the values 1 → 2 → 4 → 8 → 1. The playback engine reads each chord's individual beat count and delays accordingly before advancing to the next chord. The BPM slider still controls the global tempo; the per-chord beat count controls only relative duration within the progression.
