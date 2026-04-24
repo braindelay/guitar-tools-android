@@ -8,7 +8,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -472,11 +473,6 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
             }
         }
 
-        ElevatedButton(
-            onClick  = { vm.exitFullscreen() },
-            modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
-        ) { Text("Go Back") }
-
         val chordLabel = vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
         if (chordLabel != null) {
             Text(
@@ -498,17 +494,21 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, p
         Modifier.fillMaxWidth().horizontalScroll(scrollState)
     }
     Box(modifier = containerModifier.pointerInput(vm.isFullscreen) {
-        // Accumulate scale across gesture events; reset after action fires or when
-        // fullscreen state changes (pointerInput key flips, restarting this block).
-        var accumulatedZoom = 1f
-        detectTransformGestures { _, _, zoom, _ ->
-            accumulatedZoom *= zoom
-            if (!vm.isFullscreen && accumulatedZoom > 1.2f) {
-                vm.enterFullscreen()
-                accumulatedZoom = 1f
-            } else if (vm.isFullscreen && accumulatedZoom < 0.8f) {
-                vm.exitFullscreen()
-                accumulatedZoom = 1f
+        // Non-consuming pinch observer: never calls consume(), so horizontalScroll
+        // continues to receive drag events. accumulatedZoom resets per-gesture.
+        awaitEachGesture {
+            var accumulatedZoom = 1f
+            while (true) {
+                val event = awaitPointerEvent()
+                accumulatedZoom *= event.calculateZoom()
+                if (!vm.isFullscreen && accumulatedZoom > 1.2f) {
+                    vm.enterFullscreen()
+                    accumulatedZoom = 1f
+                } else if (vm.isFullscreen && accumulatedZoom < 0.8f) {
+                    vm.exitFullscreen()
+                    accumulatedZoom = 1f
+                }
+                if (event.changes.none { it.pressed }) break
             }
         }
     }) {
