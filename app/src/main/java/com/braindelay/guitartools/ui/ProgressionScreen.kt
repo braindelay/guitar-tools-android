@@ -73,8 +73,6 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     if (isLandscape) {
         Row(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
-            ProgressionList(vm, Modifier.weight(0.38f).fillMaxHeight())
-            VerticalDivider()
             ChordPicker(
                 selectedNote      = selectedNote,
                 selectedChordType = selectedChordType,
@@ -84,6 +82,8 @@ fun ProgressionScreen(vm: ProgressionViewModel = viewModel()) {
                 onAdd             = { selectedNote?.let { n -> vm.addChord(n, selectedChordType) } },
                 modifier          = Modifier.weight(0.62f).fillMaxHeight()
             )
+            VerticalDivider()
+            ProgressionList(vm, Modifier.weight(0.38f).fillMaxHeight())
         }
     } else {
         Column(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
@@ -214,39 +214,13 @@ private fun ChordPicker(
     onAdd: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier.padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .width(90.dp)
-                .fillMaxHeight()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text("Type", style = MaterialTheme.typography.labelSmall)
-            ChordType.entries.forEach { type ->
-                FilterChip(
-                    selected = type == selectedChordType,
-                    onClick  = { onTypeSelected(type) },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = {
-                        Text(type.label, style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    }
-                )
-            }
-        }
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    if (isLandscape) {
         Column(
-            modifier = Modifier.weight(1f).fillMaxHeight(),
+            modifier = modifier.padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            // Spacer aligns the Add button with the top of the Minor chip:
-            // labelSmall(16) + gap(4) + Major chip(32) + gap(4) = 56dp
-            // minus this column's spacedBy(6) gap = 50dp
-            Spacer(Modifier.height(50.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -273,6 +247,27 @@ private fun ChordPicker(
                     modifier = Modifier.weight(1f).fillMaxHeight()
                 )
 
+                Column(
+                    modifier = Modifier
+                        .width(90.dp)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text("Type", style = MaterialTheme.typography.labelSmall)
+                    ChordType.entries.forEach { type ->
+                        FilterChip(
+                            selected = type == selectedChordType,
+                            onClick  = { onTypeSelected(type) },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = {
+                                Text(type.label, style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            }
+                        )
+                    }
+                }
+
                 if (voicings.isNotEmpty()) {
                     Column(
                         modifier = Modifier
@@ -292,6 +287,92 @@ private fun ChordPicker(
                                         com.braindelay.guitartools.audio.GuitarAudioEngine.playVoicing(v)
                                     }
                                 )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } else {
+        Row(
+            modifier = modifier.padding(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(90.dp)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text("Type", style = MaterialTheme.typography.labelSmall)
+                ChordType.entries.forEach { type ->
+                    FilterChip(
+                        selected = type == selectedChordType,
+                        onClick  = { onTypeSelected(type) },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = {
+                            Text(type.label, style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    )
+                }
+            }
+
+            Column(
+                modifier = Modifier.weight(1f).fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                // Spacer aligns the Add button with the top of the Minor chip:
+                // labelSmall(16) + gap(4) + Major chip(32) + gap(4) = 56dp
+                // minus this column's spacedBy(6) gap = 50dp
+                Spacer(Modifier.height(50.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "${selectedNote?.displayName ?: "–"} ${selectedChordType.label}",
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Button(onClick = onAdd, enabled = selectedNote != null) {
+                        Icon(Icons.Default.Add, null, Modifier.size(16.dp))
+                        Spacer(Modifier.width(4.dp))
+                        Text("Add")
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    CircleOfFifthsView(
+                        selectedNote = selectedNote,
+                        onNoteSelected = onNoteSelected,
+                        modifier = Modifier.weight(1f).fillMaxHeight()
+                    )
+
+                    if (voicings.isNotEmpty()) {
+                        Column(
+                            modifier = Modifier
+                                .width(80.dp)
+                                .fillMaxHeight()
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text("Voicings", style = MaterialTheme.typography.labelSmall)
+                            voicings.take(6).forEach { v ->
+                                selectedNote?.let { n ->
+                                    ChordDiagramView(
+                                        voicing   = v,
+                                        root      = n,
+                                        chordType = selectedChordType,
+                                        onPlay    = {
+                                            com.braindelay.guitartools.audio.GuitarAudioEngine.playVoicing(v)
+                                        }
+                                    )
+                                }
                             }
                         }
                     }
