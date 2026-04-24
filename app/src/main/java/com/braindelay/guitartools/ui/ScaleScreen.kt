@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -323,7 +324,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                         ) {
                             HorizontalScrollableFretboard(vm)
                             Text(
-                                "Tap a note to pick chord type · tap fretboard to zoom",
+                                "Tap a note to pick chord type · pinch to zoom",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                                 modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
@@ -496,7 +497,21 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, p
     } else {
         Modifier.fillMaxWidth().horizontalScroll(scrollState)
     }
-    Box(modifier = containerModifier) {
+    Box(modifier = containerModifier.pointerInput(vm.isFullscreen) {
+        // Accumulate scale across gesture events; reset after action fires or when
+        // fullscreen state changes (pointerInput key flips, restarting this block).
+        var accumulatedZoom = 1f
+        detectTransformGestures { _, _, zoom, _ ->
+            accumulatedZoom *= zoom
+            if (!vm.isFullscreen && accumulatedZoom > 1.2f) {
+                vm.enterFullscreen()
+                accumulatedZoom = 1f
+            } else if (vm.isFullscreen && accumulatedZoom < 0.8f) {
+                vm.exitFullscreen()
+                accumulatedZoom = 1f
+            }
+        }
+    }) {
         FretboardView(
             scale                = vm.scale,
             positions            = vm.fretPositions,
@@ -505,7 +520,6 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, p
             isScaleDegreeOverlay = vm.triadNotes == null,
             nextChordNotes       = vm.nextProgressionArpeggioNotes,
             onFretTapped         = { pos -> vm.selectFretPosition(pos) },
-            onOtherTapped        = { vm.enterFullscreen() },
             scaleFactor          = scaleFactor,
             isLeftHanded         = vm.isLeftHanded,
             showNoteNames        = vm.showNoteNames

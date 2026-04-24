@@ -44,7 +44,6 @@ fun FretboardView(
     isScaleDegreeOverlay: Boolean = false,
     nextChordNotes: Map<Note, String>? = null,
     onFretTapped: (FretPosition) -> Unit,
-    onOtherTapped: () -> Unit,
     modifier: Modifier = Modifier,
     scaleFactor: Float = 1f,
     isLeftHanded: Boolean = false,
@@ -124,7 +123,7 @@ fun FretboardView(
                                else ((tapX - ocw) / cw).toInt().inc().coerceAtMost(NUM_FRETS)
                     val string = (5f - (tap.y - tp) / ss).roundToInt().coerceIn(0, 5)
                     val pos = FretPosition(string, fret)
-                    if (positions.containsKey(pos)) onFretTapped(pos) else onOtherTapped()
+                    if (positions.containsKey(pos)) onFretTapped(pos)
                 }
             }
     ) {
