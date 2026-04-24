@@ -65,7 +65,7 @@ private val helpSections = listOf(
     HelpSection("chords_screen", "Chords",
         "chords circle root voicing diagrams scroll horizontal hear playback"),
     HelpSection("progression_screen", "Progression",
-        "progression chord type note add list reorder arrows delete bpm slider tempo playback loop pause stop scales view arpeggios real time")
+        "progression circle of fifths chord type note add list reorder arrows delete bpm slider tempo playback loop pause stop scales view arpeggios real time landscape portrait")
 )
 
 @Composable
@@ -151,16 +151,18 @@ private fun SectionBlock(id: String) {
         }
         "chord_voicings" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Chord Voicings")
-            HelpImg(R.drawable.help_voicing_picker, "Voicing type picker")
             BulletList(listOf(
-                "A scrollable panel to the left of the fretboard lists 10 voicing types (Major Triad, Minor Triad, Dom 7 Shell, etc.).",
-                "**Select a voicing type**, then **tap any highlighted note** on the fretboard to overlay that chord's tones (colour-coded R / 3 / 5 / 7)."
+                "**Tap any highlighted note** on the fretboard to open a chord type picker at the bottom of the screen."
+            ))
+            HelpImg(R.drawable.help_voicing_picker, "Chord type picker")
+            BulletList(listOf(
+                "Select a chord type to overlay its tones on the fretboard (colour-coded R / 3 / 5 / 7).",
+                "Diatonic chord types for the tapped note are marked with a dot (●)."
             ))
             HelpImg(R.drawable.help_chord_overlay, "Chord tone overlay (R / 3 / 5 / 7)")
             BulletList(listOf(
                 "Tap **▶** (Play) to hear the chord via synthesised audio.",
-                "Diatonic voicings for the tapped note are marked with an ⓘ icon.",
-                "Tap the same voicing chip again, or press **Clear**, to reset the overlay."
+                "Press **Clear**, or tap outside the picker, to reset the overlay."
             ))
         }
         "arpeggio" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -191,11 +193,17 @@ private fun SectionBlock(id: String) {
         "progression_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Progression")
             HelpImg(R.drawable.help_progression, "Progression builder")
+            BodyText(
+                "The chord selector always shows the circle of fifths on the left, " +
+                "chord type chips in the middle, and example voicings on the right. " +
+                "In portrait the selector and progression list are stacked; " +
+                "in landscape they sit side by side."
+            )
             SubHeader("Building a Progression")
             NumberedList(listOf(
-                "In the right panel, select a **chord type** from the scrollable chip list.",
-                "Tap a **note** on the circle to set the root.",
-                "Press **Add** to append the chord to the progression list (left panel).",
+                "**Tap a note** on the circle of fifths to set the root.",
+                "**Select a chord type** from the chip list.",
+                "Press **Add** to append the chord to the progression list.",
                 "Repeat to build up a sequence. Use the **← →** arrows to reorder chords and **✕** to delete one."
             ))
             SubHeader("Playback")
@@ -204,7 +212,7 @@ private fun SectionBlock(id: String) {
                 "Press **▶** to start looping through the progression. The active chord is highlighted.",
                 "Adjust the BPM slider at any time — the new speed takes effect on the next chord.",
                 "Press **⏸** to stop.",
-                "While it is playing, you can go back to the scales view, to see the arpeggios being rendered in real time."
+                "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time."
             ))
         }
     }

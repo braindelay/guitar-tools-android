@@ -21,16 +21,17 @@ A tool to help guitarists to learn scales, chord voicings, and progressions. You
 
 #### Chord voicings
 
+- **Tap any highlighted note** on the fretboard to open a chord type picker at the bottom of the screen.
+
 <img src="./screenshots/04_voicing_picker.png" width="480"/>
 
-- A scrollable panel to the left of the fretboard lists 10 voicing types (Major Triad, Minor Triad, Dom 7 Shell, etc.).
-- **Select a voicing type**, then **tap any highlighted note** on the fretboard to overlay that chord's tones (colour-coded R / 3 / 5 / 7).
+- Select a chord type to overlay its tones on the fretboard (colour-coded R / 3 / 5 / 7).
 
 <img src="./screenshots/03_chord_overlay.png" width="480"/>
 
 - Tap **▶** (Play) to hear the chord via synthesised audio.
-- Diatonic voicings for the tapped note are marked with an ⓘ icon.
-- Tap the same voicing chip again, or press **Clear**, to reset the overlay.
+- Diatonic chord types for the tapped note are marked with a dot (●).
+- Press **Clear**, or tap outside the picker, to reset the overlay.
 
 #### Arpeggio overlays
 - In the **Diatonic Chords** card, tap any chord chip (e.g. "II: D Min") to highlight the full 1-3-5-7 arpeggio of that chord across the entire fretboard.
@@ -60,12 +61,12 @@ The Chords screen is landscape-only.
 
 <img src="./screenshots/06_progression.png" width="480"/>
 
-The Progression screen is landscape-only.
+The chord selector always shows the circle of fifths on the left, chord type chips in the middle, and example voicings on the right. In portrait the selector and progression list are stacked; in landscape they sit side by side.
 
 #### Building a progression
-1. In the right panel, select a **chord type** from the scrollable chip list.
-2. Tap a **note** on the circle to set the root.
-3. Press **Add** to append the chord to the progression list (left panel).
+1. **Tap a note** on the circle of fifths to set the root.
+2. **Select a chord type** from the chip list.
+3. Press **Add** to append the chord to the progression list.
 4. Repeat to build up a sequence. Use the **← →** arrows to reorder chords and **✕** to delete one.
 
 #### Playback
@@ -73,4 +74,4 @@ The Progression screen is landscape-only.
 2. Press **▶** to start looping through the progression. The active chord is highlighted.
 3. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
 4. Press **⏸** to stop.
-5. While it is playing, you can go back to the scales view, to see the arpeggios being rendered in real time.
+5. While playing, switch to the Scales tab to see the chord arpeggios highlighted on the fretboard in real time.
