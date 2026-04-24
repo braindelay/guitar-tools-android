@@ -1,7 +1,6 @@
 package com.braindelay.guitartools.ui
 
-import android.app.Activity
-import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,7 +45,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,11 +55,13 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.R
@@ -78,20 +78,12 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
     val scale = vm.scale
     var expanded by rememberSaveable { mutableStateOf(!isProgressionPlaying) }
     val isFullscreen = vm.isFullscreen
-    val activity = LocalContext.current as? Activity
-    DisposableEffect(isFullscreen) {
-        activity?.requestedOrientation = if (isFullscreen)
-            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        else
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        onDispose {
-            activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        }
-    }
 
     val chordSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showChordSheet by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    // True only when the progression itself triggered fullscreen; survives rotation.
+    var progressionEnteredFullscreen by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(vm.selectedFretPosition) {
         if (vm.selectedFretPosition != null) showChordSheet = true
@@ -101,8 +93,10 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
         if (isProgressionPlaying) {
             expanded = false
             vm.enterFullscreen()
-        } else {
+            progressionEnteredFullscreen = true
+        } else if (progressionEnteredFullscreen) {
             vm.exitFullscreen()
+            progressionEnteredFullscreen = false
         }
     }
 
@@ -236,9 +230,10 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             }
 
             if (isFullscreen) {
+                val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                    val scaleFactor = maxHeight / 216.dp
-                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor)
+                    val scaleFactor = if (isPortrait) maxWidth / 216.dp else maxHeight / 216.dp
+                    HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, portraitRotated = isPortrait)
                     ElevatedButton(
                         onClick = { vm.exitFullscreen() },
                         modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
@@ -406,11 +401,14 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
 }
 
 @Composable
-fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
+fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, portraitRotated: Boolean = false) {
     val scrollState = rememberScrollState()
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState)
-    ) {
+    val containerModifier = if (portraitRotated) {
+        Modifier.rotatePortraitToLandscape().horizontalScroll(scrollState)
+    } else {
+        Modifier.fillMaxWidth().horizontalScroll(scrollState)
+    }
+    Box(modifier = containerModifier) {
         FretboardView(
             scale                = vm.scale,
             positions            = vm.fretPositions,
@@ -424,5 +422,26 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f) {
             isLeftHanded         = vm.isLeftHanded,
             showNoteNames        = vm.showNoteNames
         )
+    }
+}
+
+private fun Modifier.rotatePortraitToLandscape(): Modifier = this.layout { measurable, constraints ->
+    // Give child landscape constraints (swap portrait width/height)
+    val swapped = Constraints(
+        minWidth = constraints.minHeight,
+        maxWidth = constraints.maxHeight,
+        minHeight = constraints.minWidth,
+        maxHeight = constraints.maxWidth,
+    )
+    val placeable = measurable.measure(swapped)
+    // Report portrait-sized bounds to parent
+    layout(placeable.height, placeable.width) {
+        // placeWithLayer transforms both rendering and pointer events
+        placeable.placeWithLayer(
+            x = -(placeable.width - placeable.height) / 2,
+            y = (placeable.width - placeable.height) / 2,
+        ) {
+            rotationZ = 90f  // 90° CCW: nut at top, scroll down for higher frets
+        }
     }
 }
