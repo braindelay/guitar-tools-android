@@ -54,6 +54,7 @@ class SavedProgressionsRepository(context: Context) {
                 val c = JSONObject()
                 c.put("note", chord.note.name)
                 c.put("chordType", chord.chordType.name)
+                c.put("beats", chord.beats)
                 chordsArr.put(c)
             }
             obj.put("chords", chordsArr)
@@ -72,7 +73,8 @@ class SavedProgressionsRepository(context: Context) {
                 val c = chordsArr.getJSONObject(j)
                 val note = Note.entries.find { it.name == c.getString("note") } ?: return@mapNotNull null
                 val type = ChordType.entries.find { it.name == c.getString("chordType") } ?: return@mapNotNull null
-                ProgressionChord(note, type)
+                val beats = if (c.has("beats")) c.getInt("beats").coerceIn(1, 8) else 4
+                ProgressionChord(note, type, beats)
             }
             SavedProgression(name, chords)
         }

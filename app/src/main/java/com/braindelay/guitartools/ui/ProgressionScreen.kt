@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Pause
@@ -129,7 +130,7 @@ private fun ProgressionList(
 ) {
     var showTemplates by remember { mutableStateOf(false) }
     var showSaveDialog by remember { mutableStateOf(false) }
-    var savedExpanded by remember { mutableStateOf(true) }
+    var savedExpanded by remember { mutableStateOf(false) }
     var loadConfirmTarget by remember { mutableStateOf<SavedProgression?>(null) }
     var renamingTarget by remember { mutableStateOf<SavedProgression?>(null) }
 
@@ -223,8 +224,10 @@ private fun ProgressionList(
                                 .fillMaxWidth()
                                 .combinedClickable(
                                     onClick = {
-                                        if (vm.progression.isEmpty()) vm.loadTemplate(saved.chords)
-                                        else loadConfirmTarget = saved
+                                        if (vm.progression.isEmpty()) {
+                                            vm.loadTemplate(saved.chords)
+                                            savedExpanded = false
+                                        } else loadConfirmTarget = saved
                                     },
                                     onLongClick = { renamingTarget = saved }
                                 )
@@ -281,6 +284,25 @@ private fun ProgressionList(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        IconButton(
+                            onClick = { vm.setChordBeats(index, chord.beats - 1) },
+                            modifier = Modifier.size(28.dp),
+                            enabled = chord.beats > 1
+                        ) {
+                            Icon(Icons.Default.Remove, null, Modifier.size(14.dp))
+                        }
+                        Text(
+                            "${chord.beats}b",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        IconButton(
+                            onClick = { vm.setChordBeats(index, chord.beats + 1) },
+                            modifier = Modifier.size(28.dp),
+                            enabled = chord.beats < 8
+                        ) {
+                            Icon(Icons.Default.Add, null, Modifier.size(14.dp))
+                        }
                         IconButton(onClick = { vm.moveChordLeft(index) },
                             modifier = Modifier.size(28.dp)) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, null, Modifier.size(14.dp))
@@ -339,7 +361,7 @@ private fun ProgressionList(
             title = { Text("Load \"${target.name}\"?") },
             text = { Text("This will replace the current progression.") },
             confirmButton = {
-                TextButton(onClick = { vm.loadTemplate(target.chords); loadConfirmTarget = null }) {
+                TextButton(onClick = { vm.loadTemplate(target.chords); loadConfirmTarget = null; savedExpanded = false }) {
                     Text("Load")
                 }
             },

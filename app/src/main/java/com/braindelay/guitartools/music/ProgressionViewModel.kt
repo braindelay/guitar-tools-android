@@ -13,7 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-data class ProgressionChord(val note: Note, val chordType: ChordType)
+data class ProgressionChord(val note: Note, val chordType: ChordType, val beats: Int = 4)
 
 class ProgressionViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -69,6 +69,14 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun setChordBeats(index: Int, beats: Int) {
+        if (index in progression.indices) {
+            val m = progression.toMutableList()
+            m[index] = m[index].copy(beats = beats.coerceIn(1, 8))
+            progression = m
+        }
+    }
+
     fun loadTemplate(chords: List<ProgressionChord>) {
         stopPlayback()
         progression = chords
@@ -111,26 +119,28 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
                     val beatMs = 60_000L / _chordBpm
+                    val beats = chord.beats
 
                     // Beat 1: accent + chord strum
                     if (voicing != null && !isMuted) GuitarAudioEngine.playVoicing(voicing)
                     GuitarAudioEngine.playClick(accentuated = true)
                     delay(beatMs)
 
-                    // Beats 2 & 3
-                    if (!isActive) break
-                    GuitarAudioEngine.playClick(accentuated = false)
-                    delay(beatMs)
-                    if (!isActive) break
-                    GuitarAudioEngine.playClick(accentuated = false)
-                    delay(beatMs)
+                    if (beats > 1) {
+                        // Middle beats 2..(beats-1)
+                        for (b in 2 until beats) {
+                            if (!isActive) break
+                            GuitarAudioEngine.playClick(accentuated = false)
+                            delay(beatMs)
+                        }
 
-                    // Beat 4: show next chord, click
-                    if (!isActive) break
-                    val currentSize = progression.size
-                    nextChordIndex = if (currentSize > 0) (i + 1) % currentSize else null
-                    GuitarAudioEngine.playClick(accentuated = false)
-                    delay(beatMs)
+                        // Final beat: preview next chord
+                        if (!isActive) break
+                        val currentSize = progression.size
+                        nextChordIndex = if (currentSize > 0) (i + 1) % currentSize else null
+                        GuitarAudioEngine.playClick(accentuated = false)
+                        delay(beatMs)
+                    }
                 }
             }
         }
