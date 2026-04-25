@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -476,10 +477,25 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
         val chordLabel = vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
         if (chordLabel != null) {
             Text(
-                text     = chordLabel,
-                style    = MaterialTheme.typography.titleLarge,
-                color    = Color.White,
-                modifier = Modifier.align(Alignment.TopStart).padding(start = 16.dp, top = 10.dp)
+                text  = chordLabel,
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                modifier = if (isPortrait) {
+                    // Fretboard is rotated 90° CW; player tilts phone so portrait-right becomes
+                    // their visual top (above the strings). Rotate the label to match.
+                    Modifier
+                        .align(Alignment.CenterEnd)
+                        .rotateWithLayout(90f)
+                        .background(Color.Black.copy(alpha = 0.45f), MaterialTheme.shapes.small)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                } else {
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .statusBarsPadding()
+                        .padding(top = 8.dp)
+                        .background(Color.Black.copy(alpha = 0.45f), MaterialTheme.shapes.small)
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                }
             )
         }
     }
@@ -524,6 +540,18 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, p
             isLeftHanded         = vm.isLeftHanded,
             showNoteNames        = vm.showNoteNames
         )
+    }
+}
+
+// Rotates a composable by [degrees] and swaps the reported layout dimensions so that
+// the parent allocates the correct (post-rotation) bounding box.
+private fun Modifier.rotateWithLayout(degrees: Float): Modifier = this.layout { measurable, _ ->
+    val placeable = measurable.measure(Constraints())
+    layout(placeable.height, placeable.width) {
+        placeable.placeWithLayer(
+            x = -(placeable.width  - placeable.height) / 2,
+            y =  (placeable.width  - placeable.height) / 2
+        ) { rotationZ = degrees }
     }
 }
 

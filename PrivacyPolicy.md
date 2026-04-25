@@ -22,7 +22,8 @@ This Service does not use “cookies”.
 
 # Service Providers
 
-The app connects to no third-party serviices
+The app connects to no third-party servi
+ces
 
 # Security
 
