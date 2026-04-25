@@ -46,12 +46,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -68,6 +68,7 @@ import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.ProgressionChord
 import com.braindelay.guitartools.music.ProgressionTemplate
 import com.braindelay.guitartools.music.ProgressionTemplates
+import com.braindelay.guitartools.music.MetronomeViewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.SavedProgression
 import com.braindelay.guitartools.music.Scale
@@ -78,7 +79,8 @@ import com.braindelay.guitartools.music.StandardChordLibrary
 @Composable
 fun ProgressionScreen(
     vm: ProgressionViewModel = viewModel(),
-    scaleVm: ScaleViewModel = viewModel()
+    scaleVm: ScaleViewModel = viewModel(),
+    metronomeVm: MetronomeViewModel = viewModel()
 ) {
     var selectedNote      by remember { mutableStateOf<Note?>(Note.C) }
     var selectedChordType by remember { mutableStateOf(ChordType.MAJOR) }
@@ -102,7 +104,7 @@ fun ProgressionScreen(
                 modifier          = Modifier.weight(0.62f).fillMaxHeight()
             )
             VerticalDivider()
-            ProgressionList(vm, scaleVm.scale, Modifier.weight(0.38f).fillMaxHeight())
+            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier.weight(0.38f).fillMaxHeight())
         }
     } else {
         Column(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
@@ -116,7 +118,7 @@ fun ProgressionScreen(
                 modifier          = Modifier.weight(0.5f).fillMaxWidth()
             )
             HorizontalDivider()
-            ProgressionList(vm, scaleVm.scale, Modifier.weight(0.5f).fillMaxWidth())
+            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier.weight(0.5f).fillMaxWidth())
         }
     }
 }
@@ -126,6 +128,7 @@ fun ProgressionScreen(
 private fun ProgressionList(
     vm: ProgressionViewModel,
     scale: Scale,
+    metronomeVm: MetronomeViewModel,
     modifier: Modifier = Modifier
 ) {
     var showTemplates by remember { mutableStateOf(false) }
@@ -133,6 +136,11 @@ private fun ProgressionList(
     var savedExpanded by remember { mutableStateOf(false) }
     var loadConfirmTarget by remember { mutableStateOf<SavedProgression?>(null) }
     var renamingTarget by remember { mutableStateOf<SavedProgression?>(null) }
+
+    // Stop metronome if the progression is stopped internally (e.g. loadTemplate)
+    LaunchedEffect(vm.isPlaying) {
+        if (!vm.isPlaying) metronomeVm.stop()
+    }
 
     Column(
         modifier = modifier.padding(12.dp),
@@ -172,7 +180,15 @@ private fun ProgressionList(
                     )
                 }
                 IconButton(
-                    onClick = { if (vm.isPlaying) vm.stopPlayback() else vm.playProgression() }
+                    onClick = {
+                        if (vm.isPlaying) {
+                            vm.stopPlayback()
+                            metronomeVm.stop()
+                        } else {
+                            vm.playProgression { metronomeVm.bpm }
+                            metronomeVm.start()
+                        }
+                    }
                 ) {
                     Icon(
                         imageVector = if (vm.isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -182,19 +198,11 @@ private fun ProgressionList(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text("${vm.chordBpm} BPM", style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.width(52.dp))
-            Slider(
-                value = vm.chordBpm.toFloat(),
-                onValueChange = { vm.setChordBpm(it.toInt()) },
-                valueRange = 20f..240f,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        Text(
+            "${metronomeVm.bpm} BPM",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         HorizontalDivider()
 

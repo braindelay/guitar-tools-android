@@ -2,7 +2,6 @@ package com.braindelay.guitartools.music
 
 import android.app.Application
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
@@ -29,9 +28,6 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
         private set
     var savedProgressions by mutableStateOf<List<SavedProgression>>(emptyList())
         private set
-
-    private var _chordBpm by mutableIntStateOf(80)
-    val chordBpm: Int get() = _chordBpm
 
     private var playJob: Job? = null
 
@@ -100,11 +96,7 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
 
     fun toggleMute() { isMuted = !isMuted }
 
-    fun setChordBpm(value: Int) {
-        _chordBpm = value.coerceIn(20, 240)
-    }
-
-    fun playProgression() {
+    fun playProgression(getBpm: () -> Int) {
         if (progression.isEmpty()) return
         stopPlayback()
         playJob = viewModelScope.launch {
@@ -118,19 +110,17 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
                     nextChordIndex = null
                     val chord = progression[i]
                     val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
-                    val beatMs = 60_000L / _chordBpm
+                    val beatMs = 60_000L / getBpm()
                     val beats = chord.beats
 
-                    // Beat 1: accent + chord strum
+                    // Beat 1: chord strum
                     if (voicing != null && !isMuted) GuitarAudioEngine.playVoicing(voicing)
-                    GuitarAudioEngine.playClick(accentuated = true)
                     delay(beatMs)
 
                     if (beats > 1) {
                         // Middle beats 2..(beats-1)
                         for (b in 2 until beats) {
                             if (!isActive) break
-                            GuitarAudioEngine.playClick(accentuated = false)
                             delay(beatMs)
                         }
 
@@ -138,7 +128,6 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
                         if (!isActive) break
                         val currentSize = progression.size
                         nextChordIndex = if (currentSize > 0) (i + 1) % currentSize else null
-                        GuitarAudioEngine.playClick(accentuated = false)
                         delay(beatMs)
                     }
                 }

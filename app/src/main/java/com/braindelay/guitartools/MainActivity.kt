@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.braindelay.guitartools.music.MetronomeViewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
@@ -87,6 +88,7 @@ class MainActivity : ComponentActivity() {
 fun MainContent() {
     var appMode by rememberSaveable { mutableStateOf(AppMode.SCALES) }
     val progressionVm: ProgressionViewModel = viewModel()
+    val metronomeVm: MetronomeViewModel = viewModel()
     val scaleVm: ScaleViewModel = viewModel()
     val isFullscreen = scaleVm.isFullscreen
     val hideNavBar = isFullscreen && appMode == AppMode.SCALES
@@ -139,8 +141,8 @@ fun MainContent() {
             when (appMode) {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
-                AppMode.PROGRESSION -> ProgressionScreen()
-                AppMode.METRONOME   -> MetronomeScreen()
+                AppMode.PROGRESSION -> ProgressionScreen(metronomeVm = metronomeVm)
+                AppMode.METRONOME   -> MetronomeScreen(vm = metronomeVm)
                 AppMode.EXERCISES   -> ExercisesScreen()
                 AppMode.HELP        -> HelpScreen()
             }
