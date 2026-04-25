@@ -48,11 +48,11 @@ A tool to help guitarists to learn scales, chord voicings, and progressions. You
 
 <img src="./screenshots/05_chords.png" width="480"/>
 
-The Chords screen is landscape-only.
+In portrait, the circle of fifths sits at the top and the chord list fills the lower half. In landscape, they sit side by side.
 
-1. **Tap a note** on the circle (left panel) to set the root.
-2. The right panel shows all 16 chord types at once — scroll vertically to browse them.
-3. Each chord type section contains a horizontally scrollable row of voicing diagrams covering up to 3 octave positions.
+1. **Tap a note** on the circle of fifths to set the root.
+2. The chord list shows all 16 chord types — scroll vertically to browse them.
+3. Each chord type section contains a horizontally scrollable row of voicing diagrams.
 4. **Tap any diagram** to hear it played back.
 
 ---

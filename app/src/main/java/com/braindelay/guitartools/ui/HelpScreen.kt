@@ -63,7 +63,7 @@ private val helpSections = listOf(
     HelpSection("fullscreen", "Fullscreen Mode",
         "fullscreen zoom fretboard go back"),
     HelpSection("chords_screen", "Chords",
-        "chords circle root voicing diagrams scroll horizontal hear playback"),
+        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape"),
     HelpSection("progression_screen", "Progression",
         "progression circle of fifths chord type note add list reorder arrows delete bpm slider tempo playback loop pause stop scales view arpeggios real time landscape portrait")
 )
@@ -183,10 +183,11 @@ private fun SectionBlock(id: String) {
         "chords_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Chords")
             HelpImg(R.drawable.help_chords, "Chords screen — voicing diagrams")
+            BodyText("In portrait the circle of fifths sits at the top and the chord list fills the lower half. In landscape they sit side by side.")
             NumberedList(listOf(
-                "**Tap a note** on the circle (left panel) to set the root.",
-                "The right panel shows all 16 chord types at once — scroll vertically to browse them.",
-                "Each chord type section contains a horizontally scrollable row of voicing diagrams covering up to 3 octave positions.",
+                "**Tap a note** on the circle of fifths to set the root.",
+                "The chord list shows all 16 chord types — scroll vertically to browse them.",
+                "Each chord type section contains a horizontally scrollable row of voicing diagrams.",
                 "**Tap any diagram** to hear it played back."
             ))
         }
