@@ -19,7 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
-import androidx.compose.material.icons.filled.FitnessCenter
+import androidx.compose.material.icons.filled.HistoryEdu
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.filled.Timer
@@ -176,7 +176,7 @@ fun MainContent() {
                 NavigationBarItem(
                     selected = appMode == AppMode.EXERCISES,
                     onClick  = { appMode = AppMode.EXERCISES },
-                    icon     = { Icon(Icons.Default.FitnessCenter, contentDescription = "Exercises") }
+                    icon     = { Icon(Icons.Default.HistoryEdu, contentDescription = "Exercises") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.HELP,
