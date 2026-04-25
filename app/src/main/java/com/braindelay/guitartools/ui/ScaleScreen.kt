@@ -90,6 +90,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
     val scale = vm.scale
     var expanded by rememberSaveable { mutableStateOf(!isProgressionPlaying) }
     val isFullscreen = vm.isFullscreen
+    val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
 
     val chordSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showChordSheet by remember { mutableStateOf(false) }
@@ -356,9 +357,11 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                     .padding(bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                val rotateSheet = isFullscreen && isPortrait
                 Text(
                     "${rootNote.displayName} — choose chord type",
-                    style = MaterialTheme.typography.titleMedium
+                    style    = MaterialTheme.typography.titleMedium,
+                    modifier = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -380,6 +383,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     }
                                 }
                             },
+                            modifier    = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier,
                             leadingIcon = if (isDiatonic) {
                                 { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
                             } else null,
@@ -436,7 +440,7 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(160.dp)
+                    .width(if (isPortrait) 48.dp else 160.dp)
                     .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.95f))
                     .padding(12.dp)
                     .pointerInput(Unit) {
@@ -450,6 +454,7 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
                     "Diatonic Chords",
                     style    = MaterialTheme.typography.titleSmall,
                     modifier = Modifier.padding(bottom = 4.dp)
+                        .then(if (isPortrait) Modifier.rotateWithLayout(90f) else Modifier)
                 )
                 LazyColumn(
                     modifier = Modifier.weight(1f),
@@ -459,7 +464,8 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
                         FilterChip(
                             selected = vm.arpeggioChordIndex == idx,
                             onClick  = { vm.selectArpeggioChord(idx); chordDrawerOpen = false },
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = if (isPortrait) Modifier.rotateWithLayout(90f)
+                                       else Modifier.fillMaxWidth(),
                             label    = {
                                 Text(
                                     chord,
