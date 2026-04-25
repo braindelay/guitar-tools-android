@@ -51,7 +51,7 @@ private data class HelpSection(val id: String, val title: String, val keywords: 
 
 private val helpSections = listOf(
     HelpSection("intro", "Guitar Tools",
-        "learn scales chord voicings progressions fretboard audio playback overview"),
+        "learn scales chord voicings progressions fretboard metronome exercises overview"),
     HelpSection("scales", "Scales",
         "root note mode major minor dorian phrygian lydian mixolydian locrian harmonic melodic fretboard roman numerals degrees collapse expand selector"),
     HelpSection("fretboard_options", "Fretboard Options",
@@ -65,7 +65,11 @@ private val helpSections = listOf(
     HelpSection("chords_screen", "Chords",
         "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape"),
     HelpSection("progression_screen", "Progression",
-        "progression circle of fifths chord type note add list reorder arrows delete bpm slider tempo playback loop pause stop scales view arpeggios real time landscape portrait")
+        "progression circle of fifths chord type note add list reorder arrows delete beats tempo bpm playback loop pause stop scales view arpeggios real time templates save saved rename landscape portrait"),
+    HelpSection("metronome_screen", "Metronome",
+        "metronome bpm tempo tap tap-tempo beats per bar time signature beat dots click mute start stop"),
+    HelpSection("exercises_screen", "Exercises",
+        "exercises beginner intermediate advanced triad arpeggio approach notes voice leading caged chord tone scale runs difficulty filter expand collapse steps tip")
 )
 
 @Composable
@@ -129,7 +133,8 @@ private fun SectionBlock(id: String) {
         "intro" -> BodyText(
             "A tool to help guitarists learn scales, chord voicings, and progressions. " +
             "Visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, " +
-            "and build chord progressions with audio playback."
+            "build chord progressions with audio playback, keep time with the built-in metronome, " +
+            "and work through structured soloing exercises."
         )
         "scales" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Scales")
@@ -195,7 +200,7 @@ private fun SectionBlock(id: String) {
             SectionHeader("Progression")
             HelpImg(R.drawable.help_progression, "Progression builder")
             BodyText(
-                "The chord selector always shows the circle of fifths on the left, " +
+                "The chord selector shows the circle of fifths on the left, " +
                 "chord type chips in the middle, and example voicings on the right. " +
                 "In portrait the selector and progression list are stacked; " +
                 "in landscape they sit side by side."
@@ -205,15 +210,69 @@ private fun SectionBlock(id: String) {
                 "**Tap a note** on the circle of fifths to set the root.",
                 "**Select a chord type** from the chip list.",
                 "Press **Add** to append the chord to the progression list.",
-                "Repeat to build up a sequence. Use the **← →** arrows to reorder chords and **✕** to delete one."
+                "Use **− / +** to adjust how many beats each chord lasts (1–8).",
+                "Use the **← →** arrows to reorder chords and **✕** to delete one."
+            ))
+            SubHeader("Templates")
+            BulletList(listOf(
+                "Tap **Templates** to open a sheet of preset progressions. Templates resolve against the key currently set in the Scales screen.",
+                "Select a template to preview the chord sequence, then press **Load** (replaces current) or **Append** (adds to the end).",
+                "Templates named after exercises — e.g. \"Approach Notes (I–IV–V)\" — are designed to be used alongside those exercises."
+            ))
+            SubHeader("Saved Progressions")
+            BulletList(listOf(
+                "Tap **Save** to name and save the current progression.",
+                "Tap **Saved** to expand the saved list. Tap an entry to load it; long-press to rename; tap **✕** to delete."
             ))
             SubHeader("Playback")
             NumberedList(listOf(
-                "Set the **BPM** with the slider (20–240). Each chord plays for 4 beats at the chosen tempo.",
-                "Press **▶** to start looping through the progression. The active chord is highlighted.",
-                "Adjust the BPM slider at any time — the new speed takes effect on the next chord.",
-                "Press **⏸** to stop.",
-                "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time."
+                "The current BPM is set on the **Metronome** screen and shown above the progression list.",
+                "Press **▶** to start looping. The metronome starts automatically at the same tempo. The active chord is highlighted.",
+                "Press **⏸** to stop — the metronome stops at the same time.",
+                "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time.",
+                "The fretboard also previews the **next** chord one beat early so you can see what is coming."
+            ))
+        }
+        "metronome_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            SectionHeader("Metronome")
+            HelpImg(R.drawable.help_metronome, "Metronome screen")
+            BodyText(
+                "A standalone click track that also drives Progression playback tempo. " +
+                "Any BPM change here is immediately reflected when the Progression loops."
+            )
+            SubHeader("Setting the Tempo")
+            BulletList(listOf(
+                "**Drag the slider** to set BPM (20–300). The Italian tempo name (Largo, Andante, Allegro…) updates automatically.",
+                "Use **−5 / −1 / +1 / +5** for precise nudges.",
+                "Tap **Tap Tempo** in rhythm to derive the BPM from your playing. Three or more taps average out to a stable tempo."
+            ))
+            SubHeader("Beat Display")
+            BulletList(listOf(
+                "Animated dots show each beat. The **downbeat (beat 1)** pulses in a distinct colour.",
+                "Choose 2–8 **beats per bar** with the filter chips below the dots.",
+                "Toggle **Muted** to keep the visual pulse without audible clicks — useful when playing quietly."
+            ))
+        }
+        "exercises_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            SectionHeader("Exercises")
+            HelpImg(R.drawable.help_exercises, "Exercises screen")
+            BodyText(
+                "Seven structured exercises for developing chord-tone soloing and improvisation. " +
+                "Each card shows a difficulty badge and a one-line summary. " +
+                "Tap any card to expand the step-by-step instructions and a tip."
+            )
+            SubHeader("Difficulty Levels")
+            BulletList(listOf(
+                "**Beginner** — Triad Arpeggios Across the Neck; Three-String Triad Shapes.",
+                "**Intermediate** — Approach Notes to Chord Tones; Scale Runs Landing on Chord Tones; Triad Pairs.",
+                "**Advanced** — Voice Leading Through Chord Changes; CAGED Position Soloing."
+            ))
+            SubHeader("Using the App Alongside Exercises")
+            BulletList(listOf(
+                "Several exercises ask you to build a progression in the **Progression** screen — use the matching template (e.g. \"Approach Notes (I–IV–V)\") to load it instantly.",
+                "Use the **Scales** screen to see the active chord highlighted on the fretboard while the progression loops.",
+                "Set a comfortable practice tempo on the **Metronome** screen before starting an exercise.",
+                "Filter exercises by difficulty using the chips at the top of the screen."
             ))
         }
     }
