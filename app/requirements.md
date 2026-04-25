@@ -1,8 +1,8 @@
 # Guitar Tools
 
-A guitar training tool for learning scales, diatonic chord voicings, and chord progressions.
+A guitar training tool for learning scales, diatonic chord voicings, chord progressions, and improvisation techniques.
 
-A bottom navigation bar switches between four modes: **Scales**, **Chords**, **Progression**, and **Help**.
+A bottom navigation bar (icon-only, no text labels) switches between six modes: **Scales**, **Chords**, **Progression**, **Metronome**, **Exercises**, and **Help**.
 
 ---
 
@@ -38,9 +38,13 @@ In left-handed mode the entire fretboard is mirrored: the nut moves to the right
 
 **Pinching in** on the fretboard enters **fullscreen mode**: the fretboard fills the screen scaled to fit the screen height. Pinch out to return to normal view. Below the normal-view fretboard the hint "Tap a note to pick chord type · pinch to zoom" is shown.
 
+Fullscreen mode is also entered automatically when a progression starts playing, and exited automatically when the progression stops. The user can return to normal view manually by pinching out at any time.
+
 When the Scales screen is in fullscreen, the bottom navigation bar is hidden. Swipe up to reveal it; swipe down to hide it again.
 
 In fullscreen, swiping right from the left edge of the screen slides in a **Diatonic Chords** drawer (160 dp wide in landscape; 48 dp wide in portrait with rotated chips). Tapping a chord chip overlays the arpeggio and closes the drawer. Swipe the drawer left or tap outside it to dismiss without selecting.
+
+When a progression is playing, the current chord name is shown as an overlay on the fullscreen fretboard (top-centre in landscape; right-edge rotated in portrait).
 
 ### Diatonic chord sidebar
 
@@ -96,15 +100,15 @@ Select a chord type from the scrollable chip list and tap a note on the Circle o
 
 ### Per-chord beat count
 
-Each chord entry displays its beat count (default 4). **−** and **+** buttons decrease or increase the count; the range is 1–8. The playback engine reads each chord's individual beat count and waits accordingly before advancing to the next chord. The BPM slider controls the global tempo; the per-chord beat count controls only relative duration within the progression.
+Each chord entry displays its beat count (default 4). **−** and **+** buttons decrease or increase the count; the range is 1–8. The playback engine reads each chord's individual beat count and waits accordingly before advancing to the next chord.
 
 ### Playback
 
-A BPM slider (20–240) controls chord duration. A **play/pause** toggle button starts and stops looping through the progression; the active chord is highlighted and its first voicing is played via Karplus-Strong synthesis. A **mute** toggle silences audio playback without stopping the progression. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
+The current BPM is sourced from the Metronome screen and shown as a label above the progression list. A **play/pause** toggle button starts and stops looping through the progression; pressing Play also starts the metronome at the same BPM, and pressing Pause stops both simultaneously. The active chord is highlighted and its first voicing is played via Karplus-Strong synthesis. A **mute** toggle silences chord audio playback without stopping the progression or metronome.
 
 On the final beat of each chord, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
 
-When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view.
+When a progression is playing, switching to the Scales tab shows the active chord's arpeggio as a colour overlay on the fretboard; each note is coloured by its scale degree using the same colour scheme as the plain scale view.
 
 ### Templates
 
@@ -118,6 +122,10 @@ Built-in templates:
 | Blues I–IV–V | I Dom7 — IV Dom7 — I Dom7 — IV Dom7 — I Dom7 — V Dom7 — IV Dom7 — I Dom7 |
 | Jazz ii–V–I | ii Min7 — V Dom7 — I Maj7 |
 | Minor i–VII–VI–VII | i Min — VII Maj — VI Maj — VII Maj |
+| Approach Notes (I–IV–V) | I Maj — IV Maj — V Maj |
+| Chord Tone Landing (I–IV–V) | I Maj — IV Maj — V Maj |
+| Voice Leading (I–vi–IV–V) | I Maj — vi Min — IV Maj — V Maj |
+| CAGED Position (I–IV–V) | I Maj — IV Maj — V Maj |
 
 ### Saved progressions
 
@@ -127,11 +135,63 @@ A **Saved** expandable section appears when saved progressions exist. Tapping a 
 
 ---
 
+## Metronome
+
+A standalone click track that also drives the tempo for Progression playback. BPM is shared: any change on this screen takes effect immediately when the Progression loops.
+
+### Setting the tempo
+
+- A large BPM number display at the top shows the current tempo. Below it, an Italian tempo name updates automatically (Largo, Larghetto, Adagio, Andante, Moderato, Allegro, Vivace, Presto, Prestissimo).
+- A **slider** below sets BPM in the range 20–300.
+- **−5 / −1 / +1 / +5** outlined buttons allow precise nudges.
+- A **Tap Tempo** button derives the BPM from tap timing. Three or more taps in rhythm average out to a stable tempo; a gap of 2.5 seconds or more resets the tap history.
+
+### Beat display
+
+Animated dots show each beat of the bar. The **downbeat (beat 1)** pulses in the tertiary colour; other active beats pulse in the primary colour; inactive beats are shown in the outline-variant colour. Dot size springs up on the active beat and returns to rest size.
+
+Choose 2–8 **beats per bar** using filter chips below the dots.
+
+### Controls
+
+A **Muted / Sound on** tonal button toggles audio on and off — the visual beat display continues whether muted or not.
+
+A **Start / Stop** primary button starts and stops the click. When started by Progression playback, this button reflects the same running state.
+
+---
+
+## Exercises
+
+Seven structured exercises for developing chord-tone soloing and improvisation. Each card shows a difficulty badge and a one-line summary. Tapping a card expands its step-by-step instructions and (where present) a tip.
+
+### Difficulty levels
+
+| Level | Exercises |
+|---|---|
+| Beginner | Triad Arpeggios Across the Neck; Three-String Triad Shapes |
+| Intermediate | Approach Notes to Chord Tones; Scale Runs Landing on Chord Tones; Triad Pairs |
+| Advanced | Voice Leading Through Chord Changes; CAGED Position Soloing |
+
+### Difficulty filter
+
+Filter chips at the top of the list — **All**, **Beginner**, **Intermediate**, **Advanced** — show only cards matching the selected difficulty. Tapping the active filter deselects it and returns to All.
+
+### Exercise cards
+
+Each card shows:
+- Title and difficulty badge (colour-coded: primary = Beginner, secondary = Intermediate, tertiary = Advanced)
+- One-line summary
+- Expand/collapse chevron
+
+When expanded, numbered steps and an optional italic tip are shown below a divider.
+
+---
+
 ## Help
 
 A scrollable help screen with a search bar at the top. Typing filters sections by title and keywords; an empty-state message is shown when no sections match.
 
-Content mirrors the README Usage Guide (excluding the build instructions), organised into sections: an intro paragraph, Scales, Fretboard Options, Chord Voicings, Arpeggio Overlays, Fullscreen Mode, Chords, and Progression. Screenshots from the `drawable-nodpi` resource folder are embedded inline. Key terms are rendered in bold.
+Content mirrors the README Usage Guide (excluding the build instructions), organised into sections: an intro paragraph, Scales, Fretboard Options, Chord Voicings, Arpeggio Overlays, Fullscreen Mode, Chords, Progression (including Templates, Saved Progressions, and Playback subsections), Metronome, and Exercises. Screenshots from the `drawable-nodpi` resource folder are embedded inline. Key terms are rendered in bold.
 
 The Scales section includes a degree colour legend — a row of seven labelled chips (I–VII) each filled with its corresponding scale degree colour — so users can cross-reference the fretboard colours without leaving the help screen.
 
@@ -139,7 +199,7 @@ The Scales section includes a degree colour legend — a row of seven labelled c
 
 ## Audio
 
-All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on remaining beats) plays during progression playback. Audio runs on background threads; no Android permissions are required.
+All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on remaining beats) plays when the metronome is running — either started directly from the Metronome screen or automatically when Progression playback begins. Audio runs on background threads; no Android permissions are required.
 
 ---
 
