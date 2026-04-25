@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,12 +51,13 @@ import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
 import com.braindelay.guitartools.ui.ExercisesScreen
 import com.braindelay.guitartools.ui.HelpScreen
+import com.braindelay.guitartools.ui.MetronomeScreen
 import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS, PROGRESSION, EXERCISES, HELP }
+enum class AppMode { SCALES, CHORDS, PROGRESSION, METRONOME, EXERCISES, HELP }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,6 +140,7 @@ fun MainContent() {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
                 AppMode.PROGRESSION -> ProgressionScreen()
+                AppMode.METRONOME   -> MetronomeScreen()
                 AppMode.EXERCISES   -> ExercisesScreen()
                 AppMode.HELP        -> HelpScreen()
             }
@@ -151,32 +154,32 @@ fun MainContent() {
                 NavigationBarItem(
                     selected = appMode == AppMode.SCALES,
                     onClick  = { appMode = AppMode.SCALES },
-                    icon     = { Icon(Icons.Default.MusicNote, contentDescription = null) },
-                    label    = { Text("Scales") }
+                    icon     = { Icon(Icons.Default.MusicNote, contentDescription = "Scales") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.CHORDS,
                     onClick  = { appMode = AppMode.CHORDS },
-                    icon     = { Icon(Icons.Default.Piano, contentDescription = null) },
-                    label    = { Text("Chords") }
+                    icon     = { Icon(Icons.Default.Piano, contentDescription = "Chords") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.PROGRESSION,
                     onClick  = { appMode = AppMode.PROGRESSION },
-                    icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
-                    label    = { Text("Progression") }
+                    icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = "Progression") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.METRONOME,
+                    onClick  = { appMode = AppMode.METRONOME },
+                    icon     = { Icon(Icons.Default.Timer, contentDescription = "Metronome") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.EXERCISES,
                     onClick  = { appMode = AppMode.EXERCISES },
-                    icon     = { Icon(Icons.Default.FitnessCenter, contentDescription = null) },
-                    label    = { Text("Exercises") }
+                    icon     = { Icon(Icons.Default.FitnessCenter, contentDescription = "Exercises") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.HELP,
                     onClick  = { appMode = AppMode.HELP },
-                    icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = null) },
-                    label    = { Text("Help") }
+                    icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "Help") }
                 )
             }
         }
