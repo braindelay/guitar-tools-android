@@ -11,7 +11,7 @@ class ScaleViewModel : ViewModel() {
         private set
     var selectedMode by mutableStateOf(Mode.MAJOR)
         private set
-    var selectedTriadType by mutableStateOf<TriadType?>(null)
+    var selectedTriadType by mutableStateOf<ChordType?>(null)
         private set
     var selectedFretPosition by mutableStateOf<FretPosition?>(null)
         private set
@@ -41,16 +41,16 @@ class ScaleViewModel : ViewModel() {
             }
         }
 
-    fun isDiatonic(triad: TriadType): Boolean {
+    fun isDiatonic(triad: ChordType): Boolean {
         val pos = selectedFretPosition ?: return false
         val s = scale
         val rootNote = fretboard.noteAt(pos.string, pos.fret)
         val degree = s.notes.indexOf(rootNote).takeIf { it >= 0 } ?: return false
         val type = s.getDiatonicTriadTypes()[degree]
         return when (type) {
-            "Maj" -> triad == TriadType.MAJOR_TRIAD || triad == TriadType.MAJ_7_SHELL || triad == TriadType.DOM_7_SHELL
-            "Min" -> triad == TriadType.MINOR_TRIAD || triad == TriadType.MIN_7_SHELL
-            "Dim" -> triad == TriadType.DIM_TRIAD || triad == TriadType.MIN_7B5_SHELL
+            "Maj" -> triad == ChordType.MAJOR || triad == ChordType.MAJ7 || triad == ChordType.DOM7
+            "Min" -> triad == ChordType.MINOR || triad == ChordType.MIN7 || triad == ChordType.MIN_MAJ7
+            "Dim" -> triad == ChordType.DIM || triad == ChordType.MIN7B5 || triad == ChordType.DIM7
             else -> false
         }
     }
@@ -142,7 +142,7 @@ class ScaleViewModel : ViewModel() {
         selectedFretPosition = null
     }
 
-    fun selectTriadType(type: TriadType) {
+    fun selectTriadType(type: ChordType) {
         selectedTriadType = type
         arpeggioChordIndex = null
     }

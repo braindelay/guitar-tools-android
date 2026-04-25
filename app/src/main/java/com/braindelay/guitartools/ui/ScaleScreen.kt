@@ -82,7 +82,7 @@ import com.braindelay.guitartools.music.Mode
 import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.Scale
 import com.braindelay.guitartools.music.ScaleViewModel
-import com.braindelay.guitartools.music.TriadType
+import com.braindelay.guitartools.music.ChordType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -367,7 +367,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement   = Arrangement.spacedBy(8.dp)
                 ) {
-                    TriadType.entries.forEach { triad ->
+                    ChordType.entries.forEach { triad ->
                         val isDiatonic = vm.isDiatonic(triad)
                         FilterChip(
                             selected = triad == vm.selectedTriadType,
