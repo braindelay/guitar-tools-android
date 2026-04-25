@@ -48,5 +48,38 @@ object ProgressionTemplates {
                 TemplateEntry(6, ChordType.MAJOR),
             )
         ),
+        ProgressionTemplate(
+            name = "Approach Notes (I–IV–V)",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Chord Tone Landing (I–IV–V)",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Voice Leading (I–vi–IV–V)",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(5, ChordType.MINOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "CAGED Position (I–IV–V)",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
     )
 }
