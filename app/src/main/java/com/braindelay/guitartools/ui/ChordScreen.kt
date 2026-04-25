@@ -71,8 +71,8 @@ fun ChordScreen() {
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(ChordType.entries) { type ->
-                        val voicings = allVoicings[type] ?: emptyList()
                         val openVoicing = openChordsMap[type]
+                        val voicings = (allVoicings[type] ?: emptyList()).filter { it != openVoicing }
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(type.label, style = MaterialTheme.typography.labelMedium)
                             HorizontalDivider()

@@ -129,8 +129,11 @@ object StandardChordLibrary {
                 val minFret = frets.filterNotNull().minOrNull() ?: 0
                 
                 if (minFret >= 0 && maxFret <= 19) {
-                    val baseFret = frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
+                    val hasOpenStrings = frets.filterNotNull().any { it == 0 }
+                    val baseFret = if (hasOpenStrings) 1
+                                   else frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
                     voicings.add(ChordVoicing(frets, baseFret))
+                    break
                 }
             }
         }
