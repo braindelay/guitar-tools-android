@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
@@ -47,13 +48,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
+import com.braindelay.guitartools.ui.ExercisesScreen
 import com.braindelay.guitartools.ui.HelpScreen
 import com.braindelay.guitartools.ui.ProgressionScreen
 import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS, PROGRESSION, HELP }
+enum class AppMode { SCALES, CHORDS, PROGRESSION, EXERCISES, HELP }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,6 +137,7 @@ fun MainContent() {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
                 AppMode.CHORDS      -> ChordScreen()
                 AppMode.PROGRESSION -> ProgressionScreen()
+                AppMode.EXERCISES   -> ExercisesScreen()
                 AppMode.HELP        -> HelpScreen()
             }
         }
@@ -161,6 +164,12 @@ fun MainContent() {
                     onClick  = { appMode = AppMode.PROGRESSION },
                     icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = null) },
                     label    = { Text("Progression") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.EXERCISES,
+                    onClick  = { appMode = AppMode.EXERCISES },
+                    icon     = { Icon(Icons.Default.FitnessCenter, contentDescription = null) },
+                    label    = { Text("Exercises") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.HELP,
