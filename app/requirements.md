@@ -40,7 +40,7 @@ In left-handed mode the entire fretboard is mirrored: the nut moves to the right
 
 When the Scales screen is in fullscreen, the bottom navigation bar is hidden. Swipe up to reveal it; swipe down to hide it again.
 
-In fullscreen, swiping right from the left edge of the screen slides in a **Diatonic Chords** drawer (160 dp wide). Tapping a chord chip overlays the arpeggio and closes the drawer. Swipe the drawer left or tap outside it to dismiss without selecting.
+In fullscreen, swiping right from the left edge of the screen slides in a **Diatonic Chords** drawer (160 dp wide in landscape; 48 dp wide in portrait with rotated chips). Tapping a chord chip overlays the arpeggio and closes the drawer. Swipe the drawer left or tap outside it to dismiss without selecting.
 
 ### Diatonic chord sidebar
 
@@ -48,11 +48,11 @@ To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) list
 
 ### Chord voicing bottom sheet
 
-Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — choose chord type" containing all 10 voicing types as filter chips:
+Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — choose chord type" containing all 16 chord types as filter chips:
 
-- Major Triad, Minor Triad, Diminished, Augmented
-- Suspended 2, Suspended 4
-- Dom 7 Shell, Maj 7 Shell, Min 7 Shell, Min 7b5 Shell
+- Major, Minor, Dom 7, Maj7, Min7
+- Dim, Dim7, Aug, Sus2, Sus4
+- HalfDim, Min/Maj7, 6, 9, 6/9, 13
 
 Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). Tapping the active voicing chip deselects it.
 
@@ -76,7 +76,7 @@ In portrait, the Circle of Fifths is on top (45% height) and the chord list is b
 
 ### Chord diagrams
 
-Each diagram renders a 4-fret window of the guitar neck showing fingering positions for one voicing. Notes are colour-coded by chord degree (root, third, other). Muted strings are shown with a red X. Up to 3 octaves of voicings are generated per chord type, sorted by fret position from low to high. Tapping a diagram plays the voicing using Karplus-Strong synthesis.
+Each diagram renders a 4-fret window of the guitar neck showing fingering positions for one voicing. Notes are colour-coded by chord degree (root, third, other). Muted strings are shown with a red X. Voicings are generated from CAGED shapes (E, A, and D positions where applicable) plus an open-position voicing from the open chord library where available; duplicates are removed and results are sorted by fret position from low to high. Tapping a diagram plays the voicing using Karplus-Strong synthesis.
 
 ---
 
@@ -92,13 +92,38 @@ In portrait, the chord picker is on top (50%) and the progression list is below 
 
 ### Building a progression
 
-Select a chord type from the scrollable chip list and tap a note on the Circle of Fifths, then press **Add** to append the chord to the progression. Each chord in the list shows its name with left/right reorder buttons and a delete button.
+Select a chord type from the scrollable chip list and tap a note on the Circle of Fifths, then press **Add** to append the chord to the progression. Each chord in the list shows its name, per-chord beat count controls, left/right reorder buttons, and a delete button.
+
+### Per-chord beat count
+
+Each chord entry displays its beat count (default 4). **−** and **+** buttons decrease or increase the count; the range is 1–8. The playback engine reads each chord's individual beat count and waits accordingly before advancing to the next chord. The BPM slider controls the global tempo; the per-chord beat count controls only relative duration within the progression.
 
 ### Playback
 
-A BPM slider (20–240) controls chord duration (4 beats per chord at the set tempo). A **play/pause** toggle button starts and stops looping through the progression; the active chord is highlighted and its first voicing is played via Karplus-Strong synthesis. A **mute** toggle silences audio playback without stopping the progression. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
+A BPM slider (20–240) controls chord duration. A **play/pause** toggle button starts and stops looping through the progression; the active chord is highlighted and its first voicing is played via Karplus-Strong synthesis. A **mute** toggle silences audio playback without stopping the progression. Adjust the BPM slider at any time — the new speed takes effect on the next chord.
 
-When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view. On beat 4, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
+On the final beat of each chord, the next chord's arpeggio is previewed in a semi-transparent overlay so the player can anticipate the upcoming change.
+
+When a progression is playing, the Scales screen fretboard shows the active chord's arpeggio as a colour overlay; each note is coloured by its scale degree using the same colour scheme as the plain scale view.
+
+### Templates
+
+A **Templates** button in the Progression header opens a bottom sheet of named chord sequence templates. Tapping a template name shows a preview of the chord names it would generate in the current key (derived from the Scales screen's selected note and mode). **Load** replaces the current progression; **Append** adds the template chords to the end.
+
+Built-in templates:
+
+| Name | Sequence |
+|---|---|
+| Pop I–V–vi–IV | I Maj — V Maj — vi Min — IV Maj |
+| Blues I–IV–V | I Dom7 — IV Dom7 — I Dom7 — IV Dom7 — I Dom7 — V Dom7 — IV Dom7 — I Dom7 |
+| Jazz ii–V–I | ii Min7 — V Dom7 — I Maj7 |
+| Minor i–VII–VI–VII | i Min — VII Maj — VI Maj — VII Maj |
+
+### Saved progressions
+
+A **Save** button (enabled when the progression is non-empty) opens a dialog where the user enters a name; confirming writes it to local storage (DataStore).
+
+A **Saved** expandable section appears when saved progressions exist. Tapping a saved entry loads it (with a confirmation dialog if the current list is non-empty). Long-pressing a saved entry opens a rename dialog. Each entry has a delete (✕) button. Saved progressions survive app restarts.
 
 ---
 
@@ -114,7 +139,7 @@ The Scales section includes a degree colour legend — a row of seven labelled c
 
 ## Audio
 
-All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on beats 2–4) plays during progression playback. Audio runs on background threads; no Android permissions are required.
+All audio uses Karplus-Strong plucked-string synthesis at 44 100 Hz, mixed in mono. Multiple strings are summed and normalised. A metronome click (accented on beat 1, unaccented on remaining beats) plays during progression playback. Audio runs on background threads; no Android permissions are required.
 
 ---
 
@@ -130,36 +155,3 @@ A capo position selector appears in the Scales top bar or Root & Scale card. The
 - All note and scale calculations are unchanged — the capo simply shifts which physical positions are visible and tappable. A fret number in the diagram is rendered relative to the capo position (so the first open-position fret after the capo is labelled as fret 1 in the capo view, or the absolute fret number is shown with the capo label alongside — either convention is acceptable).
 - The capo value persists while the user changes root and mode, and resets when the user sets it back to 0.
 - Chord voicing overlays and arpeggio overlays continue to work; positions below the capo are not shown.
-
----
-
-### Progression Templates (Progression screen)
-
-A **Templates** button in the Progression list panel opens a bottom sheet of named chord sequence templates. Each template is defined in Roman numerals and is instantiated in the key/mode currently selected on the Scales screen when the button is tapped.
-
-Built-in templates (minimum set):
-
-| Name | Roman numeral sequence |
-|---|---|
-| Pop I–V–vi–IV | I Maj — V Maj — vi Min — IV Maj |
-| Blues I–IV–V | I Dom7 — IV Dom7 — I Dom7 — IV Dom7 — I Dom7 — V Dom7 — IV Dom7 — I Dom7 |
-| Jazz ii–V–I | ii Min7 — V Dom7 — I Maj7 |
-| Minor i–VII–VI–VII | i Min — VII Maj — VI Maj — VII Maj |
-
-Tapping a template shows a preview of the chord names it would generate in the current key. A **Load** button replaces the current progression with the template chords; a **Append** button adds them to the end of the existing list.
-
----
-
-### Saved Progressions (Progression screen)
-
-The Progression list panel includes a **Save** button. Tapping it opens a dialog where the user types a name for the current progression; confirming writes it to local storage (DataStore or Room).
-
-A **Saved** expandable section below the playback controls lists all saved progressions by name. Tapping a saved progression loads it into the builder (replacing the current list after a confirmation prompt if the list is non-empty). Each saved entry has a delete (✕) button; a long-press renames it.
-
-Saved progressions survive app restarts. There is no hard cap on the number of saved progressions.
-
----
-
-### Per-Chord Beat Count (Progression screen)
-
-Each chord entry in the progression list displays its beat count alongside its name (default 4). Tapping the beat count label cycles through the values 1 → 2 → 4 → 8 → 1. The playback engine reads each chord's individual beat count and delays accordingly before advancing to the next chord. The BPM slider still controls the global tempo; the per-chord beat count controls only relative duration within the progression.
