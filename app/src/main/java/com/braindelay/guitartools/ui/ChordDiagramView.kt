@@ -15,7 +15,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.braindelay.guitartools.music.ChordType
+import com.braindelay.guitartools.music.AnyChordType
 import com.braindelay.guitartools.music.ChordVoicing
 import com.braindelay.guitartools.music.Fretboard
 import com.braindelay.guitartools.music.Note
@@ -27,7 +27,7 @@ private const val DISPLAY_FRETS = 4
 fun ChordDiagramView(
     voicing: ChordVoicing,
     root: Note,
-    chordType: ChordType,
+    chordType: AnyChordType,
     modifier: Modifier = Modifier,
     onPlay: (() -> Unit)? = null
 ) {

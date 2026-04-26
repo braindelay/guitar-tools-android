@@ -23,9 +23,9 @@ class ScaleViewModel : ViewModel() {
         private set
     var arpeggioChordIndex by mutableStateOf<Int?>(null)
         private set
-    var progressionChord by mutableStateOf<Pair<Note, ChordType>?>(null)
+    var progressionChord by mutableStateOf<Pair<Note, AnyChordType>?>(null)
         private set
-    var nextProgressionChord by mutableStateOf<Pair<Note, ChordType>?>(null)
+    var nextProgressionChord by mutableStateOf<Pair<Note, AnyChordType>?>(null)
         private set
 
     private val fretboard = Fretboard(fretCount = 19)
@@ -171,9 +171,9 @@ class ScaleViewModel : ViewModel() {
         selectedTriadType = null
     }
 
-    fun setProgressionChord(note: Note, chordType: ChordType) { progressionChord = Pair(note, chordType) }
+    fun setProgressionChord(note: Note, chordType: AnyChordType) { progressionChord = Pair(note, chordType) }
     fun clearProgressionChord() { progressionChord = null }
-    fun setNextProgressionChord(note: Note, chordType: ChordType) { nextProgressionChord = Pair(note, chordType) }
+    fun setNextProgressionChord(note: Note, chordType: AnyChordType) { nextProgressionChord = Pair(note, chordType) }
     fun clearNextProgressionChord() { nextProgressionChord = null }
 
     fun noteAt(pos: FretPosition) = fretboard.noteAt(pos.string, pos.fret)

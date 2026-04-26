@@ -117,6 +117,59 @@ object StandardChordLibrary {
         ),
     )
 
+    fun getVoicingsForCustomType(root: Note, toneOffsets: List<Int>): List<ChordVoicing> {
+        if (toneOffsets.size < 2) return emptyList()
+        val requiredSemitones = toneOffsets.map { (root.semitone + it).mod(12) }.toSet()
+        val voicings = mutableListOf<ChordVoicing>()
+
+        for (rootString in 0..2) {
+            val baseRootFret = (root.semitone - OPEN[rootString] + 12).mod(12)
+            for (octave in 0..2) {
+                val rootFret = baseRootFret + octave * 12
+                if (rootFret > 15) continue
+
+                val frets = MutableList<Int?>(6) { null }
+                frets[rootString] = rootFret
+                var currentMin = rootFret
+                var currentMax = rootFret
+
+                for (s in (rootString + 1)..5) {
+                    val openSemi = OPEN[s]
+                    var bestFret: Int? = null
+                    var bestDist = Int.MAX_VALUE
+                    for (semi in requiredSemitones) {
+                        for (oct in 0..1) {
+                            val fret = (semi - openSemi + 12).mod(12) + oct * 12
+                            if (fret < 0 || fret > 19) continue
+                            val newMin = minOf(currentMin, fret)
+                            val newMax = maxOf(currentMax, fret)
+                            if (newMax - newMin > 3) continue
+                            val dist = kotlin.math.abs(fret - rootFret)
+                            if (dist < bestDist) {
+                                bestDist = dist
+                                bestFret = fret
+                            }
+                        }
+                    }
+                    if (bestFret != null) {
+                        frets[s] = bestFret
+                        currentMin = minOf(currentMin, bestFret)
+                        currentMax = maxOf(currentMax, bestFret)
+                    }
+                }
+
+                val nonNull = frets.filterNotNull()
+                if (nonNull.size >= 3) {
+                    val hasOpen = nonNull.any { it == 0 }
+                    val baseFret = if (hasOpen) 1 else nonNull.filter { it > 0 }.minOrNull() ?: 0
+                    voicings.add(ChordVoicing(frets, baseFret))
+                    break
+                }
+            }
+        }
+        return voicings.distinct()
+    }
+
     fun getVoicings(root: Note, chordType: ChordType): List<ChordVoicing> {
         val voicings = mutableListOf<ChordVoicing>()
         for (shape in shapes[chordType] ?: emptyList()) {

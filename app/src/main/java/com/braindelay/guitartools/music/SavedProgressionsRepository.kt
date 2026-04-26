@@ -53,8 +53,20 @@ class SavedProgressionsRepository(context: Context) {
             sp.chords.forEach { chord ->
                 val c = JSONObject()
                 c.put("note", chord.note.name)
-                c.put("chordType", chord.chordType.name)
                 c.put("beats", chord.beats)
+                when (val ct = chord.chordType) {
+                    is ChordType -> {
+                        c.put("kind", "standard")
+                        c.put("chordType", ct.name)
+                    }
+                    is CustomChordType -> {
+                        c.put("kind", "custom")
+                        c.put("chordLabel", ct.label)
+                        c.put("toneOffsets", JSONArray(ct.toneOffsets))
+                        c.put("noteLabels", JSONArray(ct.noteLabels))
+                    }
+                    else -> c.put("kind", "standard")
+                }
                 chordsArr.put(c)
             }
             obj.put("chords", chordsArr)
@@ -72,7 +84,17 @@ class SavedProgressionsRepository(context: Context) {
             val chords = (0 until chordsArr.length()).mapNotNull { j ->
                 val c = chordsArr.getJSONObject(j)
                 val note = Note.entries.find { it.name == c.getString("note") } ?: return@mapNotNull null
-                val type = ChordType.entries.find { it.name == c.getString("chordType") } ?: return@mapNotNull null
+                val kind = if (c.has("kind")) c.getString("kind") else "standard"
+                val type: AnyChordType = if (kind == "custom") {
+                    val label = c.getString("chordLabel")
+                    val offsetsArr = c.getJSONArray("toneOffsets")
+                    val offsets = (0 until offsetsArr.length()).map { offsetsArr.getInt(it) }
+                    val labelsArr = c.getJSONArray("noteLabels")
+                    val labels = (0 until labelsArr.length()).map { labelsArr.getString(it) }
+                    CustomChordType(label, offsets, labels)
+                } else {
+                    ChordType.entries.find { it.name == c.getString("chordType") } ?: return@mapNotNull null
+                }
                 val beats = if (c.has("beats")) c.getInt("beats").coerceIn(1, 8) else 4
                 ProgressionChord(note, type, beats)
             }

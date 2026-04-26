@@ -1,6 +1,10 @@
 package com.braindelay.guitartools.music
 
-enum class ChordType(val label: String, val toneOffsets: List<Int>, val noteLabels: List<String>) {
+enum class ChordType(
+    override val label: String,
+    override val toneOffsets: List<Int>,
+    override val noteLabels: List<String>
+) : AnyChordType {
     MAJOR    ("Major",       listOf(0, 4, 7),      listOf("R", "3",  "5")),
     MINOR    ("Minor",       listOf(0, 3, 7),      listOf("R", "b3", "5")),
     DOM7     ("Dom 7",       listOf(0, 4, 7, 10),  listOf("R", "3",  "5", "b7")),

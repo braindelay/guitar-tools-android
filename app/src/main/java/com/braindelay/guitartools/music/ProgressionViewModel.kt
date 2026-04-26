@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-data class ProgressionChord(val note: Note, val chordType: ChordType, val beats: Int = 4)
+data class ProgressionChord(val note: Note, val chordType: AnyChordType, val beats: Int = 4)
 
 class ProgressionViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -39,7 +39,7 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    fun addChord(note: Note, chordType: ChordType) {
+    fun addChord(note: Note, chordType: AnyChordType) {
         progression = progression + ProgressionChord(note, chordType)
     }
 
@@ -109,7 +109,10 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
                     playingIndex = i
                     nextChordIndex = null
                     val chord = progression[i]
-                    val voicing = StandardChordLibrary.getVoicings(chord.note, chord.chordType).firstOrNull()
+                    val voicing = when (val ct = chord.chordType) {
+                        is ChordType -> StandardChordLibrary.getVoicings(chord.note, ct).firstOrNull()
+                        else -> StandardChordLibrary.getVoicingsForCustomType(chord.note, ct.toneOffsets).firstOrNull()
+                    }
                     val beatMs = 60_000L / getBpm()
                     val beats = chord.beats
 
