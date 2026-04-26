@@ -63,7 +63,9 @@ private val helpSections = listOf(
     HelpSection("fullscreen", "Fullscreen Mode",
         "fullscreen zoom fretboard go back"),
     HelpSection("chords_screen", "Chords",
-        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape"),
+        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape add progression"),
+    HelpSection("custom_chord", "Custom Chord Builder",
+        "custom chord intervals semitones b2 b3 b5 b6 b7 name voicing generate builder"),
     HelpSection("progression_screen", "Progression",
         "progression circle of fifths chord type note add list reorder arrows delete beats tempo bpm playback loop pause stop scales view arpeggios real time templates save saved rename landscape portrait"),
     HelpSection("metronome_screen", "Metronome",
@@ -193,7 +195,20 @@ private fun SectionBlock(id: String) {
                 "**Tap a note** on the circle of fifths to set the root.",
                 "The chord list shows all 16 chord types — scroll vertically to browse them.",
                 "Each chord type section contains a horizontally scrollable row of voicing diagrams.",
-                "**Tap any diagram** to hear it played back."
+                "**Tap any diagram** to hear it played back.",
+                "**Tap + next to any chord type** to add it directly to the Progression."
+            ))
+        }
+        "custom_chord" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            SectionHeader("Custom Chord Builder")
+            HelpImg(R.drawable.help_custom_chord, "Custom chord builder — interval grid and generated voicings")
+            BodyText("Scroll to the bottom of the Chords list to find the Custom section. Build any chord from scratch using the 12-semitone interval grid.")
+            NumberedList(listOf(
+                "Give the chord a **Name** in the text field.",
+                "**Tap interval buttons** to add tones — Root (R) is always on; toggle any of the 11 remaining semitones (b2 through 7).",
+                "Voicing diagrams are **generated automatically** once two or more intervals are selected.",
+                "**Tap any diagram** to hear it played through the synthesiser.",
+                "Tap **+** to add the custom chord to the Progression."
             ))
         }
         "progression_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {

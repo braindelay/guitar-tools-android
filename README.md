@@ -54,6 +54,18 @@ In portrait, the circle of fifths sits at the top and the chord list fills the l
 2. The chord list shows all 16 chord types — scroll vertically to browse them.
 3. Each chord type section contains a horizontally scrollable row of voicing diagrams.
 4. **Tap any diagram** to hear it played back.
+5. **Tap +** next to any chord type label to add that chord directly to the Progression.
+
+#### Custom chord builder
+
+<img src="./screenshots/09_custom_chord.png" width="480"/>
+
+Scroll to the bottom of the chord list to find the **Custom** section.
+
+1. Give the chord a **Name** in the text field.
+2. **Toggle interval buttons** to build the chord — Root (R) is always on; tap any of the 11 remaining semitones (b2 through 7) to add or remove them.
+3. Voicing diagrams generate automatically once two or more intervals are selected. **Tap any diagram** to hear it.
+4. Tap **+** to add the custom chord to the Progression.
 
 ---
 
