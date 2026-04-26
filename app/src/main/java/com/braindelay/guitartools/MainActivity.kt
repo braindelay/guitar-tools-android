@@ -140,7 +140,7 @@ fun MainContent() {
         ) {
             when (appMode) {
                 AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
-                AppMode.CHORDS      -> ChordScreen()
+                AppMode.CHORDS      -> ChordScreen(progressionVm = progressionVm)
                 AppMode.PROGRESSION -> ProgressionScreen(metronomeVm = metronomeVm)
                 AppMode.METRONOME   -> MetronomeScreen(vm = metronomeVm)
                 AppMode.EXERCISES   -> ExercisesScreen()

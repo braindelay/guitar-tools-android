@@ -11,12 +11,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -25,17 +30,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.audio.GuitarAudioEngine
 import com.braindelay.guitartools.music.ChordType
 import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.OpenChordLibrary
+import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.StandardChordLibrary
 
 @Composable
-fun ChordScreen() {
+fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
     var selectedNote by remember { mutableStateOf<Note?>(Note.C) }
 
     val allVoicings = remember(selectedNote) {
@@ -74,7 +82,26 @@ fun ChordScreen() {
                         val openVoicing = openChordsMap[type]
                         val voicings = (allVoicings[type] ?: emptyList()).filter { it != openVoicing }
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(type.label, style = MaterialTheme.typography.labelMedium)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    type.label,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(
+                                    onClick = { selectedNote?.let { n -> progressionVm.addChord(n, type) } },
+                                    modifier = Modifier.size(24.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Add,
+                                        contentDescription = "Add to progression",
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
+                            }
                             HorizontalDivider()
                             if (openVoicing == null && voicings.isEmpty()) {
                                 Text(
