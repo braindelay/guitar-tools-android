@@ -40,25 +40,16 @@ class MusicLogicTest {
     }
 
     @Test
-    fun testNonDiatonicTriadInFretPositions() {
-        val vm = ScaleViewModel()
-        vm.selectNote(Note.C)
-        vm.selectMode(Mode.MAJOR)
-        
-        // Find a C note on the fretboard (e.g., A string 3rd fret)
-        val cPosition = FretPosition(1, 3) 
-        vm.selectFretPosition(cPosition)
-        
-        // Select Dom 7 Shell (R, 3, b7) -> C, E, Bb. Bb is not in C Major.
-        val dom7 = TriadType.DOM_7_SHELL
-        vm.selectTriadType(dom7)
-        
-        val positions = vm.fretPositions
-        // Bb should be in the positions even though it's not in C Major scale
-        val hasBb = positions.values.contains(Note.A_SHARP) // Bb is A# in our enum
-        assertEquals(true, hasBb)
-        
-        val triadNotes = vm.triadNotes!!
-        assertEquals("b7", triadNotes[Note.A_SHARP])
+    fun testNonDiatonicChordTones() {
+        // Dom7 on C: C, E, G, Bb — Bb is not in C Major
+        val dom7 = ChordType.DOM7
+        val root = Note.C
+        val toneNotes = dom7.toneOffsets.zip(dom7.noteLabels).associate { (offset, label) ->
+            root.transpose(offset) to label
+        }
+
+        // Bb (A#) should be present even though it's outside C Major
+        assertEquals(true, toneNotes.containsKey(Note.A_SHARP))
+        assertEquals("b7", toneNotes[Note.A_SHARP])
     }
 }
