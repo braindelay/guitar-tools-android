@@ -2,7 +2,7 @@
 
 A tool to help guitarists learn scales, chord voicings, and progressions. Visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, build chord progressions with audio playback, keep time with the built-in metronome, and work through structured soloing exercises.
 
-This is still in closed testing, if you want to download a preview version, the details are in [CLOSED_TESTING.md](CLOSED_TESTING.md)
+**NOTE:** This is still in closed testing, if you want to download a preview version, the details are in [CLOSED_TESTING.md](CLOSED_TESTING.md)
 
 ## Usage Guide
 
