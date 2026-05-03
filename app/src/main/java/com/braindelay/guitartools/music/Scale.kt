@@ -15,6 +15,7 @@ data class Scale(val root: Note, val mode: Mode) {
     fun romanNumeral(note: Note): String? {
         val degree = notes.indexOf(note).takeIf { it >= 0 } ?: return null
         val numeral = ROMAN_NUMERALS[degree]
+        if (!mode.isDiatonic) return numeral
         return if (getDiatonicTriadTypes()[degree] == "Maj") numeral else numeral.lowercase()
     }
 
@@ -30,6 +31,7 @@ data class Scale(val root: Note, val mode: Mode) {
             Mode.LOCRIAN -> 6
             Mode.HARMONIC_MINOR -> return listOf("Min", "Dim", "Aug", "Min", "Maj", "Maj", "Dim")
             Mode.MELODIC_MINOR -> return listOf("Min", "Min", "Aug", "Maj", "Maj", "Dim", "Dim")
+            Mode.MAJOR_PENTATONIC, Mode.MINOR_PENTATONIC, Mode.BLUES -> return emptyList()
         }
         return List(7) { i -> majorPattern[(i + offset) % 7] }
     }

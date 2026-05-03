@@ -143,7 +143,7 @@ class ScaleViewModel : ViewModel() {
     val triadSummary: String?
         get() {
             val arpIdx = arpeggioChordIndex
-            if (arpIdx != null && scale.mode.isDiatonic) {
+            if (arpIdx != null) {
                 val s = scale
                 val rootNote = s.notes[arpIdx]
                 val quality = s.getDiatonicTriadTypes()[arpIdx]
@@ -167,7 +167,6 @@ class ScaleViewModel : ViewModel() {
     fun selectMode(mode: Mode) {
         selectedMode = mode
         selectedFretPosition = null
-        if (!mode.isDiatonic) arpeggioChordIndex = null
     }
 
     fun selectTriadType(type: ChordType) {

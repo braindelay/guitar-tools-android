@@ -176,7 +176,8 @@ fun FretboardView(
                     val tLabel = triadNotes[note]
                     if (tLabel != null) {
                         val (f, t) = if (isScaleDegreeOverlay) {
-                            degreeColors[scale.notes.indexOf(note).coerceAtLeast(0)]
+                            val degIdx = scale.notes.indexOf(note).coerceAtLeast(0)
+                            degreeColors[scale.mode.degreeColorIndex.getOrElse(degIdx) { degIdx }]
                         } else {
                             when {
                                 tLabel.contains("R") -> tertiaryColor to onTertiaryColor
@@ -195,7 +196,7 @@ fun FretboardView(
                     val roman = scale.romanNumeral(note) ?: continue
                     val degree = scale.notes.indexOf(note)
                     val display = if (showNoteNames) note.displayName else roman
-                    val (f, t) = degreeColors[degree]
+                    val (f, t) = degreeColors[scale.mode.degreeColorIndex.getOrElse(degree) { degree }]
                     Triple(f, t, display)
                 }
             }

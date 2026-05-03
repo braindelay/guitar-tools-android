@@ -3,8 +3,17 @@ package com.braindelay.guitartools.music
 data class TemplateEntry(val degreeIndex: Int, val chordType: ChordType)
 
 data class ProgressionTemplate(val name: String, val entries: List<TemplateEntry>) {
-    fun resolve(scale: Scale): List<ProgressionChord> =
-        entries.map { ProgressionChord(scale.notes[it.degreeIndex], it.chordType) }
+    fun resolve(scale: Scale): List<ProgressionChord> {
+        // Templates are written against 7 diatonic degrees. If the active scale is
+        // pentatonic or blues, fall back to the parallel major (or minor for the
+        // minor-flavoured pentatonic/blues) so degree indices resolve correctly.
+        val resolved = if (scale.mode.isDiatonic) scale else when (scale.mode) {
+            Mode.MAJOR_PENTATONIC -> Scale(scale.root, Mode.MAJOR)
+            Mode.MINOR_PENTATONIC, Mode.BLUES -> Scale(scale.root, Mode.MINOR)
+            else -> Scale(scale.root, Mode.MAJOR)
+        }
+        return entries.map { ProgressionChord(resolved.notes[it.degreeIndex], it.chordType) }
+    }
 }
 
 object ProgressionTemplates {

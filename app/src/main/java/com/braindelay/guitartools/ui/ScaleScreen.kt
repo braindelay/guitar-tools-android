@@ -313,27 +313,29 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.Top
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .width(120.dp)
-                                .height(216.dp)
-                                .verticalScroll(rememberScrollState()),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            vm.diatonicChords.forEachIndexed { idx, chord ->
-                                FilterChip(
-                                    selected = vm.arpeggioChordIndex == idx,
-                                    onClick = { vm.selectArpeggioChord(idx) },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    label = {
-                                        Text(
-                                            chord,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                    }
-                                )
+                        if (vm.scale.mode.isDiatonic) {
+                            Column(
+                                modifier = Modifier
+                                    .width(120.dp)
+                                    .height(216.dp)
+                                    .verticalScroll(rememberScrollState()),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                vm.diatonicChords.forEachIndexed { idx, chord ->
+                                    FilterChip(
+                                        selected = vm.arpeggioChordIndex == idx,
+                                        onClick = { vm.selectArpeggioChord(idx) },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        label = {
+                                            Text(
+                                                chord,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
 
@@ -424,8 +426,10 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
 
         HorizontalScrollableFretboard(vm, scaleFactor = scaleFactor, portraitRotated = isPortrait)
 
+        val drawerEnabled = vm.scale.mode.isDiatonic
+
         // Thin left-edge strip — rightward drag opens the chord drawer
-        if (!chordDrawerOpen) {
+        if (drawerEnabled && !chordDrawerOpen) {
             Box(
                 modifier = Modifier
                     .width(32.dp)
@@ -450,7 +454,7 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
 
         // Chord drawer panel — slides in from the left
         AnimatedVisibility(
-            visible = chordDrawerOpen,
+            visible = chordDrawerOpen && drawerEnabled,
             enter = slideInHorizontally { -it },
             exit = slideOutHorizontally { -it },
             modifier = Modifier.align(Alignment.TopStart)
