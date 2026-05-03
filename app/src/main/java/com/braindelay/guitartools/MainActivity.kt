@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.QueueMusic
+import androidx.compose.material.icons.filled.Hearing
 import androidx.compose.material.icons.filled.HistoryEdu
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
@@ -50,6 +51,7 @@ import com.braindelay.guitartools.music.MetronomeViewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.ui.ChordScreen
+import com.braindelay.guitartools.ui.EarTrainingScreen
 import com.braindelay.guitartools.ui.ExercisesScreen
 import com.braindelay.guitartools.ui.HelpScreen
 import com.braindelay.guitartools.ui.MetronomeScreen
@@ -58,7 +60,7 @@ import com.braindelay.guitartools.ui.ScaleScreen
 import com.braindelay.guitartools.ui.theme.GuitarToolsTheme
 import kotlinx.coroutines.delay
 
-enum class AppMode { SCALES, CHORDS, PROGRESSION, METRONOME, EXERCISES, HELP }
+enum class AppMode { SCALES, CHORDS, PROGRESSION, METRONOME, EXERCISES, EAR_TRAINING, HELP }
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -148,6 +150,7 @@ fun MainContent() {
                 AppMode.PROGRESSION -> ProgressionScreen(metronomeVm = metronomeVm)
                 AppMode.METRONOME -> MetronomeScreen(vm = metronomeVm)
                 AppMode.EXERCISES -> ExercisesScreen()
+                AppMode.EAR_TRAINING -> EarTrainingScreen()
                 AppMode.HELP -> HelpScreen()
             }
         }
@@ -186,6 +189,11 @@ fun MainContent() {
                     selected = appMode == AppMode.EXERCISES,
                     onClick = { appMode = AppMode.EXERCISES },
                     icon = { Icon(Icons.Default.HistoryEdu, contentDescription = "Exercises") }
+                )
+                NavigationBarItem(
+                    selected = appMode == AppMode.EAR_TRAINING,
+                    onClick = { appMode = AppMode.EAR_TRAINING },
+                    icon = { Icon(Icons.Default.Hearing, contentDescription = "Ear Training") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.HELP,
