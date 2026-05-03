@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -100,7 +99,8 @@ fun CircleOfFifthsView(
 
             val textColor = if (isSelected) onPrimaryColor else onSurfaceColor
             val fontSize = if (note.displayName.length > 1) 11.sp else 13.sp
-            val style = TextStyle(fontSize = fontSize, color = textColor, textAlign = TextAlign.Center)
+            val style =
+                TextStyle(fontSize = fontSize, color = textColor, textAlign = TextAlign.Center)
             val measured = textMeasurer.measure(note.displayName, style)
             drawText(
                 textMeasurer = textMeasurer,

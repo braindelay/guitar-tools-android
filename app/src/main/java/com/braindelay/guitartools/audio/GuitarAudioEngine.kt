@@ -31,7 +31,8 @@ object GuitarAudioEngine {
             val next = (pos + 1) % bufSize
             ring[pos] = (s + ring[next]) * 0.498f
             pos = next
-            (s * Short.MAX_VALUE).toInt().coerceIn(Short.MIN_VALUE.toInt(), Short.MAX_VALUE.toInt()).toShort()
+            (s * Short.MAX_VALUE).toInt().coerceIn(Short.MIN_VALUE.toInt(), Short.MAX_VALUE.toInt())
+                .toShort()
         }
     }
 
@@ -86,7 +87,8 @@ object GuitarAudioEngine {
                 at.stop()
                 at.release()
             }.start()
-        } catch (_: Exception) {}
+        } catch (_: Exception) {
+        }
     }
 
     fun playNote(note: Note, octave: Int = 3) {

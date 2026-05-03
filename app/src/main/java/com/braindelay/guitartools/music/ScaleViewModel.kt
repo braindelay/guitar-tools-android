@@ -105,14 +105,23 @@ class ScaleViewModel : ViewModel() {
             val s = scale
             val n = s.notes
             val quality = s.getDiatonicTriadTypes()[idx]
-            val root   = n[idx]
-            val third  = n[(idx + 2) % 7]
-            val fifth  = n[(idx + 4) % 7]
+            val root = n[idx]
+            val third = n[(idx + 2) % 7]
+            val fifth = n[(idx + 4) % 7]
             val seventh = n[(idx + 6) % 7]
-            val thirdLabel  = if (quality == "Maj") "3" else "b3"
-            val fifthLabel  = when (quality) { "Dim" -> "b5"; "Aug" -> "#5"; else -> "5" }
-            val seventhLabel = when (quality) { "Maj" -> "7"; "Min" -> "b7"; "Dim" -> "bb7"; else -> "7" }
-            return mapOf(root to "R", third to thirdLabel, fifth to fifthLabel, seventh to seventhLabel)
+            val thirdLabel = if (quality == "Maj") "3" else "b3"
+            val fifthLabel = when (quality) {
+                "Dim" -> "b5"; "Aug" -> "#5"; else -> "5"
+            }
+            val seventhLabel = when (quality) {
+                "Maj" -> "7"; "Min" -> "b7"; "Dim" -> "bb7"; else -> "7"
+            }
+            return mapOf(
+                root to "R",
+                third to thirdLabel,
+                fifth to fifthLabel,
+                seventh to seventhLabel
+            )
         }
 
     val triadSummary: String?
@@ -129,7 +138,9 @@ class ScaleViewModel : ViewModel() {
             val triad = selectedTriadType ?: return null
             val rootNote = fretboard.noteAt(pos.string, pos.fret)
             val notes = triad.toneOffsets.map { offset -> rootNote.transpose(offset).displayName }
-            return "${rootNote.displayName} ${triad.label.split(" (").first()}: ${notes.joinToString(", ")}"
+            return "${rootNote.displayName} ${
+                triad.label.split(" (").first()
+            }: ${notes.joinToString(", ")}"
         }
 
     fun selectNote(note: Note) {
@@ -171,16 +182,37 @@ class ScaleViewModel : ViewModel() {
         selectedTriadType = null
     }
 
-    fun setProgressionChord(note: Note, chordType: AnyChordType) { progressionChord = Pair(note, chordType) }
-    fun clearProgressionChord() { progressionChord = null }
-    fun setNextProgressionChord(note: Note, chordType: AnyChordType) { nextProgressionChord = Pair(note, chordType) }
-    fun clearNextProgressionChord() { nextProgressionChord = null }
+    fun setProgressionChord(note: Note, chordType: AnyChordType) {
+        progressionChord = Pair(note, chordType)
+    }
+
+    fun clearProgressionChord() {
+        progressionChord = null
+    }
+
+    fun setNextProgressionChord(note: Note, chordType: AnyChordType) {
+        nextProgressionChord = Pair(note, chordType)
+    }
+
+    fun clearNextProgressionChord() {
+        nextProgressionChord = null
+    }
 
     fun noteAt(pos: FretPosition) = fretboard.noteAt(pos.string, pos.fret)
 
-    fun toggleLeftHanded() { isLeftHanded = !isLeftHanded }
-    fun toggleLabelMode()   { showNoteNames = !showNoteNames }
+    fun toggleLeftHanded() {
+        isLeftHanded = !isLeftHanded
+    }
 
-    fun enterFullscreen() { isFullscreen = true }
-    fun exitFullscreen()  { isFullscreen = false }
+    fun toggleLabelMode() {
+        showNoteNames = !showNoteNames
+    }
+
+    fun enterFullscreen() {
+        isFullscreen = true
+    }
+
+    fun exitFullscreen() {
+        isFullscreen = false
+    }
 }

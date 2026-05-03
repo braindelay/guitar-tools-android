@@ -51,60 +51,60 @@ fun FretboardView(
 ) {
     val textMeasurer = rememberTextMeasurer()
 
-    val woodColor    = Color(0xFF2D1B13)
-    val fretColor    = Color(0xFFBDBDBD)
-    val stringColor  = Color(0xFFE0E0E0)
-    val nutColor     = Color(0xFFEFEBE9)
-    val markerColor  = Color(0xFFF5F5F5).copy(alpha = 0.6f)
+    val woodColor = Color(0xFF2D1B13)
+    val fretColor = Color(0xFFBDBDBD)
+    val stringColor = Color(0xFFE0E0E0)
+    val nutColor = Color(0xFFEFEBE9)
+    val markerColor = Color(0xFFF5F5F5).copy(alpha = 0.6f)
 
-    val primaryColor              = MaterialTheme.colorScheme.primary
-    val onPrimaryColor            = MaterialTheme.colorScheme.onPrimary
-    val primaryContainerColor     = MaterialTheme.colorScheme.primaryContainer
-    val onPrimaryContainerColor   = MaterialTheme.colorScheme.onPrimaryContainer
-    val secondaryColor            = MaterialTheme.colorScheme.secondary
-    val onSecondaryColor          = MaterialTheme.colorScheme.onSecondary
-    val secondaryContainerColor   = MaterialTheme.colorScheme.secondaryContainer
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val onPrimaryColor = MaterialTheme.colorScheme.onPrimary
+    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
+    val onPrimaryContainerColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val secondaryColor = MaterialTheme.colorScheme.secondary
+    val onSecondaryColor = MaterialTheme.colorScheme.onSecondary
+    val secondaryContainerColor = MaterialTheme.colorScheme.secondaryContainer
     val onSecondaryContainerColor = MaterialTheme.colorScheme.onSecondaryContainer
-    val tertiaryColor             = MaterialTheme.colorScheme.tertiary
-    val onTertiaryColor           = MaterialTheme.colorScheme.onTertiary
-    val tertiaryContainerColor    = MaterialTheme.colorScheme.tertiaryContainer
-    val onTertiaryContainerColor  = MaterialTheme.colorScheme.onTertiaryContainer
-    val errorColor                = MaterialTheme.colorScheme.error
-    val onErrorColor              = MaterialTheme.colorScheme.onError
-    val dimNoteColor              = Color.White.copy(alpha = 0.2f)
+    val tertiaryColor = MaterialTheme.colorScheme.tertiary
+    val onTertiaryColor = MaterialTheme.colorScheme.onTertiary
+    val tertiaryContainerColor = MaterialTheme.colorScheme.tertiaryContainer
+    val onTertiaryContainerColor = MaterialTheme.colorScheme.onTertiaryContainer
+    val errorColor = MaterialTheme.colorScheme.error
+    val onErrorColor = MaterialTheme.colorScheme.onError
+    val dimNoteColor = Color.White.copy(alpha = 0.2f)
 
     // One distinct color per scale degree — must match DegreeLegend in HelpScreen
     val degreeColors = listOf(
-        tertiaryColor           to onTertiaryColor,
-        primaryColor            to onPrimaryColor,
-        secondaryColor          to onSecondaryColor,
-        tertiaryContainerColor  to onTertiaryContainerColor,
-        primaryContainerColor   to onPrimaryContainerColor,
+        tertiaryColor to onTertiaryColor,
+        primaryColor to onPrimaryColor,
+        secondaryColor to onSecondaryColor,
+        tertiaryContainerColor to onTertiaryContainerColor,
+        primaryContainerColor to onPrimaryContainerColor,
         secondaryContainerColor to onSecondaryContainerColor,
-        errorColor              to onErrorColor,
+        errorColor to onErrorColor,
     )
 
-    val cellWidthDp     = 64.dp * scaleFactor
+    val cellWidthDp = 64.dp * scaleFactor
     val stringSpacingDp = 32.dp * scaleFactor
-    val noteRadiusDp    = 13.dp * scaleFactor
-    val topPaddingDp    = 24.dp * scaleFactor
+    val noteRadiusDp = 13.dp * scaleFactor
+    val topPaddingDp = 24.dp * scaleFactor
     val bottomPaddingDp = 32.dp * scaleFactor
-    val openColWidthDp  = 48.dp * scaleFactor
+    val openColWidthDp = 48.dp * scaleFactor
 
-    val totalWidth  = openColWidthDp + cellWidthDp * NUM_FRETS
+    val totalWidth = openColWidthDp + cellWidthDp * NUM_FRETS
     val totalHeight = topPaddingDp + stringSpacingDp * (NUM_STRINGS - 1) + bottomPaddingDp
 
     val density = LocalDensity.current
-    val cw  = with(density) { cellWidthDp.toPx() }
-    val ss  = with(density) { stringSpacingDp.toPx() }
-    val nr  = with(density) { noteRadiusDp.toPx() }
-    val tp  = with(density) { topPaddingDp.toPx() }
+    val cw = with(density) { cellWidthDp.toPx() }
+    val ss = with(density) { stringSpacingDp.toPx() }
+    val nr = with(density) { noteRadiusDp.toPx() }
+    val tp = with(density) { topPaddingDp.toPx() }
     val ocw = with(density) { openColWidthDp.toPx() }
-    val tw  = ocw + NUM_FRETS * cw   // total width in px
+    val tw = ocw + NUM_FRETS * cw   // total width in px
 
     fun rhX(fret: Int) = if (fret == 0) ocw / 2f else ocw + (fret - 0.5f) * cw
     fun noteX(fret: Int) = if (isLeftHanded) tw - rhX(fret) else rhX(fret)
-    fun stringY(s: Int)  = tp + (5 - s) * ss
+    fun stringY(s: Int) = tp + (5 - s) * ss
 
     // Fret line x in left-handed mode is mirrored
     fun fretLineX(fret: Int) = if (isLeftHanded) tw - (ocw + fret * cw) else ocw + fret * cw
@@ -120,7 +120,7 @@ fun FretboardView(
                 detectTapGestures { tap ->
                     val tapX = if (isLeftHanded) tw - tap.x else tap.x
                     val fret = if (tapX < ocw) 0
-                               else ((tapX - ocw) / cw).toInt().inc().coerceAtMost(NUM_FRETS)
+                    else ((tapX - ocw) / cw).toInt().inc().coerceAtMost(NUM_FRETS)
                     val string = (5f - (tap.y - tp) / ss).roundToInt().coerceIn(0, 5)
                     val pos = FretPosition(string, fret)
                     if (positions.containsKey(pos)) onFretTapped(pos)
@@ -138,14 +138,14 @@ fun FretboardView(
         drawRect(nutColor, Offset(nutX, tp - 10f), Size(8f, 5 * ss + 20f))
 
         // Inlay rectangles
-        val rw  = cw * 0.8f
-        val rh  = (5 * ss) * 0.9f
+        val rw = cw * 0.8f
+        val rh = (5 * ss) * 0.9f
         val dotY = tp + 2.5f * ss
         for (fret in INLAY_SINGLE) {
             val cx = noteX(fret)
             drawRect(markerColor, Offset(cx - rw / 2f, dotY - rh / 2f), Size(rw, rh))
         }
-        val x12  = noteX(INLAY_DOUBLE)
+        val x12 = noteX(INLAY_DOUBLE)
         val rh12 = (5 * ss) * 0.4f
         drawRect(markerColor, Offset(x12 - rw / 2f, tp + 1.1f * ss - rh12 / 2f), Size(rw, rh12))
         drawRect(markerColor, Offset(x12 - rw / 2f, tp + 3.9f * ss - rh12 / 2f), Size(rw, rh12))
@@ -159,7 +159,10 @@ fun FretboardView(
         // Fret number labels
         for (fret in INLAY_LABEL_FRETS) {
             val fontSize = 11.sp * scaleFactor
-            val m = textMeasurer.measure(fret.toString(), TextStyle(fontSize = fontSize, color = Color.White.copy(alpha = 0.5f)))
+            val m = textMeasurer.measure(
+                fret.toString(),
+                TextStyle(fontSize = fontSize, color = Color.White.copy(alpha = 0.5f))
+            )
             drawText(m, topLeft = Offset(noteX(fret) - m.size.width / 2f, tp + 5 * ss + nr + 6f))
         }
 
@@ -176,9 +179,9 @@ fun FretboardView(
                             degreeColors[scale.notes.indexOf(note).coerceAtLeast(0)]
                         } else {
                             when {
-                                tLabel.contains("R")  -> tertiaryColor  to onTertiaryColor
-                                tLabel.contains("3")  -> primaryColor   to onPrimaryColor
-                                else                  -> secondaryColor to onSecondaryColor
+                                tLabel.contains("R") -> tertiaryColor to onTertiaryColor
+                                tLabel.contains("3") -> primaryColor to onPrimaryColor
+                                else -> secondaryColor to onSecondaryColor
                             }
                         }
                         val display = if (showNoteNames) note.displayName else tLabel
@@ -187,6 +190,7 @@ fun FretboardView(
                         Triple(dimNoteColor, Color.Transparent, null)
                     }
                 }
+
                 else -> {
                     val roman = scale.romanNumeral(note) ?: continue
                     val degree = scale.notes.indexOf(note)
@@ -199,7 +203,11 @@ fun FretboardView(
             drawCircle(fill, nr, Offset(x, y))
 
             if (label != null) {
-                val style = TextStyle(fontSize = (10 * scaleFactor).sp, fontWeight = FontWeight.Bold, color = textColor)
+                val style = TextStyle(
+                    fontSize = (10 * scaleFactor).sp,
+                    fontWeight = FontWeight.Bold,
+                    color = textColor
+                )
                 val m = textMeasurer.measure(label, style)
                 drawText(m, topLeft = Offset(x - m.size.width / 2f, y - m.size.height / 2f))
             }
@@ -220,7 +228,7 @@ fun FretboardView(
                 val fill = when {
                     nextLabel.contains("R") -> tertiaryColor.copy(alpha = anticipationAlpha)
                     nextLabel.contains("3") -> primaryColor.copy(alpha = anticipationAlpha)
-                    else                   -> secondaryColor.copy(alpha = anticipationAlpha)
+                    else -> secondaryColor.copy(alpha = anticipationAlpha)
                 }
                 drawCircle(fill, nr, Offset(x, y))
                 val style = TextStyle(

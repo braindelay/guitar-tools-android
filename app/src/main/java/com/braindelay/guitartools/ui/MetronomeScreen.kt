@@ -21,10 +21,10 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
@@ -179,8 +179,8 @@ private fun BeatDot(active: Boolean, isDownbeat: Boolean) {
     val color by animateColorAsState(
         targetValue = when {
             active && isDownbeat -> MaterialTheme.colorScheme.tertiary
-            active               -> MaterialTheme.colorScheme.primary
-            else                 -> MaterialTheme.colorScheme.outlineVariant
+            active -> MaterialTheme.colorScheme.primary
+            else -> MaterialTheme.colorScheme.outlineVariant
         },
         label = "dot_color"
     )
@@ -197,13 +197,13 @@ private fun BeatDot(active: Boolean, isDownbeat: Boolean) {
 }
 
 private fun tempoName(bpm: Int): String = when {
-    bpm < 60  -> "Largo"
-    bpm < 66  -> "Larghetto"
-    bpm < 76  -> "Adagio"
+    bpm < 60 -> "Largo"
+    bpm < 66 -> "Larghetto"
+    bpm < 76 -> "Adagio"
     bpm < 108 -> "Andante"
     bpm < 120 -> "Moderato"
     bpm < 156 -> "Allegro"
     bpm < 176 -> "Vivace"
     bpm < 200 -> "Presto"
-    else      -> "Prestissimo"
+    else -> "Prestissimo"
 }

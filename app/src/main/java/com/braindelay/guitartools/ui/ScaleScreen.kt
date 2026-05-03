@@ -6,10 +6,10 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.calculateZoom
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,8 +24,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -39,11 +39,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.TextFields
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconToggleButton
@@ -62,7 +60,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -78,16 +75,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.R
 import com.braindelay.guitartools.audio.GuitarAudioEngine
-import com.braindelay.guitartools.music.Mode
-import com.braindelay.guitartools.music.Note
-import com.braindelay.guitartools.music.Scale
-import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.music.ChordType
+import com.braindelay.guitartools.music.Mode
+import com.braindelay.guitartools.music.ScaleViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean = false) {
-    val scale = vm.scale
+    vm.scale
     var expanded by rememberSaveable { mutableStateOf(!isProgressionPlaying) }
     val isFullscreen = vm.isFullscreen
     val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
@@ -129,7 +125,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     Icons.Default.SwapHoriz,
                                     contentDescription = "Left-handed mode",
                                     tint = if (vm.isLeftHanded) MaterialTheme.colorScheme.primary
-                                           else MaterialTheme.colorScheme.onSurfaceVariant
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             // Note-name label toggle
@@ -141,7 +137,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     Icons.Default.TextFields,
                                     contentDescription = "Show note names",
                                     tint = if (vm.showNoteNames) MaterialTheme.colorScheme.primary
-                                           else MaterialTheme.colorScheme.onSurfaceVariant
+                                    else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             Text(
@@ -152,7 +148,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                             IconButton(onClick = { expanded = !expanded }) {
                                 Icon(
                                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp
-                                                  else Icons.Default.KeyboardArrowDown,
+                                    else Icons.Default.KeyboardArrowDown,
                                     contentDescription = if (expanded) "Collapse" else "Expand"
                                 )
                             }
@@ -167,15 +163,19 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                 .padding(if (isFullscreen) androidx.compose.foundation.layout.PaddingValues(0.dp) else innerPadding)
                 .then(if (isFullscreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth())
                 .then(if (!isFullscreen) Modifier.verticalScroll(rememberScrollState()) else Modifier)
-                .padding(horizontal = if (isFullscreen) 0.dp else 16.dp,
-                         vertical   = if (isFullscreen) 0.dp else 12.dp),
+                .padding(
+                    horizontal = if (isFullscreen) 0.dp else 16.dp,
+                    vertical = if (isFullscreen) 0.dp else 12.dp
+                ),
             verticalArrangement = if (isFullscreen) Arrangement.Center else Arrangement.spacedBy(20.dp)
         ) {
             if (!isFullscreen) {
                 AnimatedVisibility(visible = expanded) {
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         // Hero image
-                        OutlinedCard(modifier = Modifier.fillMaxWidth().height(180.dp)) {
+                        OutlinedCard(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)) {
                             Box {
                                 Image(
                                     painter = painterResource(id = R.drawable.guitar_lessons),
@@ -188,18 +188,26 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                         .fillMaxSize()
                                         .background(
                                             Brush.verticalGradient(
-                                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.7f)),
+                                                colors = listOf(
+                                                    Color.Transparent,
+                                                    Color.Black.copy(alpha = 0.7f)
+                                                ),
                                                 startY = 100f
                                             )
                                         ),
                                     contentAlignment = Alignment.BottomStart
                                 ) {
                                     Column(modifier = Modifier.padding(16.dp)) {
-                                        Text("Master Your Fretboard",
-                                            style = MaterialTheme.typography.headlineSmall, color = Color.White)
-                                        Text("Visualise scales and diatonic chords",
+                                        Text(
+                                            "Master Your Fretboard",
+                                            style = MaterialTheme.typography.headlineSmall,
+                                            color = Color.White
+                                        )
+                                        Text(
+                                            "Visualise scales and diatonic chords",
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = Color.White.copy(alpha = 0.8f))
+                                            color = Color.White.copy(alpha = 0.8f)
+                                        )
                                     }
                                 }
                             }
@@ -224,13 +232,13 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     FlowRow(
                                         modifier = Modifier.weight(1f),
                                         horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                        verticalArrangement   = Arrangement.spacedBy(4.dp)
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
                                         Mode.entries.forEach { mode ->
                                             FilterChip(
                                                 selected = mode == vm.selectedMode,
-                                                onClick  = { vm.selectMode(mode) },
-                                                label    = { Text(mode.displayName) }
+                                                onClick = { vm.selectMode(mode) },
+                                                label = { Text(mode.displayName) }
                                             )
                                         }
                                     }
@@ -243,7 +251,8 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             }
 
             if (isFullscreen) {
-                val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
+                val isPortrait =
+                    LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
                 FullscreenContent(vm, isPortrait)
             } else {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -269,21 +278,28 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                 val triadType = vm.selectedTriadType
                                 if (pos != null && triadType != null) {
                                     IconButton(onClick = {
-                                        val rootMidi = GuitarAudioEngine.midiFromPosition(pos.string, pos.fret)
+                                        val rootMidi =
+                                            GuitarAudioEngine.midiFromPosition(pos.string, pos.fret)
                                         GuitarAudioEngine.playMidis(triadType.toneOffsets.map { rootMidi + it })
                                     }) {
-                                        Icon(Icons.Default.PlayArrow, contentDescription = "Play chord")
+                                        Icon(
+                                            Icons.Default.PlayArrow,
+                                            contentDescription = "Play chord"
+                                        )
                                     }
                                 }
                             }
                             if (vm.selectedFretPosition != null || vm.selectedTriadType != null
-                                || vm.arpeggioChordIndex != null) {
+                                || vm.arpeggioChordIndex != null
+                            ) {
                                 ElevatedButton(onClick = {
                                     vm.clearFretSelection()
                                     vm.arpeggioChordIndex?.let { vm.selectArpeggioChord(it) }
                                 }) {
-                                    Icon(Icons.Default.Clear, contentDescription = null,
-                                        modifier = Modifier.size(16.dp))
+                                    Icon(
+                                        Icons.Default.Clear, contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
                                     Spacer(Modifier.width(8.dp))
                                     Text("Clear")
                                 }
@@ -307,14 +323,14 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                             vm.diatonicChords.forEachIndexed { idx, chord ->
                                 FilterChip(
                                     selected = vm.arpeggioChordIndex == idx,
-                                    onClick  = { vm.selectArpeggioChord(idx) },
+                                    onClick = { vm.selectArpeggioChord(idx) },
                                     modifier = Modifier.fillMaxWidth(),
-                                    label    = {
+                                    label = {
                                         Text(
                                             chord,
                                             style = MaterialTheme.typography.labelSmall,
                                             maxLines = 1,
-                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                            overflow = TextOverflow.Ellipsis
                                         )
                                     }
                                 )
@@ -330,7 +346,9 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                 "Tap a note to pick chord type · pinch to zoom",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                                modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 4.dp)
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(top = 4.dp)
                             )
                         }
                     }
@@ -360,18 +378,18 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                 val rotateSheet = isFullscreen && isPortrait
                 Text(
                     "${rootNote.displayName} — choose chord type",
-                    style    = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement   = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     ChordType.entries.forEach { triad ->
                         val isDiatonic = vm.isDiatonic(triad)
                         FilterChip(
                             selected = triad == vm.selectedTriadType,
-                            onClick  = {
+                            onClick = {
                                 if (vm.selectedTriadType == triad) {
                                     vm.clearTriadType()
                                 } else {
@@ -383,7 +401,7 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     }
                                 }
                             },
-                            modifier    = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier,
+                            modifier = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier,
                             leadingIcon = if (isDiatonic) {
                                 { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
                             } else null,
@@ -432,9 +450,9 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
 
         // Chord drawer panel — slides in from the left
         AnimatedVisibility(
-            visible  = chordDrawerOpen,
-            enter    = slideInHorizontally { -it },
-            exit     = slideOutHorizontally { -it },
+            visible = chordDrawerOpen,
+            enter = slideInHorizontally { -it },
+            exit = slideOutHorizontally { -it },
             modifier = Modifier.align(Alignment.TopStart)
         ) {
             Column(
@@ -452,8 +470,9 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
             ) {
                 Text(
                     "Diatonic Chords",
-                    style    = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
                         .then(if (isPortrait) Modifier.rotateWithLayout(90f) else Modifier)
                 )
                 LazyColumn(
@@ -463,13 +482,13 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
                     itemsIndexed(vm.diatonicChords) { idx, chord ->
                         FilterChip(
                             selected = vm.arpeggioChordIndex == idx,
-                            onClick  = { vm.selectArpeggioChord(idx); chordDrawerOpen = false },
+                            onClick = { vm.selectArpeggioChord(idx); chordDrawerOpen = false },
                             modifier = if (isPortrait) Modifier.rotateWithLayout(90f)
-                                       else Modifier.fillMaxWidth(),
-                            label    = {
+                            else Modifier.fillMaxWidth(),
+                            label = {
                                 Text(
                                     chord,
-                                    style    = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelSmall,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
@@ -480,10 +499,11 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
             }
         }
 
-        val chordLabel = vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
+        val chordLabel =
+            vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
         if (chordLabel != null) {
             Text(
-                text  = chordLabel,
+                text = chordLabel,
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.White,
                 modifier = if (isPortrait) {
@@ -508,12 +528,20 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
 }
 
 @Composable
-fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, portraitRotated: Boolean = false) {
+fun HorizontalScrollableFretboard(
+    vm: ScaleViewModel,
+    scaleFactor: Float = 1f,
+    portraitRotated: Boolean = false
+) {
     val scrollState = rememberScrollState()
     val containerModifier = if (portraitRotated) {
-        Modifier.rotatePortraitToLandscape().horizontalScroll(scrollState)
+        Modifier
+            .rotatePortraitToLandscape()
+            .horizontalScroll(scrollState)
     } else {
-        Modifier.fillMaxWidth().horizontalScroll(scrollState)
+        Modifier
+            .fillMaxWidth()
+            .horizontalScroll(scrollState)
     }
     Box(modifier = containerModifier.pointerInput(vm.isFullscreen) {
         // Non-consuming pinch observer: never calls consume(), so horizontalScroll
@@ -535,16 +563,16 @@ fun HorizontalScrollableFretboard(vm: ScaleViewModel, scaleFactor: Float = 1f, p
         }
     }) {
         FretboardView(
-            scale                = vm.scale,
-            positions            = vm.fretPositions,
-            selectedPosition     = vm.selectedFretPosition,
-            triadNotes           = vm.activeOverlay,
+            scale = vm.scale,
+            positions = vm.fretPositions,
+            selectedPosition = vm.selectedFretPosition,
+            triadNotes = vm.activeOverlay,
             isScaleDegreeOverlay = vm.triadNotes == null,
-            nextChordNotes       = vm.nextProgressionArpeggioNotes,
-            onFretTapped         = { pos -> vm.selectFretPosition(pos) },
-            scaleFactor          = scaleFactor,
-            isLeftHanded         = vm.isLeftHanded,
-            showNoteNames        = vm.showNoteNames
+            nextChordNotes = vm.nextProgressionArpeggioNotes,
+            onFretTapped = { pos -> vm.selectFretPosition(pos) },
+            scaleFactor = scaleFactor,
+            isLeftHanded = vm.isLeftHanded,
+            showNoteNames = vm.showNoteNames
         )
     }
 }
@@ -555,29 +583,30 @@ private fun Modifier.rotateWithLayout(degrees: Float): Modifier = this.layout { 
     val placeable = measurable.measure(Constraints())
     layout(placeable.height, placeable.width) {
         placeable.placeWithLayer(
-            x = -(placeable.width  - placeable.height) / 2,
-            y =  (placeable.width  - placeable.height) / 2
+            x = -(placeable.width - placeable.height) / 2,
+            y = (placeable.width - placeable.height) / 2
         ) { rotationZ = degrees }
     }
 }
 
-private fun Modifier.rotatePortraitToLandscape(): Modifier = this.layout { measurable, constraints ->
-    // Give child landscape constraints (swap portrait width/height)
-    val swapped = Constraints(
-        minWidth = constraints.minHeight,
-        maxWidth = constraints.maxHeight,
-        minHeight = constraints.minWidth,
-        maxHeight = constraints.maxWidth,
-    )
-    val placeable = measurable.measure(swapped)
-    // Report portrait-sized bounds to parent
-    layout(placeable.height, placeable.width) {
-        // placeWithLayer transforms both rendering and pointer events
-        placeable.placeWithLayer(
-            x = -(placeable.width - placeable.height) / 2,
-            y = (placeable.width - placeable.height) / 2,
-        ) {
-            rotationZ = 90f  // 90° CCW: nut at top, scroll down for higher frets
+private fun Modifier.rotatePortraitToLandscape(): Modifier =
+    this.layout { measurable, constraints ->
+        // Give child landscape constraints (swap portrait width/height)
+        val swapped = Constraints(
+            minWidth = constraints.minHeight,
+            maxWidth = constraints.maxHeight,
+            minHeight = constraints.minWidth,
+            maxHeight = constraints.maxWidth,
+        )
+        val placeable = measurable.measure(swapped)
+        // Report portrait-sized bounds to parent
+        layout(placeable.height, placeable.width) {
+            // placeWithLayer transforms both rendering and pointer events
+            placeable.placeWithLayer(
+                x = -(placeable.width - placeable.height) / 2,
+                y = (placeable.width - placeable.height) / 2,
+            ) {
+                rotationZ = 90f  // 90° CCW: nut at top, scroll down for higher frets
+            }
         }
     }
-}

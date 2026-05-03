@@ -27,11 +27,11 @@ import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -64,11 +64,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.music.ChordType
 import com.braindelay.guitartools.music.ChordVoicing
+import com.braindelay.guitartools.music.MetronomeViewModel
 import com.braindelay.guitartools.music.Note
 import com.braindelay.guitartools.music.ProgressionChord
 import com.braindelay.guitartools.music.ProgressionTemplate
 import com.braindelay.guitartools.music.ProgressionTemplates
-import com.braindelay.guitartools.music.MetronomeViewModel
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.SavedProgression
 import com.braindelay.guitartools.music.Scale
@@ -82,7 +82,7 @@ fun ProgressionScreen(
     scaleVm: ScaleViewModel = viewModel(),
     metronomeVm: MetronomeViewModel = viewModel()
 ) {
-    var selectedNote      by remember { mutableStateOf<Note?>(Note.C) }
+    var selectedNote by remember { mutableStateOf<Note?>(Note.C) }
     var selectedChordType by remember { mutableStateOf(ChordType.MAJOR) }
     val voicings = remember(selectedNote, selectedChordType) {
         val n = selectedNote ?: return@remember emptyList()
@@ -93,32 +93,44 @@ fun ProgressionScreen(
 
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     if (isLandscape) {
-        Row(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+        Row(Modifier
+            .fillMaxSize()
+            .padding(top = topInset + 8.dp)) {
             ChordPicker(
-                selectedNote      = selectedNote,
+                selectedNote = selectedNote,
                 selectedChordType = selectedChordType,
-                voicings          = voicings,
-                onNoteSelected    = { selectedNote = it },
-                onTypeSelected    = { selectedChordType = it },
-                onAdd             = { selectedNote?.let { n -> vm.addChord(n, selectedChordType) } },
-                modifier          = Modifier.weight(0.62f).fillMaxHeight()
+                voicings = voicings,
+                onNoteSelected = { selectedNote = it },
+                onTypeSelected = { selectedChordType = it },
+                onAdd = { selectedNote?.let { n -> vm.addChord(n, selectedChordType) } },
+                modifier = Modifier
+                    .weight(0.62f)
+                    .fillMaxHeight()
             )
             VerticalDivider()
-            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier.weight(0.38f).fillMaxHeight())
+            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier
+                .weight(0.38f)
+                .fillMaxHeight())
         }
     } else {
-        Column(Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+        Column(Modifier
+            .fillMaxSize()
+            .padding(top = topInset + 8.dp)) {
             ChordPicker(
-                selectedNote      = selectedNote,
+                selectedNote = selectedNote,
                 selectedChordType = selectedChordType,
-                voicings          = voicings,
-                onNoteSelected    = { selectedNote = it },
-                onTypeSelected    = { selectedChordType = it },
-                onAdd             = { selectedNote?.let { n -> vm.addChord(n, selectedChordType) } },
-                modifier          = Modifier.weight(0.5f).fillMaxWidth()
+                voicings = voicings,
+                onNoteSelected = { selectedNote = it },
+                onTypeSelected = { selectedChordType = it },
+                onAdd = { selectedNote?.let { n -> vm.addChord(n, selectedChordType) } },
+                modifier = Modifier
+                    .weight(0.5f)
+                    .fillMaxWidth()
             )
             HorizontalDivider()
-            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier.weight(0.5f).fillMaxWidth())
+            ProgressionList(vm, scaleVm.scale, metronomeVm, Modifier
+                .weight(0.5f)
+                .fillMaxWidth())
         }
     }
 }
@@ -173,10 +185,10 @@ private fun ProgressionList(
                 ) {
                     Icon(
                         imageVector = if (vm.isMuted) Icons.AutoMirrored.Filled.VolumeOff
-                                      else Icons.AutoMirrored.Filled.VolumeUp,
+                        else Icons.AutoMirrored.Filled.VolumeUp,
                         contentDescription = if (vm.isMuted) "Unmute" else "Mute",
                         tint = if (vm.isMuted) MaterialTheme.colorScheme.primary
-                               else MaterialTheme.colorScheme.onSurfaceVariant
+                        else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 IconButton(
@@ -253,7 +265,11 @@ private fun ProgressionList(
                                 onClick = { vm.deleteSaved(saved.name) },
                                 modifier = Modifier.size(28.dp)
                             ) {
-                                Icon(Icons.Default.Close, contentDescription = "Delete", Modifier.size(14.dp))
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = "Delete",
+                                    Modifier.size(14.dp)
+                                )
                             }
                         }
                     }
@@ -282,7 +298,9 @@ private fun ProgressionList(
                     else CardDefaults.cardColors()
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
@@ -311,16 +329,22 @@ private fun ProgressionList(
                         ) {
                             Icon(Icons.Default.Add, null, Modifier.size(14.dp))
                         }
-                        IconButton(onClick = { vm.moveChordLeft(index) },
-                            modifier = Modifier.size(28.dp)) {
+                        IconButton(
+                            onClick = { vm.moveChordLeft(index) },
+                            modifier = Modifier.size(28.dp)
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, null, Modifier.size(14.dp))
                         }
-                        IconButton(onClick = { vm.moveChordRight(index) },
-                            modifier = Modifier.size(28.dp)) {
+                        IconButton(
+                            onClick = { vm.moveChordRight(index) },
+                            modifier = Modifier.size(28.dp)
+                        ) {
                             Icon(Icons.AutoMirrored.Filled.ArrowForward, null, Modifier.size(14.dp))
                         }
-                        IconButton(onClick = { vm.removeChord(index) },
-                            modifier = Modifier.size(28.dp)) {
+                        IconButton(
+                            onClick = { vm.removeChord(index) },
+                            modifier = Modifier.size(28.dp)
+                        ) {
                             Icon(Icons.Default.Close, null, Modifier.size(14.dp))
                         }
                     }
@@ -369,7 +393,9 @@ private fun ProgressionList(
             title = { Text("Load \"${target.name}\"?") },
             text = { Text("This will replace the current progression.") },
             confirmButton = {
-                TextButton(onClick = { vm.loadTemplate(target.chords); loadConfirmTarget = null; savedExpanded = false }) {
+                TextButton(onClick = {
+                    vm.loadTemplate(target.chords); loadConfirmTarget = null; savedExpanded = false
+                }) {
                     Text("Load")
                 }
             },
@@ -502,13 +528,17 @@ private fun ChordPicker(
         }
 
         Row(
-            modifier = Modifier.weight(1f).fillMaxWidth(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CircleOfFifthsView(
                 selectedNote = selectedNote,
                 onNoteSelected = onNoteSelected,
-                modifier = Modifier.weight(1f).fillMaxHeight()
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
             )
 
             Column(
@@ -522,11 +552,13 @@ private fun ChordPicker(
                 ChordType.entries.forEach { type ->
                     FilterChip(
                         selected = type == selectedChordType,
-                        onClick  = { onTypeSelected(type) },
+                        onClick = { onTypeSelected(type) },
                         modifier = Modifier.fillMaxWidth(),
                         label = {
-                            Text(type.label, style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(
+                                type.label, style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1, overflow = TextOverflow.Ellipsis
+                            )
                         }
                     )
                 }
@@ -544,10 +576,10 @@ private fun ChordPicker(
                     voicings.take(6).forEach { v ->
                         selectedNote?.let { n ->
                             ChordDiagramView(
-                                voicing   = v,
-                                root      = n,
+                                voicing = v,
+                                root = n,
                                 chordType = selectedChordType,
-                                onPlay    = {
+                                onPlay = {
                                     com.braindelay.guitartools.audio.GuitarAudioEngine.playVoicing(v)
                                 }
                             )

@@ -40,7 +40,9 @@ class MetronomeViewModel : ViewModel() {
         _beatsPerBar = value
     }
 
-    fun toggleMute() { _isMuted = !_isMuted }
+    fun toggleMute() {
+        _isMuted = !_isMuted
+    }
 
     fun tapTempo() {
         val now = System.currentTimeMillis()

@@ -204,7 +204,11 @@ fun ExercisesScreen() {
     ) {
         item(key = "header") {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("Exercises", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    "Exercises",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 Text(
                     "Techniques for soloing on chord tones and triads.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -226,7 +230,9 @@ fun ExercisesScreen() {
                 Difficulty.entries.forEach { diff ->
                     FilterChip(
                         selected = filterDifficulty == diff,
-                        onClick = { filterDifficulty = if (filterDifficulty == diff) null else diff },
+                        onClick = {
+                            filterDifficulty = if (filterDifficulty == diff) null else diff
+                        },
                         label = { Text(diff.label) }
                     )
                 }
@@ -266,7 +272,9 @@ private fun ExerciseCard(exercise: Exercise) {
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = if (expanded) "Collapse" else "Expand",
-                    modifier = Modifier.size(20.dp).padding(start = 4.dp),
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(start = 4.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -300,7 +308,11 @@ private fun ExerciseCard(exercise: Exercise) {
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.width(22.dp)
                             )
-                            Text(step, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                            Text(
+                                step,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+                            )
                         }
                     }
 
@@ -324,9 +336,9 @@ private fun ExerciseCard(exercise: Exercise) {
 @Composable
 private fun DifficultyBadge(difficulty: Difficulty) {
     val (bg, fg) = when (difficulty) {
-        Difficulty.BEGINNER     -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+        Difficulty.BEGINNER -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
         Difficulty.INTERMEDIATE -> MaterialTheme.colorScheme.secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        Difficulty.ADVANCED     -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
+        Difficulty.ADVANCED -> MaterialTheme.colorScheme.tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
     }
     Surface(
         shape = MaterialTheme.shapes.extraSmall,

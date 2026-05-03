@@ -50,28 +50,50 @@ import com.braindelay.guitartools.R
 private data class HelpSection(val id: String, val title: String, val keywords: String)
 
 private val helpSections = listOf(
-    HelpSection("intro", "Guitar Tools",
-        "learn scales chord voicings progressions fretboard metronome exercises overview"),
-    HelpSection("scales", "Scales",
-        "root note mode major minor dorian phrygian lydian mixolydian locrian harmonic melodic fretboard roman numerals degrees collapse expand selector"),
-    HelpSection("fretboard_options", "Fretboard Options",
-        "left-handed mirror swap label mode roman numerals note names"),
-    HelpSection("chord_voicings", "Chord Voicings",
-        "voicing major triad minor dim dom 7 shell overlay chord tones R 3 5 7 play audio clear diatonic"),
-    HelpSection("arpeggio", "Arpeggio Overlays",
-        "arpeggio diatonic chords 1 3 5 7 highlight summary card clear"),
-    HelpSection("fullscreen", "Fullscreen Mode",
-        "fullscreen zoom fretboard go back"),
-    HelpSection("chords_screen", "Chords",
-        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape add progression"),
-    HelpSection("custom_chord", "Custom Chord Builder",
-        "custom chord intervals semitones b2 b3 b5 b6 b7 name voicing generate builder rootless reorder order arrows"),
-    HelpSection("progression_screen", "Progression",
-        "progression circle of fifths chord type note add list reorder arrows delete beats tempo bpm playback loop pause stop scales view arpeggios real time templates save saved rename landscape portrait"),
-    HelpSection("metronome_screen", "Metronome",
-        "metronome bpm tempo tap tap-tempo beats per bar time signature beat dots click mute start stop"),
-    HelpSection("exercises_screen", "Exercises",
-        "exercises beginner intermediate advanced triad arpeggio approach notes voice leading caged chord tone scale runs difficulty filter expand collapse steps tip")
+    HelpSection(
+        "intro", "Guitar Tools",
+        "learn scales chord voicings progressions fretboard metronome exercises overview"
+    ),
+    HelpSection(
+        "scales", "Scales",
+        "root note mode major minor dorian phrygian lydian mixolydian locrian harmonic melodic fretboard roman numerals degrees collapse expand selector"
+    ),
+    HelpSection(
+        "fretboard_options", "Fretboard Options",
+        "left-handed mirror swap label mode roman numerals note names"
+    ),
+    HelpSection(
+        "chord_voicings", "Chord Voicings",
+        "voicing major triad minor dim dom 7 shell overlay chord tones R 3 5 7 play audio clear diatonic"
+    ),
+    HelpSection(
+        "arpeggio", "Arpeggio Overlays",
+        "arpeggio diatonic chords 1 3 5 7 highlight summary card clear"
+    ),
+    HelpSection(
+        "fullscreen", "Fullscreen Mode",
+        "fullscreen zoom fretboard go back"
+    ),
+    HelpSection(
+        "chords_screen", "Chords",
+        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape add progression"
+    ),
+    HelpSection(
+        "custom_chord", "Custom Chord Builder",
+        "custom chord intervals semitones b2 b3 b5 b6 b7 name voicing generate builder rootless reorder order arrows"
+    ),
+    HelpSection(
+        "progression_screen", "Progression",
+        "progression circle of fifths chord type note add list reorder arrows delete beats tempo bpm playback loop pause stop scales view arpeggios real time templates save saved rename landscape portrait"
+    ),
+    HelpSection(
+        "metronome_screen", "Metronome",
+        "metronome bpm tempo tap tap-tempo beats per bar time signature beat dots click mute start stop"
+    ),
+    HelpSection(
+        "exercises_screen", "Exercises",
+        "exercises beginner intermediate advanced triad arpeggio approach notes voice leading caged chord tone scale runs difficulty filter expand collapse steps tip"
+    )
 )
 
 @Composable
@@ -88,7 +110,12 @@ fun HelpScreen() {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     LazyColumn(
         Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = topInset + 8.dp, bottom = 24.dp),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = topInset + 8.dp,
+            bottom = 24.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item(key = "search") {
@@ -134,162 +161,211 @@ private fun SectionBlock(id: String) {
     when (id) {
         "intro" -> BodyText(
             "A tool to help guitarists learn scales, chord voicings, and progressions. " +
-            "Visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, " +
-            "build chord progressions with audio playback, keep time with the built-in metronome, " +
-            "and work through structured soloing exercises."
+                    "Visualise any scale on a 19-fret fretboard, explore diatonic chord shapes, " +
+                    "build chord progressions with audio playback, keep time with the built-in metronome, " +
+                    "and work through structured soloing exercises."
         )
+
         "scales" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Scales")
             HelpImg(R.drawable.help_scale_selector, "Root & Scale selector")
-            NumberedList(listOf(
-                "**Choose a root note** — tap any of the 12 chromatic notes in the Root & Scale card.",
-                "**Choose a mode** — tap a mode chip (Major, Minor, Dorian, Harmonic Minor, etc.).",
-                "The fretboard updates immediately, showing every scale note labelled with Roman numeral degrees (I–VII). Root notes appear in a distinct colour.",
-                "**Collapse the selector** — tap the arrow in the top bar to hide the Root & Scale panel and focus on the fretboard. Tap again to restore it."
-            ))
+            NumberedList(
+                listOf(
+                    "**Choose a root note** — tap any of the 12 chromatic notes in the Root & Scale card.",
+                    "**Choose a mode** — tap a mode chip (Major, Minor, Dorian, Harmonic Minor, etc.).",
+                    "The fretboard updates immediately, showing every scale note labelled with Roman numeral degrees (I–VII). Root notes appear in a distinct colour.",
+                    "**Collapse the selector** — tap the arrow in the top bar to hide the Root & Scale panel and focus on the fretboard. Tap again to restore it."
+                )
+            )
             DegreeLegend()
         }
+
         "fretboard_options" -> Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             SectionHeader("Fretboard Options")
-            OptionRow(Icons.Default.SwapHoriz,
-                "Toggle **left-handed mode** — mirrors the fretboard so the nut is on the right")
-            OptionRow(Icons.Default.TextFields,
-                "Toggle **label mode** — switches note labels between Roman numerals (I, b3…) and note names (C, C#…)")
+            OptionRow(
+                Icons.Default.SwapHoriz,
+                "Toggle **left-handed mode** — mirrors the fretboard so the nut is on the right"
+            )
+            OptionRow(
+                Icons.Default.TextFields,
+                "Toggle **label mode** — switches note labels between Roman numerals (I, b3…) and note names (C, C#…)"
+            )
         }
+
         "chord_voicings" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Chord Voicings")
-            BulletList(listOf(
-                "**Tap any highlighted note** on the fretboard to open a chord type picker at the bottom of the screen."
-            ))
+            BulletList(
+                listOf(
+                    "**Tap any highlighted note** on the fretboard to open a chord type picker at the bottom of the screen."
+                )
+            )
             HelpImg(R.drawable.help_voicing_picker, "Chord type picker")
-            BulletList(listOf(
-                "Select a chord type to overlay its tones on the fretboard (colour-coded R / 3 / 5 / 7).",
-                "Diatonic chord types for the tapped note are marked with a dot (●)."
-            ))
+            BulletList(
+                listOf(
+                    "Select a chord type to overlay its tones on the fretboard (colour-coded R / 3 / 5 / 7).",
+                    "Diatonic chord types for the tapped note are marked with a dot (●)."
+                )
+            )
             HelpImg(R.drawable.help_chord_overlay, "Chord tone overlay (R / 3 / 5 / 7)")
-            BulletList(listOf(
-                "Tap **▶** (Play) to hear the chord via synthesised audio.",
-                "Press **Clear**, or tap outside the picker, to reset the overlay."
-            ))
+            BulletList(
+                listOf(
+                    "Tap **▶** (Play) to hear the chord via synthesised audio.",
+                    "Press **Clear**, or tap outside the picker, to reset the overlay."
+                )
+            )
         }
+
         "arpeggio" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Arpeggio Overlays")
-            BulletList(listOf(
-                "In the **Diatonic Chords** card, tap any chord chip (e.g. \"II: D Min\") to highlight the full 1-3-5-7 arpeggio of that chord across the entire fretboard.",
-                "A summary card shows the chord name, quality, and constituent notes.",
-                "Tap the chip again or press **Clear** to remove the overlay."
-            ))
+            BulletList(
+                listOf(
+                    "In the **Diatonic Chords** card, tap any chord chip (e.g. \"II: D Min\") to highlight the full 1-3-5-7 arpeggio of that chord across the entire fretboard.",
+                    "A summary card shows the chord name, quality, and constituent notes.",
+                    "Tap the chip again or press **Clear** to remove the overlay."
+                )
+            )
         }
+
         "fullscreen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Fullscreen Mode")
-            BulletList(listOf(
-                "Tap anywhere on the fretboard that is **not** a highlighted note to enter fullscreen zoom.",
-                "Tap **Go Back** to return to the normal view."
-            ))
+            BulletList(
+                listOf(
+                    "Tap anywhere on the fretboard that is **not** a highlighted note to enter fullscreen zoom.",
+                    "Tap **Go Back** to return to the normal view."
+                )
+            )
         }
+
         "chords_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Chords")
             HelpImg(R.drawable.help_chords, "Chords screen — voicing diagrams")
             BodyText("In portrait the circle of fifths sits at the top and the chord list fills the lower half. In landscape they sit side by side.")
-            NumberedList(listOf(
-                "**Tap a note** on the circle of fifths to set the root.",
-                "The chord list shows all 16 chord types — scroll vertically to browse them.",
-                "Each chord type section contains a horizontally scrollable row of voicing diagrams.",
-                "**Tap any diagram** to hear it played back.",
-                "**Tap + next to any chord type** to add it directly to the Progression."
-            ))
+            NumberedList(
+                listOf(
+                    "**Tap a note** on the circle of fifths to set the root.",
+                    "The chord list shows all 16 chord types — scroll vertically to browse them.",
+                    "Each chord type section contains a horizontally scrollable row of voicing diagrams.",
+                    "**Tap any diagram** to hear it played back.",
+                    "**Tap + next to any chord type** to add it directly to the Progression."
+                )
+            )
         }
+
         "custom_chord" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Custom Chord Builder")
-            HelpImg(R.drawable.help_custom_chord, "Custom chord builder — interval grid, reorder row, and generated voicings")
+            HelpImg(
+                R.drawable.help_custom_chord,
+                "Custom chord builder — interval grid, reorder row, and generated voicings"
+            )
             BodyText("Scroll to the bottom of the Chords list to find the Custom section. Build any chord from scratch using the 12-semitone interval grid.")
-            NumberedList(listOf(
-                "Give the chord a **Name** in the text field.",
-                "**Tap interval buttons** to add tones — toggle any of the 12 semitones (R, b2 through 7). Deselecting **R** generates rootless voicings (e.g. 3-5-b7 jazz shells).",
-                "**Reorder selected tones** — each picked interval appears in a row beneath the grid with **◀ ▶** arrows; swap any tone with its neighbour to set its position.",
-                "Voicing diagrams are **generated automatically** once two or more intervals are selected.",
-                "**Tap any diagram** to hear it played through the synthesiser.",
-                "Tap **+** to add the custom chord to the Progression."
-            ))
+            NumberedList(
+                listOf(
+                    "Give the chord a **Name** in the text field.",
+                    "**Tap interval buttons** to add tones — toggle any of the 12 semitones (R, b2 through 7). Deselecting **R** generates rootless voicings (e.g. 3-5-b7 jazz shells).",
+                    "**Reorder selected tones** — each picked interval appears in a row beneath the grid with **◀ ▶** arrows; swap any tone with its neighbour to set its position.",
+                    "Voicing diagrams are **generated automatically** once two or more intervals are selected.",
+                    "**Tap any diagram** to hear it played through the synthesiser.",
+                    "Tap **+** to add the custom chord to the Progression."
+                )
+            )
         }
+
         "progression_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Progression")
             HelpImg(R.drawable.help_progression, "Progression builder")
             BodyText(
                 "The chord selector shows the circle of fifths on the left, " +
-                "chord type chips in the middle, and example voicings on the right. " +
-                "In portrait the selector and progression list are stacked; " +
-                "in landscape they sit side by side."
+                        "chord type chips in the middle, and example voicings on the right. " +
+                        "In portrait the selector and progression list are stacked; " +
+                        "in landscape they sit side by side."
             )
             SubHeader("Building a Progression")
-            NumberedList(listOf(
-                "**Tap a note** on the circle of fifths to set the root.",
-                "**Select a chord type** from the chip list.",
-                "Press **Add** to append the chord to the progression list.",
-                "Use **− / +** to adjust how many beats each chord lasts (1–8).",
-                "Use the **← →** arrows to reorder chords and **✕** to delete one."
-            ))
+            NumberedList(
+                listOf(
+                    "**Tap a note** on the circle of fifths to set the root.",
+                    "**Select a chord type** from the chip list.",
+                    "Press **Add** to append the chord to the progression list.",
+                    "Use **− / +** to adjust how many beats each chord lasts (1–8).",
+                    "Use the **← →** arrows to reorder chords and **✕** to delete one."
+                )
+            )
             SubHeader("Templates")
-            BulletList(listOf(
-                "Tap **Templates** to open a sheet of preset progressions. Templates resolve against the key currently set in the Scales screen.",
-                "Select a template to preview the chord sequence, then press **Load** (replaces current) or **Append** (adds to the end).",
-                "Templates named after exercises — e.g. \"Approach Notes (I–IV–V)\" — are designed to be used alongside those exercises."
-            ))
+            BulletList(
+                listOf(
+                    "Tap **Templates** to open a sheet of preset progressions. Templates resolve against the key currently set in the Scales screen.",
+                    "Select a template to preview the chord sequence, then press **Load** (replaces current) or **Append** (adds to the end).",
+                    "Templates named after exercises — e.g. \"Approach Notes (I–IV–V)\" — are designed to be used alongside those exercises."
+                )
+            )
             SubHeader("Saved Progressions")
-            BulletList(listOf(
-                "Tap **Save** to name and save the current progression.",
-                "Tap **Saved** to expand the saved list. Tap an entry to load it; long-press to rename; tap **✕** to delete."
-            ))
+            BulletList(
+                listOf(
+                    "Tap **Save** to name and save the current progression.",
+                    "Tap **Saved** to expand the saved list. Tap an entry to load it; long-press to rename; tap **✕** to delete."
+                )
+            )
             SubHeader("Playback")
-            NumberedList(listOf(
-                "The current BPM is set on the **Metronome** screen and shown above the progression list.",
-                "Press **▶** to start looping. The metronome starts automatically at the same tempo. The active chord is highlighted.",
-                "Press **⏸** to stop — the metronome stops at the same time.",
-                "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time.",
-                "The fretboard also previews the **next** chord one beat early so you can see what is coming."
-            ))
+            NumberedList(
+                listOf(
+                    "The current BPM is set on the **Metronome** screen and shown above the progression list.",
+                    "Press **▶** to start looping. The metronome starts automatically at the same tempo. The active chord is highlighted.",
+                    "Press **⏸** to stop — the metronome stops at the same time.",
+                    "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time.",
+                    "The fretboard also previews the **next** chord one beat early so you can see what is coming."
+                )
+            )
         }
+
         "metronome_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Metronome")
             HelpImg(R.drawable.help_metronome, "Metronome screen")
             BodyText(
                 "A standalone click track that also drives Progression playback tempo. " +
-                "Any BPM change here is immediately reflected when the Progression loops."
+                        "Any BPM change here is immediately reflected when the Progression loops."
             )
             SubHeader("Setting the Tempo")
-            BulletList(listOf(
-                "**Drag the slider** to set BPM (20–300). The Italian tempo name (Largo, Andante, Allegro…) updates automatically.",
-                "Use **−5 / −1 / +1 / +5** for precise nudges.",
-                "Tap **Tap Tempo** in rhythm to derive the BPM from your playing. Three or more taps average out to a stable tempo."
-            ))
+            BulletList(
+                listOf(
+                    "**Drag the slider** to set BPM (20–300). The Italian tempo name (Largo, Andante, Allegro…) updates automatically.",
+                    "Use **−5 / −1 / +1 / +5** for precise nudges.",
+                    "Tap **Tap Tempo** in rhythm to derive the BPM from your playing. Three or more taps average out to a stable tempo."
+                )
+            )
             SubHeader("Beat Display")
-            BulletList(listOf(
-                "Animated dots show each beat. The **downbeat (beat 1)** pulses in a distinct colour.",
-                "Choose 2–8 **beats per bar** with the filter chips below the dots.",
-                "Toggle **Muted** to keep the visual pulse without audible clicks — useful when playing quietly."
-            ))
+            BulletList(
+                listOf(
+                    "Animated dots show each beat. The **downbeat (beat 1)** pulses in a distinct colour.",
+                    "Choose 2–8 **beats per bar** with the filter chips below the dots.",
+                    "Toggle **Muted** to keep the visual pulse without audible clicks — useful when playing quietly."
+                )
+            )
         }
+
         "exercises_screen" -> Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
             SectionHeader("Exercises")
             HelpImg(R.drawable.help_exercises, "Exercises screen")
             BodyText(
                 "Seven structured exercises for developing chord-tone soloing and improvisation. " +
-                "Each card shows a difficulty badge and a one-line summary. " +
-                "Tap any card to expand the step-by-step instructions and a tip."
+                        "Each card shows a difficulty badge and a one-line summary. " +
+                        "Tap any card to expand the step-by-step instructions and a tip."
             )
             SubHeader("Difficulty Levels")
-            BulletList(listOf(
-                "**Beginner** — Triad Arpeggios Across the Neck; Three-String Triad Shapes.",
-                "**Intermediate** — Approach Notes to Chord Tones; Scale Runs Landing on Chord Tones; Triad Pairs.",
-                "**Advanced** — Voice Leading Through Chord Changes; CAGED Position Soloing."
-            ))
+            BulletList(
+                listOf(
+                    "**Beginner** — Triad Arpeggios Across the Neck; Three-String Triad Shapes.",
+                    "**Intermediate** — Approach Notes to Chord Tones; Scale Runs Landing on Chord Tones; Triad Pairs.",
+                    "**Advanced** — Voice Leading Through Chord Changes; CAGED Position Soloing."
+                )
+            )
             SubHeader("Using the App Alongside Exercises")
-            BulletList(listOf(
-                "Several exercises ask you to build a progression in the **Progression** screen — use the matching template (e.g. \"Approach Notes (I–IV–V)\") to load it instantly.",
-                "Use the **Scales** screen to see the active chord highlighted on the fretboard while the progression loops.",
-                "Set a comfortable practice tempo on the **Metronome** screen before starting an exercise.",
-                "Filter exercises by difficulty using the chips at the top of the screen."
-            ))
+            BulletList(
+                listOf(
+                    "Several exercises ask you to build a progression in the **Progression** screen — use the matching template (e.g. \"Approach Notes (I–IV–V)\") to load it instantly.",
+                    "Use the **Scales** screen to see the active chord highlighted on the fretboard while the progression loops.",
+                    "Set a comfortable practice tempo on the **Metronome** screen before starting an exercise.",
+                    "Filter exercises by difficulty using the chips at the top of the screen."
+                )
+            )
         }
     }
 }
@@ -366,7 +442,11 @@ private fun BulletList(items: List<String>) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items.forEach { text ->
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("•", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.width(16.dp))
+                Text(
+                    "•",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.width(16.dp)
+                )
                 Text(
                     bold(text),
                     style = MaterialTheme.typography.bodyLarge,
@@ -392,8 +472,10 @@ private fun OptionRow(icon: ImageVector, description: String) {
             modifier = Modifier.size(44.dp)
         ) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer)
+                Icon(
+                    icon, contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSecondaryContainer
+                )
             }
         }
         Text(
@@ -408,13 +490,13 @@ private fun OptionRow(icon: ImageVector, description: String) {
 private fun DegreeLegend() {
     val cs = MaterialTheme.colorScheme
     val degrees = listOf(
-        "I"   to (cs.tertiary           to cs.onTertiary),
-        "II"  to (cs.primary            to cs.onPrimary),
-        "III" to (cs.secondary          to cs.onSecondary),
-        "IV"  to (cs.tertiaryContainer  to cs.onTertiaryContainer),
-        "V"   to (cs.primaryContainer   to cs.onPrimaryContainer),
-        "VI"  to (cs.secondaryContainer to cs.onSecondaryContainer),
-        "VII" to (cs.error              to cs.onError),
+        "I" to (cs.tertiary to cs.onTertiary),
+        "II" to (cs.primary to cs.onPrimary),
+        "III" to (cs.secondary to cs.onSecondary),
+        "IV" to (cs.tertiaryContainer to cs.onTertiaryContainer),
+        "V" to (cs.primaryContainer to cs.onPrimaryContainer),
+        "VI" to (cs.secondaryContainer to cs.onSecondaryContainer),
+        "VII" to (cs.error to cs.onError),
     )
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
@@ -443,10 +525,14 @@ private fun bold(text: String): AnnotatedString = buildAnnotatedString {
     var i = 0
     while (i < text.length) {
         val start = text.indexOf("**", i)
-        if (start == -1) { append(text.substring(i)); break }
+        if (start == -1) {
+            append(text.substring(i)); break
+        }
         append(text.substring(i, start))
         val end = text.indexOf("**", start + 2)
-        if (end == -1) { append(text.substring(start)); break }
+        if (end == -1) {
+            append(text.substring(start)); break
+        }
         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
             append(text.substring(start + 2, end))
         }

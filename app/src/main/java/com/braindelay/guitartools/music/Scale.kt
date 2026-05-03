@@ -29,7 +29,7 @@ data class Scale(val root: Note, val mode: Mode) {
             Mode.MINOR -> 5
             Mode.LOCRIAN -> 6
             Mode.HARMONIC_MINOR -> return listOf("Min", "Dim", "Aug", "Min", "Maj", "Maj", "Dim")
-            Mode.MELODIC_MINOR  -> return listOf("Min", "Min", "Aug", "Maj", "Maj", "Dim", "Dim")
+            Mode.MELODIC_MINOR -> return listOf("Min", "Min", "Aug", "Maj", "Maj", "Dim", "Dim")
         }
         return List(7) { i -> majorPattern[(i + offset) % 7] }
     }

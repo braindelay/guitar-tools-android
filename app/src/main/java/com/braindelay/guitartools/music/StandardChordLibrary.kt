@@ -197,14 +197,14 @@ object StandardChordLibrary {
             for (octave in 0..2) {
                 val rootFret = baseRootFret + octave * 12
                 val frets = shape.offsets.map { offset -> offset?.let { rootFret + it } }
-                
+
                 val maxFret = frets.filterNotNull().maxOrNull() ?: -1
                 val minFret = frets.filterNotNull().minOrNull() ?: 0
-                
+
                 if (minFret >= 0 && maxFret <= 19) {
                     val hasOpenStrings = frets.filterNotNull().any { it == 0 }
                     val baseFret = if (hasOpenStrings) 1
-                                   else frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
+                    else frets.filterNotNull().filter { it > 0 }.minOrNull() ?: 0
                     voicings.add(ChordVoicing(frets, baseFret))
                     break
                 }

@@ -94,7 +94,9 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
         viewModelScope.launch { repo.rename(oldName, newName) }
     }
 
-    fun toggleMute() { isMuted = !isMuted }
+    fun toggleMute() {
+        isMuted = !isMuted
+    }
 
     fun playProgression(getBpm: () -> Int) {
         if (progression.isEmpty()) return
@@ -110,8 +112,13 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
                     nextChordIndex = null
                     val chord = progression[i]
                     val voicing = when (val ct = chord.chordType) {
-                        is ChordType -> StandardChordLibrary.getVoicings(chord.note, ct).firstOrNull()
-                        else -> StandardChordLibrary.getVoicingsForCustomType(chord.note, ct.toneOffsets).firstOrNull()
+                        is ChordType -> StandardChordLibrary.getVoicings(chord.note, ct)
+                            .firstOrNull()
+
+                        else -> StandardChordLibrary.getVoicingsForCustomType(
+                            chord.note,
+                            ct.toneOffsets
+                        ).firstOrNull()
                     }
                     val beatMs = 60_000L / getBpm()
                     val beats = chord.beats

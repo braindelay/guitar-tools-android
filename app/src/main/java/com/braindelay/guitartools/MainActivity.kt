@@ -16,14 +16,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material.icons.filled.HistoryEdu
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.Piano
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -41,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,10 +72,14 @@ class MainActivity : ComponentActivity() {
                     delay(2000)
                     isLoading = false
                 }
-                Surface(modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background) {
-                    Crossfade(targetState = isLoading,
-                        animationSpec = tween(500), label = "loading_fade") { loading ->
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    Crossfade(
+                        targetState = isLoading,
+                        animationSpec = tween(500), label = "loading_fade"
+                    ) { loading ->
                         if (loading) LoadingScreen() else MainContent()
                     }
                 }
@@ -139,49 +143,59 @@ fun MainContent() {
                 }
         ) {
             when (appMode) {
-                AppMode.SCALES      -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
-                AppMode.CHORDS      -> ChordScreen(progressionVm = progressionVm)
+                AppMode.SCALES -> ScaleScreen(isProgressionPlaying = progressionVm.playingIndex != null)
+                AppMode.CHORDS -> ChordScreen(progressionVm = progressionVm)
                 AppMode.PROGRESSION -> ProgressionScreen(metronomeVm = metronomeVm)
-                AppMode.METRONOME   -> MetronomeScreen(vm = metronomeVm)
-                AppMode.EXERCISES   -> ExercisesScreen()
-                AppMode.HELP        -> HelpScreen()
+                AppMode.METRONOME -> MetronomeScreen(vm = metronomeVm)
+                AppMode.EXERCISES -> ExercisesScreen()
+                AppMode.HELP -> HelpScreen()
             }
         }
         AnimatedVisibility(
             visible = navBarVisible,
             enter = slideInVertically { it },
-            exit  = slideOutVertically { it }
+            exit = slideOutVertically { it }
         ) {
             NavigationBar {
                 NavigationBarItem(
                     selected = appMode == AppMode.SCALES,
-                    onClick  = { appMode = AppMode.SCALES },
-                    icon     = { Icon(Icons.Default.MusicNote, contentDescription = "Scales") }
+                    onClick = { appMode = AppMode.SCALES },
+                    icon = { Icon(Icons.Default.MusicNote, contentDescription = "Scales") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.CHORDS,
-                    onClick  = { appMode = AppMode.CHORDS },
-                    icon     = { Icon(Icons.Default.Piano, contentDescription = "Chords") }
+                    onClick = { appMode = AppMode.CHORDS },
+                    icon = { Icon(Icons.Default.Piano, contentDescription = "Chords") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.PROGRESSION,
-                    onClick  = { appMode = AppMode.PROGRESSION },
-                    icon     = { Icon(Icons.AutoMirrored.Filled.QueueMusic, contentDescription = "Progression") }
+                    onClick = { appMode = AppMode.PROGRESSION },
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.QueueMusic,
+                            contentDescription = "Progression"
+                        )
+                    }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.METRONOME,
-                    onClick  = { appMode = AppMode.METRONOME },
-                    icon     = { Icon(Icons.Default.Timer, contentDescription = "Metronome") }
+                    onClick = { appMode = AppMode.METRONOME },
+                    icon = { Icon(Icons.Default.Timer, contentDescription = "Metronome") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.EXERCISES,
-                    onClick  = { appMode = AppMode.EXERCISES },
-                    icon     = { Icon(Icons.Default.HistoryEdu, contentDescription = "Exercises") }
+                    onClick = { appMode = AppMode.EXERCISES },
+                    icon = { Icon(Icons.Default.HistoryEdu, contentDescription = "Exercises") }
                 )
                 NavigationBarItem(
                     selected = appMode == AppMode.HELP,
-                    onClick  = { appMode = AppMode.HELP },
-                    icon     = { Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "Help") }
+                    onClick = { appMode = AppMode.HELP },
+                    icon = {
+                        Icon(
+                            Icons.AutoMirrored.Filled.HelpOutline,
+                            contentDescription = "Help"
+                        )
+                    }
                 )
             }
         }
@@ -202,7 +216,10 @@ fun LoadingScreen() {
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Black.copy(alpha = 0.3f), Color.Black.copy(alpha = 0.7f))
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.3f),
+                            Color.Black.copy(alpha = 0.7f)
+                        )
                     )
                 ),
             contentAlignment = Alignment.BottomCenter

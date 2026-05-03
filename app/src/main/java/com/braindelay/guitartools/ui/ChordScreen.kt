@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -47,7 +46,8 @@ import com.braindelay.guitartools.music.OpenChordLibrary
 import com.braindelay.guitartools.music.ProgressionViewModel
 import com.braindelay.guitartools.music.StandardChordLibrary
 
-private val INTERVAL_LABELS = listOf("R", "b2", "2", "b3", "3", "4", "b5", "5", "b6", "6", "b7", "7")
+private val INTERVAL_LABELS =
+    listOf("R", "b2", "2", "b3", "3", "4", "b5", "5", "b6", "6", "b7", "7")
 
 @Composable
 fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
@@ -103,7 +103,8 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                 ) {
                     items(ChordType.entries) { type ->
                         val openVoicing = openChordsMap[type]
-                        val voicings = (allVoicings[type] ?: emptyList()).filter { it != openVoicing }
+                        val voicings =
+                            (allVoicings[type] ?: emptyList()).filter { it != openVoicing }
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -115,7 +116,14 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                                     modifier = Modifier.weight(1f)
                                 )
                                 IconButton(
-                                    onClick = { selectedNote?.let { n -> progressionVm.addChord(n, type) } },
+                                    onClick = {
+                                        selectedNote?.let { n ->
+                                            progressionVm.addChord(
+                                                n,
+                                                type
+                                            )
+                                        }
+                                    },
                                     modifier = Modifier.size(24.dp)
                                 ) {
                                     Icon(
@@ -141,18 +149,18 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                                 ) {
                                     if (openVoicing != null) {
                                         ChordDiagramView(
-                                            voicing   = openVoicing,
-                                            root      = note,
+                                            voicing = openVoicing,
+                                            root = note,
                                             chordType = type,
-                                            onPlay    = { GuitarAudioEngine.playVoicing(openVoicing) }
+                                            onPlay = { GuitarAudioEngine.playVoicing(openVoicing) }
                                         )
                                     }
                                     voicings.forEach { v ->
                                         ChordDiagramView(
-                                            voicing   = v,
-                                            root      = note,
+                                            voicing = v,
+                                            root = note,
                                             chordType = type,
-                                            onPlay    = { GuitarAudioEngine.playVoicing(v) }
+                                            onPlay = { GuitarAudioEngine.playVoicing(v) }
                                         )
                                     }
                                 }
@@ -187,7 +195,12 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                             OutlinedTextField(
                                 value = customName,
                                 onValueChange = { customName = it },
-                                label = { Text("Name", style = MaterialTheme.typography.labelSmall) },
+                                label = {
+                                    Text(
+                                        "Name",
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                },
                                 singleLine = true,
                                 textStyle = MaterialTheme.typography.bodySmall,
                                 modifier = Modifier.fillMaxWidth()
@@ -233,11 +246,12 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                                         ) {
                                             IconButton(
                                                 onClick = {
-                                                    selectedOffsets = selectedOffsets.toMutableList().apply {
-                                                        val tmp = this[index]
-                                                        this[index] = this[index - 1]
-                                                        this[index - 1] = tmp
-                                                    }
+                                                    selectedOffsets =
+                                                        selectedOffsets.toMutableList().apply {
+                                                            val tmp = this[index]
+                                                            this[index] = this[index - 1]
+                                                            this[index - 1] = tmp
+                                                        }
                                                 },
                                                 enabled = index > 0,
                                                 modifier = Modifier.size(24.dp)
@@ -254,11 +268,12 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                                             )
                                             IconButton(
                                                 onClick = {
-                                                    selectedOffsets = selectedOffsets.toMutableList().apply {
-                                                        val tmp = this[index]
-                                                        this[index] = this[index + 1]
-                                                        this[index + 1] = tmp
-                                                    }
+                                                    selectedOffsets =
+                                                        selectedOffsets.toMutableList().apply {
+                                                            val tmp = this[index]
+                                                            this[index] = this[index + 1]
+                                                            this[index + 1] = tmp
+                                                        }
                                                 },
                                                 enabled = index < selectedOffsets.size - 1,
                                                 modifier = Modifier.size(24.dp)
@@ -282,10 +297,10 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                                 ) {
                                     customVoicings.forEach { v ->
                                         ChordDiagramView(
-                                            voicing   = v,
-                                            root      = note,
+                                            voicing = v,
+                                            root = note,
                                             chordType = customType,
-                                            onPlay    = { GuitarAudioEngine.playVoicing(v) }
+                                            onPlay = { GuitarAudioEngine.playVoicing(v) }
                                         )
                                     }
                                 }
@@ -304,7 +319,9 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
     }
 
     if (isPortrait) {
-        Column(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = topInset + 8.dp)) {
             CircleOfFifthsView(
                 selectedNote = selectedNote,
                 onNoteSelected = { selectedNote = it },
@@ -321,7 +338,9 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
             )
         }
     } else {
-        Row(modifier = Modifier.fillMaxSize().padding(top = topInset + 8.dp)) {
+        Row(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = topInset + 8.dp)) {
             Column(
                 modifier = Modifier
                     .weight(0.38f)
@@ -332,7 +351,9 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
                 CircleOfFifthsView(
                     selectedNote = selectedNote,
                     onNoteSelected = { selectedNote = it },
-                    modifier = Modifier.weight(1f).fillMaxWidth()
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
                 )
             }
             VerticalDivider()
