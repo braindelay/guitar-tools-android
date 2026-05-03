@@ -52,11 +52,13 @@ To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) list
 
 ### Chord voicing bottom sheet
 
-Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — choose chord type" containing all 16 chord types as filter chips:
+Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — choose chord type" containing all 29 chord types as filter chips, in this order:
 
-- Major, Minor, Dom 7, Maj7, Min7
+- 5, Major, add9, Minor, m(add9), m6
+- Dom 7, 7sus4, 7b5, 7b9, 7#9, 7#11
+- Maj7, Maj9, Min7, m9, m11
 - Dim, Dim7, Aug, Sus2, Sus4
-- HalfDim, Min/Maj7, 6, 9, 6/9, 13
+- HalfDim, Min/Maj7, 6, 9, 6/9, 13, Maj13
 
 Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). Tapping the active voicing chip deselects it.
 
@@ -74,13 +76,27 @@ Selecting a diatonic chord chip (arpeggio mode) and selecting a voicing type (ch
 
 In landscape:
 - **Left panel (38%)**: Circle of Fifths. Tap any note to select the root.
-- **Right panel (62%)**: All 16 chord types are shown at once in a scrollable list.
+- **Right panel (62%)**: All 29 chord types are shown at once in a scrollable list, followed by a Custom chord builder.
 
 In portrait, the Circle of Fifths is on top (45% height) and the chord list is below (55% height), stacked vertically.
 
 ### Chord diagrams
 
 Each diagram renders a 4-fret window of the guitar neck showing fingering positions for one voicing. Notes are colour-coded by chord degree (root, third, other). Muted strings are shown with a red X. Voicings are generated from CAGED shapes (E, A, and D positions where applicable) plus an open-position voicing from the open chord library where available; duplicates are removed and results are sorted by fret position from low to high. Tapping a diagram plays the voicing using Karplus-Strong synthesis.
+
+### Add to progression
+
+Each chord-type row has a **+** icon button next to its label. Tapping it appends the current root + chord type to the Progression list immediately, without leaving the Chords screen.
+
+### Custom chord builder
+
+Below the standard chord list, a **Custom** section lets the user define an arbitrary chord:
+
+- A **Name** text field (default "Custom") sets the chord label.
+- A 12-button interval grid (R, b2, 2, b3, 3, 4, b5, 5, b6, 6, b7, 7) toggles which semitone offsets are part of the chord. Selecting/deselecting **R** is allowed (rootless voicings are supported).
+- An ordered preview row beneath the grid shows the selected intervals in their stored order. Each entry has **◀ ▶** arrow buttons that swap it with its neighbour, letting the user define the order of stored tones.
+- Voicings are generated automatically once at least 2 intervals are selected, using the same CAGED-derived diagram engine as the standard chord list. Tapping a diagram plays it.
+- A **+** icon button next to the "Custom" label appends the custom chord (with its current name and intervals) to the Progression list. The button is disabled until at least 2 intervals are selected.
 
 ---
 
@@ -215,3 +231,77 @@ A capo position selector appears in the Scales top bar or Root & Scale card. The
 - All note and scale calculations are unchanged — the capo simply shifts which physical positions are visible and tappable. A fret number in the diagram is rendered relative to the capo position (so the first open-position fret after the capo is labelled as fret 1 in the capo view, or the absolute fret number is shown with the capo label alongside — either convention is acceptable).
 - The capo value persists while the user changes root and mode, and resets when the user sets it back to 0.
 - Chord voicing overlays and arpeggio overlays continue to work; positions below the capo are not shown.
+
+---
+
+### Pentatonic and Blues Scales (Scales screen)
+
+Add three new entries to the Mode list: **Major Pentatonic**, **Minor Pentatonic**, and **Blues**. The mode chips appear in the same FlowRow as the existing modes.
+
+- Major Pentatonic uses intervals 1–2–3–5–6 (semitones 0, 2, 4, 7, 9). Minor Pentatonic uses 1–b3–4–5–b7 (0, 3, 5, 7, 10). Blues adds the b5 to the minor pentatonic: 1–b3–4–b5–5–b7 (0, 3, 5, 6, 7, 10).
+- Roman numerals are shown for the available degrees only (5 or 6 chips instead of 7). Degree colour mapping is reused: I, b3/III, IV, V, b7/VII positions keep their colours; the b5 in the Blues scale uses the error colour.
+- The diatonic chord sidebar is **hidden** for non-7-note scales, since classical diatonic harmony does not apply. The chord voicing bottom sheet still opens on tap, but no voicings are marked diatonic.
+- Templates that resolve against the current key (Progression screen) fall back to the parallel major/minor when the active scale is pentatonic or blues.
+
+---
+
+### Position Lock / CAGED Box (Scales screen)
+
+A **Position** filter in the Scales top bar restricts the visible scale notes to a 5-fret window aligned with one of the five CAGED shapes. Options: **All** (default), **E**, **D**, **C**, **A**, **G**.
+
+- When a shape is selected, only notes inside that shape's 5-fret box are highlighted on the fretboard. Notes outside the box are not drawn (or are drawn faintly with reduced opacity for orientation).
+- The box position is computed from the current root: e.g., for C Major + E shape, the box starts at fret 8.
+- The horizontal scroll of the fretboard auto-scrolls to centre on the selected box on entry.
+- Tapping a note inside the box still opens the chord voicing sheet; chord overlays are clipped to the box.
+- The position lock is independent of the left-handed and label-mode toggles, and persists across root/mode changes.
+
+---
+
+### Tempo Ramping (Metronome / Progression)
+
+A **Ramp** section on the Metronome screen lets the user gradually increase tempo over a practice session.
+
+- Inputs: **Start BPM**, **End BPM**, and **Duration** (either bars or minutes). A toggle chooses the unit. A **Repeat** switch loops the ramp back to Start when End is reached.
+- When ramp mode is active, pressing Start begins at Start BPM and increments linearly toward End BPM over the chosen duration. The current BPM display animates as it changes.
+- Progression playback honours the ramp: each chord still plays its full beat count, but the tempo at which beats elapse follows the ramp.
+- A small ramp-progress bar appears below the BPM display showing position within the ramp. The ramp resets when Stop is pressed.
+- When ramp mode is off, the screen behaves exactly as today.
+
+---
+
+### Practice Loop (Progression screen)
+
+A range-loop control lets the user repeat a sub-section of the progression for focused practice.
+
+- Long-pressing a chord in the progression list marks it as **Loop Start**; long-pressing a second chord marks **Loop End**. The two chords and everything between them are highlighted with a tinted background.
+- A **Loop** toggle button in the playback toolbar restricts playback to the marked range. With loop off, playback covers the whole progression as today.
+- Pressing the toolbar's **✕ Loop** clears the markers.
+- The Scales screen overlay still tracks the active chord during loop playback, including the next-chord preview at the loop boundary (which previews the loop's start chord, not the chord that comes after the end).
+- Loop markers are saved with named progressions; loading a saved progression restores them.
+
+---
+
+### Alternate Tunings (global)
+
+A **Tuning** selector lets the user switch from standard EADGBE to other tunings. Affects every screen that renders the fretboard or plays audio.
+
+- Presets: **Standard (E A D G B E)**, **Drop D (D A D G B E)**, **DADGAD**, **Open G (D G D G B D)**, **Open D (D A D F# A D)**, **Half-step Down (Eb Ab Db Gb Bb Eb)**, **Full-step Down (D G C F A D)**, plus a **Custom** option that opens a 6-string picker.
+- The selected tuning is stored in DataStore and persists across launches.
+- Scale highlighting, chord voicing diagrams, and Karplus-Strong audio playback all use the active tuning. The open-position chord library only applies in Standard tuning; for any other tuning, only procedurally generated voicings are shown, and an info chip notes that open shapes are tuning-specific.
+- Tuning changes do not affect the metronome or progression chord sequence (only how each chord voices).
+- Selector lives in the bottom-nav-adjacent settings or as a Scales top-bar icon; design TBD.
+
+---
+
+### Ear Training (new tab)
+
+A new bottom-nav entry for ear-training drills, complementing the visual scale/chord work.
+
+- Three drill modes:
+  - **Interval ID** — plays two notes, then prompts the user to pick the interval (12 buttons: m2 through P8). Notes are picked at random within a configurable range.
+  - **Scale Degree ID** — plays the current Scales-screen root, then a second note from within the active scale. The user picks the degree (I–VII chips, matching scale-degree colours).
+  - **Chord Quality** — plays a single chord voicing, the user picks the quality (Major / Minor / Dim / Aug / Maj7 / Min7 / Dom7 / HalfDim).
+- Each mode tracks current streak and session score; a Reset clears the score.
+- Difficulty is set per drill: number of choices, interval pool, ascending/descending/harmonic playback for Interval ID.
+- Audio reuses GuitarAudioEngine. No microphone or recording is involved; this is a listen-and-pick drill only.
+- Settings persist across sessions; score does not.
