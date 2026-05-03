@@ -65,9 +65,10 @@ In portrait, the circle of fifths sits at the top and the chord list fills the l
 Scroll to the bottom of the chord list to find the **Custom** section.
 
 1. Give the chord a **Name** in the text field.
-2. **Toggle interval buttons** to build the chord — Root (R) is always on; tap any of the 11 remaining semitones (b2 through 7) to add or remove them.
-3. Voicing diagrams generate automatically once two or more intervals are selected. **Tap any diagram** to hear it.
-4. Tap **+** to add the custom chord to the Progression.
+2. **Toggle interval buttons** to build the chord — tap any of the 12 semitones (R, b2, 2 … 7) to add or remove them. Deselecting **R** generates rootless voicings (useful for jazz shells like 3-5-b7).
+3. **Reorder the selected tones** — every picked interval appears in a row beneath the grid with **◀ ▶** arrows; use them to swap a tone with its neighbour and define the order it is stored in.
+4. Voicing diagrams generate automatically once two or more intervals are selected. **Tap any diagram** to hear it.
+5. Tap **+** to add the custom chord to the Progression.
 
 ---
 

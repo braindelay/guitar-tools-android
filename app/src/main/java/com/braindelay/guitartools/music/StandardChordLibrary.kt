@@ -120,6 +120,7 @@ object StandardChordLibrary {
     fun getVoicingsForCustomType(root: Note, toneOffsets: List<Int>): List<ChordVoicing> {
         if (toneOffsets.size < 2) return emptyList()
         val requiredSemitones = toneOffsets.map { (root.semitone + it).mod(12) }.toSet()
+        val rootIncluded = 0 in toneOffsets
         val voicings = mutableListOf<ChordVoicing>()
 
         for (rootString in 0..2) {
@@ -129,9 +130,28 @@ object StandardChordLibrary {
                 if (rootFret > 15) continue
 
                 val frets = MutableList<Int?>(6) { null }
-                frets[rootString] = rootFret
-                var currentMin = rootFret
-                var currentMax = rootFret
+                val startFret: Int = if (rootIncluded) {
+                    rootFret
+                } else {
+                    val openSemi = OPEN[rootString]
+                    var best: Int? = null
+                    var bestDist = Int.MAX_VALUE
+                    for (semi in requiredSemitones) {
+                        for (oct in 0..1) {
+                            val fret = (semi - openSemi + 12).mod(12) + oct * 12
+                            if (fret < 0 || fret > 19) continue
+                            val dist = kotlin.math.abs(fret - rootFret)
+                            if (dist < bestDist) {
+                                bestDist = dist
+                                best = fret
+                            }
+                        }
+                    }
+                    best ?: continue
+                }
+                frets[rootString] = startFret
+                var currentMin = startFret
+                var currentMax = startFret
 
                 for (s in (rootString + 1)..5) {
                     val openSemi = OPEN[s]
