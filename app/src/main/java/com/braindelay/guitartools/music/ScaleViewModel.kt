@@ -48,9 +48,22 @@ class ScaleViewModel : ViewModel() {
         val degree = s.notes.indexOf(rootNote).takeIf { it >= 0 } ?: return false
         val type = s.getDiatonicTriadTypes()[degree]
         return when (type) {
-            "Maj" -> triad == ChordType.MAJOR || triad == ChordType.MAJ7 || triad == ChordType.DOM7
-            "Min" -> triad == ChordType.MINOR || triad == ChordType.MIN7 || triad == ChordType.MIN_MAJ7
-            "Dim" -> triad == ChordType.DIM || triad == ChordType.MIN7B5 || triad == ChordType.DIM7
+            "Maj" -> triad in setOf(
+                ChordType.MAJOR, ChordType.MAJ7, ChordType.DOM7,
+                ChordType.ADD9, ChordType.MAJ9, ChordType.MAJ13,
+                ChordType.NINE, ChordType.THIRTEEN,
+                ChordType.SIX, ChordType.SIX_NINE,
+                ChordType.SEVEN_SUS4, ChordType.SEVEN_B5,
+                ChordType.SEVEN_B9, ChordType.SEVEN_SHARP9, ChordType.SEVEN_SHARP11
+            )
+            "Min" -> triad in setOf(
+                ChordType.MINOR, ChordType.MIN7, ChordType.MIN_MAJ7,
+                ChordType.M_ADD9, ChordType.MIN6,
+                ChordType.MIN9, ChordType.MIN11
+            )
+            "Dim" -> triad in setOf(
+                ChordType.DIM, ChordType.MIN7B5, ChordType.DIM7
+            )
             else -> false
         }
     }

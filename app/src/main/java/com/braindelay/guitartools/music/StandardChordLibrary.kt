@@ -15,16 +15,42 @@ object StandardChordLibrary {
 
     private val shapes: Map<ChordType, List<Shape>> = mapOf(
 
+        // Power chords: E5 = 022xxx, A5 = x022xx, D5 = xx023x
+        ChordType.POWER to listOf(
+            Shape(0, listOf(0, 2, 2, null, null, null)),
+            Shape(1, listOf(null, 0, 2, 2, null, null)),
+            Shape(2, listOf(null, null, 0, 2, 3, null))
+        ),
+
         ChordType.MAJOR to listOf(
             Shape(0, listOf(0, 2, 2, 1, 0, 0)),           // E shape
             Shape(1, listOf(null, 0, 2, 2, 2, 0)),         // A shape
             Shape(2, listOf(null, null, 0, 2, 3, 2))        // D shape
         ),
 
+        // Eadd9 = 022102, Cadd9 = x32033
+        ChordType.ADD9 to listOf(
+            Shape(0, listOf(0, 2, 2, 1, 0, 2)),
+            Shape(1, listOf(null, 0, -1, -3, 0, 0))
+        ),
+
         ChordType.MINOR to listOf(
             Shape(0, listOf(0, 2, 2, 0, 0, 0)),            // Em shape
             Shape(1, listOf(null, 0, 2, 2, 1, 0)),          // Am shape
             Shape(2, listOf(null, null, 0, 2, 3, 1))        // Dm shape
+        ),
+
+        // Em(add9) = 022002, Cm(add9) = x31033
+        ChordType.M_ADD9 to listOf(
+            Shape(0, listOf(0, 2, 2, 0, 0, 2)),
+            Shape(1, listOf(null, 0, -2, -3, 0, 0))
+        ),
+
+        // Em6 = 022020, Am6 = x02212, Dm6 = xx0201
+        ChordType.MIN6 to listOf(
+            Shape(0, listOf(0, 2, 2, 0, 2, 0)),
+            Shape(1, listOf(null, 0, 2, 2, 1, 2)),
+            Shape(2, listOf(null, null, 0, 2, 0, 1))
         ),
 
         // E7 = 020100, A7 = x02020, D7 = xx0212
@@ -34,10 +60,44 @@ object StandardChordLibrary {
             Shape(2, listOf(null, null, 0, 2, 1, 2))        // D7 shape
         ),
 
+        // E7sus4 = 020230, A7sus4 = x02030, D7sus4 = xx0213
+        ChordType.SEVEN_SUS4 to listOf(
+            Shape(0, listOf(0, 2, 0, 2, 3, 0)),
+            Shape(1, listOf(null, 0, 2, 0, 3, 0)),
+            Shape(2, listOf(null, null, 0, 2, 1, 3))
+        ),
+
+        // E7b5 = 010130, A7b5 = x01020 (no high e)
+        ChordType.SEVEN_B5 to listOf(
+            Shape(0, listOf(0, 1, 0, 1, 3, null)),
+            Shape(1, listOf(null, 0, 1, 0, 2, null))
+        ),
+
+        // E7b9 = 020101, A7b9 = x02323
+        ChordType.SEVEN_B9 to listOf(
+            Shape(0, listOf(0, 2, 0, 1, 0, 1)),
+            Shape(1, listOf(null, 0, 2, 3, 2, 3))
+        ),
+
+        // Hendrix shape — A-shape from A string root: x-R-(R-1)-R-(R+1)-x
+        ChordType.SEVEN_SHARP9 to listOf(
+            Shape(1, listOf(null, 0, -1, 0, 1, null))
+        ),
+
+        // C7#11 = x3x354 (root on A string)
+        ChordType.SEVEN_SHARP11 to listOf(
+            Shape(1, listOf(null, 0, null, 0, 2, 1))
+        ),
+
         // Emaj7 = 021100, Amaj7 = x02120
         ChordType.MAJ7 to listOf(
             Shape(0, listOf(0, 2, 1, 1, 0, 0)),            // Emaj7 shape
             Shape(1, listOf(null, 0, 2, 1, 2, 0))           // Amaj7 shape
+        ),
+
+        // Cmaj9 = x32430 (root on A string)
+        ChordType.MAJ9 to listOf(
+            Shape(1, listOf(null, 0, -1, 1, 0, -3))
         ),
 
         // Em7 = 022030, Am7 = x02010, Dm7 = xx0211
@@ -45,6 +105,18 @@ object StandardChordLibrary {
             Shape(0, listOf(0, 2, 2, 0, 3, 0)),            // Em7 shape
             Shape(1, listOf(null, 0, 2, 0, 1, 0)),          // Am7 shape
             Shape(2, listOf(null, null, 0, 2, 1, 1))        // Dm7 shape
+        ),
+
+        // Em9 = 022032, Cm9 = x31333
+        ChordType.MIN9 to listOf(
+            Shape(0, listOf(0, 2, 2, 0, 3, 2)),
+            Shape(1, listOf(null, 0, -2, 0, 0, 0))
+        ),
+
+        // Cm11 = x31331 (Cm9 with 11 on top); also full barre Em11 = 000000
+        ChordType.MIN11 to listOf(
+            Shape(0, listOf(0, 0, 0, 0, 0, 0)),
+            Shape(1, listOf(null, 0, -2, 0, 0, -2))
         ),
 
         // Adim = x01210 (mute high e), Ddim = xx0131
@@ -114,6 +186,11 @@ object StandardChordLibrary {
         ChordType.THIRTEEN to listOf(
             Shape(0, listOf(0, null, 0, 1, 2, null)),      // E-shape 13
             Shape(1, listOf(null, 0, -1, 0, 0, 2))         // A-shape 13
+        ),
+
+        // Cmaj13 = x32455 (R, 3, 7, 9, 13)
+        ChordType.MAJ13 to listOf(
+            Shape(1, listOf(null, 0, -1, 1, 2, 2))
         ),
     )
 
