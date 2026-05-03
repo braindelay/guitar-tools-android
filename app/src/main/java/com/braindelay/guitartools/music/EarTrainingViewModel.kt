@@ -58,7 +58,7 @@ class EarTrainingViewModel : ViewModel() {
     val bestStreak: Int get() = _bestStreak
 
     var intervalPool by mutableStateOf(EarTraining.INTERVAL_SEMITONES.toSet()); private set
-    var intervalMode by mutableStateOf(IntervalMode.ASCENDING); private set
+    var intervalModes by mutableStateOf(IntervalMode.entries.toSet()); private set
 
     var scaleDegreeRoot by mutableStateOf(Note.C); private set
 
@@ -76,6 +76,7 @@ class EarTrainingViewModel : ViewModel() {
     private var firstMidi: Int = 60
     private var secondMidi: Int = 60
     private var chordMidis: List<Int> = emptyList()
+    private var lastIntervalMode: IntervalMode = IntervalMode.ASCENDING
     private var playJob: Job? = null
 
     fun selectDrill(d: EarDrill) {
@@ -94,14 +95,12 @@ class EarTrainingViewModel : ViewModel() {
         hasQuestion = false
     }
 
-    fun selectIntervalMode(m: IntervalMode) {
-        intervalMode = m
+    fun toggleIntervalMode(m: IntervalMode) {
+        intervalModes = if (m in intervalModes) intervalModes - m else intervalModes + m
     }
 
     fun toggleInterval(semi: Int) {
-        val next = if (semi in intervalPool) intervalPool - semi else intervalPool + semi
-        // Never allow an empty pool — a drill with zero choices makes no sense.
-        if (next.isNotEmpty()) intervalPool = next
+        intervalPool = if (semi in intervalPool) intervalPool - semi else intervalPool + semi
     }
 
     fun selectScaleDegreeRoot(n: Note) {
@@ -109,8 +108,16 @@ class EarTrainingViewModel : ViewModel() {
     }
 
     fun toggleChordQuality(q: EarChordQuality) {
-        val next = if (q in chordQualityPool) chordQualityPool - q else chordQualityPool + q
-        if (next.isNotEmpty()) chordQualityPool = next
+        chordQualityPool = if (q in chordQualityPool) chordQualityPool - q else chordQualityPool + q
+    }
+
+    fun clearIntervalSettings() {
+        intervalPool = emptySet()
+        intervalModes = emptySet()
+    }
+
+    fun clearChordQualityPool() {
+        chordQualityPool = emptySet()
     }
 
     val choices: List<String>
@@ -126,11 +133,12 @@ class EarTrainingViewModel : ViewModel() {
         when (drill) {
             EarDrill.INTERVAL -> {
                 val pool = intervalPool.sorted()
-                if (pool.isEmpty()) return
+                if (pool.isEmpty() || intervalModes.isEmpty()) return
                 val semi = pool.random()
                 val rootMidi = (48..67).random()
                 firstMidi = rootMidi
                 secondMidi = rootMidi + semi
+                lastIntervalMode = intervalModes.random()
                 correctChoiceIndex = pool.indexOf(semi)
             }
             EarDrill.SCALE_DEGREE -> {
@@ -161,7 +169,7 @@ class EarTrainingViewModel : ViewModel() {
         playJob?.cancel()
         playJob = viewModelScope.launch {
             when (drill) {
-                EarDrill.INTERVAL -> when (intervalMode) {
+                EarDrill.INTERVAL -> when (lastIntervalMode) {
                     IntervalMode.ASCENDING -> {
                         GuitarAudioEngine.playMidis(listOf(firstMidi))
                         delay(700)

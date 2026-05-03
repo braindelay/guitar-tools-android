@@ -128,7 +128,10 @@ fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
                         Spacer(Modifier.width(6.dp))
                         Text("Replay")
                     }
-                    FilledTonalButton(onClick = { vm.nextQuestion() }) {
+                    FilledTonalButton(onClick = {
+                        settingsExpanded = false
+                        vm.nextQuestion()
+                    }) {
                         Text(if (vm.hasQuestion) "Next question" else "Start")
                     }
                 }
@@ -217,12 +220,24 @@ private fun promptText(drill: EarDrill): String = when (drill) {
 @Composable
 private fun IntervalSettings(vm: EarTrainingViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Playback", style = MaterialTheme.typography.labelMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Playback", style = MaterialTheme.typography.labelMedium)
+            TextButton(
+                onClick = { vm.clearIntervalSettings() },
+                enabled = vm.intervalPool.isNotEmpty() || vm.intervalModes.isNotEmpty()
+            ) {
+                Text("Clear")
+            }
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             IntervalMode.entries.forEach { m ->
                 FilterChip(
-                    selected = vm.intervalMode == m,
-                    onClick = { vm.selectIntervalMode(m) },
+                    selected = m in vm.intervalModes,
+                    onClick = { vm.toggleIntervalMode(m) },
                     label = { Text(m.displayName) }
                 )
             }
@@ -274,7 +289,19 @@ private fun ScaleDegreeSettings(vm: EarTrainingViewModel) {
 @Composable
 private fun ChordQualitySettings(vm: EarTrainingViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Quality pool", style = MaterialTheme.typography.labelMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Quality pool", style = MaterialTheme.typography.labelMedium)
+            TextButton(
+                onClick = { vm.clearChordQualityPool() },
+                enabled = vm.chordQualityPool.isNotEmpty()
+            ) {
+                Text("Clear")
+            }
+        }
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
