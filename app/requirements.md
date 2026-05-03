@@ -234,17 +234,6 @@ A capo position selector appears in the Scales top bar or Root & Scale card. The
 
 ---
 
-### Pentatonic and Blues Scales (Scales screen)
-
-Add three new entries to the Mode list: **Major Pentatonic**, **Minor Pentatonic**, and **Blues**. The mode chips appear in the same FlowRow as the existing modes.
-
-- Major Pentatonic uses intervals 1–2–3–5–6 (semitones 0, 2, 4, 7, 9). Minor Pentatonic uses 1–b3–4–5–b7 (0, 3, 5, 7, 10). Blues adds the b5 to the minor pentatonic: 1–b3–4–b5–5–b7 (0, 3, 5, 6, 7, 10).
-- Roman numerals are shown for the available degrees only (5 or 6 chips instead of 7). Degree colour mapping is reused: I, b3/III, IV, V, b7/VII positions keep their colours; the b5 in the Blues scale uses the error colour.
-- The diatonic chord sidebar is **hidden** for non-7-note scales, since classical diatonic harmony does not apply. The chord voicing bottom sheet still opens on tap, but no voicings are marked diatonic.
-- Templates that resolve against the current key (Progression screen) fall back to the parallel major/minor when the active scale is pentatonic or blues.
-
----
-
 ### Position Lock / CAGED Box (Scales screen)
 
 A **Position** filter in the Scales top bar restricts the visible scale notes to a 5-fret window aligned with one of the five CAGED shapes. Options: **All** (default), **E**, **D**, **C**, **A**, **G**.
