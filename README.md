@@ -53,7 +53,7 @@ A tool to help guitarists learn scales, chord voicings, and progressions. Visual
 In portrait, the circle of fifths sits at the top and the chord list fills the lower half. In landscape, they sit side by side.
 
 1. **Tap a note** on the circle of fifths to set the root.
-2. The chord list shows all 16 chord types — scroll vertically to browse them.
+2. The chord list shows all 29 chord types — scroll vertically to browse them.
 3. Each chord type section contains a horizontally scrollable row of voicing diagrams.
 4. **Tap any diagram** to hear it played back.
 5. **Tap +** next to any chord type label to add that chord directly to the Progression.

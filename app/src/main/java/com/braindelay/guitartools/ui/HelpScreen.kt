@@ -64,7 +64,8 @@ private val helpSections = listOf(
     ),
     HelpSection(
         "chord_voicings", "Chord Voicings",
-        "voicing major triad minor dim dom 7 shell overlay chord tones R 3 5 7 play audio clear diatonic"
+        "voicing major triad minor dim dom 7 shell overlay chord tones R 3 5 7 play audio clear diatonic " +
+                "power 5 add9 m(add9) m6 6 6/9 9 13 maj9 maj13 m9 m11 sus2 sus4 7sus4 7b5 7b9 7#9 7#11 hendrix altered jazz extensions"
     ),
     HelpSection(
         "arpeggio", "Arpeggio Overlays",
@@ -76,7 +77,8 @@ private val helpSections = listOf(
     ),
     HelpSection(
         "chords_screen", "Chords",
-        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape add progression"
+        "chords circle of fifths root voicing diagrams scroll horizontal hear playback portrait landscape add progression " +
+                "power 5 add9 m(add9) m6 6 6/9 9 13 maj7 maj9 maj13 min7 m9 m11 dim dim7 aug sus2 sus4 7sus4 7b5 7b9 7#9 7#11 halfdim min/maj7 jazz extensions altered"
     ),
     HelpSection(
         "custom_chord", "Custom Chord Builder",
@@ -243,7 +245,7 @@ private fun SectionBlock(id: String) {
             NumberedList(
                 listOf(
                     "**Tap a note** on the circle of fifths to set the root.",
-                    "The chord list shows all 16 chord types — scroll vertically to browse them.",
+                    "The chord list shows all 29 chord types — scroll vertically to browse them.",
                     "Each chord type section contains a horizontally scrollable row of voicing diagrams.",
                     "**Tap any diagram** to hear it played back.",
                     "**Tap + next to any chord type** to add it directly to the Progression."
