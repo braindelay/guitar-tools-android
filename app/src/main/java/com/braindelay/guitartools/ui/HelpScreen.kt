@@ -186,6 +186,10 @@ private fun SectionBlock(id: String) {
                     "**Collapse the selector** — tap the arrow in the top bar to hide the Root & Scale panel and focus on the fretboard. Tap again to restore it."
                 )
             )
+            BodyText(
+                "In **portrait** the Root & Scale card stacks vertically — a large Circle of Fifths on top with the mode chips wrapping over multiple rows beneath it. " +
+                        "In **landscape** the circle sits on the left and the chips fill the remaining width on the right."
+            )
             SubHeader("Pentatonic and Blues Scales")
             BulletList(
                 listOf(
@@ -312,6 +316,8 @@ private fun SectionBlock(id: String) {
                 listOf(
                     "Tap **Templates** to open a sheet of preset progressions. Templates resolve against the key currently set in the Scales screen.",
                     "Select a template to preview the chord sequence, then press **Load** (replaces current) or **Append** (adds to the end).",
+                    "The library covers pop (I–V–vi–IV, Heart-and-Soul, Pachelbel), modal vamps (Mixolydian I–bVII–IV, Andalusian Cadence, Dorian i–IV), jazz (ii–V–I, Jazz Turnaround, Minor ii–V–i, Jazz Blues 12-bar), and the original I–IV–V exercise patterns.",
+                    "Modal/minor templates assume the user is on the matching mode (Mixolydian / Minor / Dorian) for the degrees to resolve into the expected chords.",
                     "Templates named after exercises — e.g. \"Approach Notes (I–IV–V)\" — are designed to be used alongside those exercises."
                 )
             )
@@ -329,7 +335,7 @@ private fun SectionBlock(id: String) {
                     "Press **▶** to start looping. The metronome starts automatically at the same tempo. The active chord is highlighted.",
                     "Press **⏸** to stop — the metronome stops at the same time.",
                     "While playing, switch to the **Scales** tab to see the chord arpeggios highlighted on the fretboard in real time.",
-                    "The fretboard also previews the **next** chord one beat early so you can see what is coming."
+                    "The fretboard also previews the **next** chord one beat early so you can see what is coming. In fullscreen the chord-name overlay shows the current and next chord side by side, e.g. **C Maj → G Maj**, on that final beat."
                 )
             )
         }
@@ -379,18 +385,18 @@ private fun SectionBlock(id: String) {
             NumberedList(
                 listOf(
                     "Tap the drill chips at the top to switch between **Interval**, **Scale Degree**, and **Chord Quality**. Switching resets the score.",
-                    "Press **Start** to play the first question; tap **Replay** to hear it again.",
-                    "Tap an answer chip to submit your guess. The correct answer is highlighted; if you picked wrong, your choice is also marked.",
-                    "Press **Next question** to advance.",
-                    "**Score** shows correct out of attempted; **Streak** tracks consecutive correct answers. Press **Reset** to clear the session."
+                    "Press **Start** to play the first question; tap **Replay** to hear it again. Replay is the lighter tonal button; Start / Next question is the filled primary button.",
+                    "Tap an answer chip to submit your guess. A correct pick turns **bright green**; a wrong pick turns **bright red** and the correct chip turns **dark green**.",
+                    "Press **Next question** to advance — the Settings panel auto-collapses on each new question.",
+                    "**Score** shows correct out of attempted, with a coloured **percentage** to its right (e.g. \"Score 18 / 22 : 81 %\"). The percentage stays a darker grey until 20 attempts have been made; after that it turns green when ≥ 80 % and red when < 80 %. **Streak** tracks consecutive correct answers. Press **Reset** to clear the session."
                 )
             )
             SubHeader("Settings")
             BulletList(
                 listOf(
-                    "**Interval drill** — toggle which intervals are in the pool (m2 through P8); choose Ascending, Descending, or Harmonic playback.",
+                    "**Interval drill** — toggle which intervals are in the pool (m2 through P8); multi-select **Ascending**, **Descending**, and **Harmonic** playback (the drill picks one mode at random per question, and Replay reuses it). A **Clear** button on the header empties both the pool and the playback set.",
                     "**Scale Degree drill** — pick the root note used to anchor the major scale.",
-                    "**Chord Quality drill** — toggle which qualities are in the pool."
+                    "**Chord Quality drill** — toggle which qualities are in the pool. A **Clear** button on the header empties the pool."
                 )
             )
         }
