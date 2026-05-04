@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -87,11 +88,28 @@ fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    "Score ${vm.score} / ${vm.attempts}",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        "Score ${vm.score} / ${vm.attempts}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    val pct = if (vm.attempts == 0) 0 else (vm.score * 100) / vm.attempts
+                    val pctColor = when {
+                        vm.attempts < 20 -> Color(0xFF4B5563)
+                        pct >= 80 -> Color(0xFF22C55E)
+                        else -> Color(0xFFDC2626)
+                    }
+                    Text(
+                        ": $pct%",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = pctColor
+                    )
+                }
                 Text(
                     "Streak ${vm.streak}  ·  Best ${vm.bestStreak}",
                     style = MaterialTheme.typography.bodySmall,
@@ -123,12 +141,12 @@ fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Button(onClick = { vm.playCurrent() }, enabled = vm.hasQuestion) {
+                    FilledTonalButton(onClick = { vm.playCurrent() }, enabled = vm.hasQuestion) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null)
                         Spacer(Modifier.width(6.dp))
                         Text("Replay")
                     }
-                    FilledTonalButton(onClick = {
+                    Button(onClick = {
                         settingsExpanded = false
                         vm.nextQuestion()
                     }) {
@@ -156,25 +174,34 @@ fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
             ) {
                 vm.choices.forEachIndexed { idx, label ->
                     val answered = vm.lastResult != null
-                    val isCorrect = answered && vm.correctChoiceIndex == idx
+                    val isCorrectChoice = answered && vm.correctChoiceIndex == idx
                     val isPickedWrong =
                         answered && vm.pickedChoiceIndex == idx && vm.lastResult == false
+                    val isPickedCorrect = isCorrectChoice && vm.lastResult == true
+                    val isUnpickedCorrect = isCorrectChoice && vm.lastResult == false
                     FilterChip(
-                        selected = isCorrect || isPickedWrong,
+                        selected = isCorrectChoice || isPickedWrong,
                         enabled = !answered,
                         onClick = { vm.submit(idx) },
                         label = { Text(label) },
-                        colors = if (isCorrect) {
-                            FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        colors = when {
+                            isPickedCorrect -> FilterChipDefaults.filterChipColors(
+                                disabledContainerColor = Color(0xFF22C55E),
+                                disabledLabelColor = Color.White,
+                                disabledSelectedContainerColor = Color(0xFF22C55E)
                             )
-                        } else if (isPickedWrong) {
-                            FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = MaterialTheme.colorScheme.errorContainer,
-                                selectedLabelColor = MaterialTheme.colorScheme.onErrorContainer
+                            isUnpickedCorrect -> FilterChipDefaults.filterChipColors(
+                                disabledContainerColor = Color(0xFF166534),
+                                disabledLabelColor = Color.White,
+                                disabledSelectedContainerColor = Color(0xFF166534)
                             )
-                        } else FilterChipDefaults.filterChipColors()
+                            isPickedWrong -> FilterChipDefaults.filterChipColors(
+                                disabledContainerColor = Color(0xFFDC2626),
+                                disabledLabelColor = Color.White,
+                                disabledSelectedContainerColor = Color(0xFFDC2626)
+                            )
+                            else -> FilterChipDefaults.filterChipColors()
+                        }
                     )
                 }
             }
