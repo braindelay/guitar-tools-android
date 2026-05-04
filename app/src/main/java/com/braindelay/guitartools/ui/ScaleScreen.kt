@@ -32,6 +32,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -532,11 +533,12 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
 
         val chordLabel =
             vm.progressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
+        val nextChordLabel =
+            vm.nextProgressionChord?.let { (note, type) -> "${note.displayName} ${type.label}" }
         if (chordLabel != null) {
-            Text(
-                text = chordLabel,
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.White,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = if (isPortrait) {
                     // Fretboard is rotated 90° CW; player tilts phone so portrait-right becomes
                     // their visual top (above the strings). Rotate the label to match.
@@ -553,7 +555,25 @@ private fun FullscreenContent(vm: ScaleViewModel, isPortrait: Boolean) {
                         .background(Color.Black.copy(alpha = 0.45f), MaterialTheme.shapes.small)
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 }
-            )
+            ) {
+                Text(
+                    text = chordLabel,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White
+                )
+                if (nextChordLabel != null) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "next",
+                        tint = Color.White.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = nextChordLabel,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = Color.White.copy(alpha = 0.7f)
+                    )
+                }
+            }
         }
     }
 }
