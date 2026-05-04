@@ -219,27 +219,54 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                 verticalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
                                 Text("Root & Scale", style = MaterialTheme.typography.titleMedium)
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                    verticalAlignment = Alignment.Top
-                                ) {
-                                    CircleOfFifthsView(
-                                        selectedNote = vm.selectedNote,
-                                        onNoteSelected = { vm.selectNote(it) },
-                                        modifier = Modifier.size(160.dp)
-                                    )
-                                    FlowRow(
-                                        modifier = Modifier.weight(1f),
-                                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                if (isPortrait) {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
-                                        Mode.entries.forEach { mode ->
-                                            FilterChip(
-                                                selected = mode == vm.selectedMode,
-                                                onClick = { vm.selectMode(mode) },
-                                                label = { Text(mode.displayName) }
-                                            )
+                                        CircleOfFifthsView(
+                                            selectedNote = vm.selectedNote,
+                                            onNoteSelected = { vm.selectNote(it) },
+                                            modifier = Modifier.size(220.dp)
+                                        )
+                                        FlowRow(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            Mode.entries.forEach { mode ->
+                                                FilterChip(
+                                                    selected = mode == vm.selectedMode,
+                                                    onClick = { vm.selectMode(mode) },
+                                                    label = { Text(mode.displayName) }
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        CircleOfFifthsView(
+                                            selectedNote = vm.selectedNote,
+                                            onNoteSelected = { vm.selectNote(it) },
+                                            modifier = Modifier.size(160.dp)
+                                        )
+                                        FlowRow(
+                                            modifier = Modifier.weight(1f),
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                                        ) {
+                                            Mode.entries.forEach { mode ->
+                                                FilterChip(
+                                                    selected = mode == vm.selectedMode,
+                                                    onClick = { vm.selectMode(mode) },
+                                                    label = { Text(mode.displayName) }
+                                                )
+                                            }
                                         }
                                     }
                                 }
