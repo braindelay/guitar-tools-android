@@ -13,16 +13,14 @@ val keystoreProperties = Properties().apply {
 android {
     namespace = "com.braindelay.guitartools"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
         applicationId = "com.braindelay.guitartools"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 21
+        targetSdk = 37
+        versionCode = 22
         versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

@@ -41,10 +41,10 @@ fun FretboardView(
     positions: Map<FretPosition, Note>,
     selectedPosition: FretPosition?,
     triadNotes: Map<Note, String>?,
-    isScaleDegreeOverlay: Boolean = false,
-    nextChordNotes: Map<Note, String>? = null,
     onFretTapped: (FretPosition) -> Unit,
     modifier: Modifier = Modifier,
+    isScaleDegreeOverlay: Boolean = false,
+    nextChordNotes: Map<Note, String>? = null,
     scaleFactor: Float = 1f,
     isLeftHanded: Boolean = false,
     showNoteNames: Boolean = false
