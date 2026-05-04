@@ -90,5 +90,85 @@ object ProgressionTemplates {
                 TemplateEntry(4, ChordType.MAJOR),
             )
         ),
+        ProgressionTemplate(
+            name = "Heart-and-Soul I–vi–ii–V",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(5, ChordType.MINOR),
+                TemplateEntry(1, ChordType.MINOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Pachelbel I–V–vi–iii–IV–I–IV–V",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+                TemplateEntry(5, ChordType.MINOR),
+                TemplateEntry(2, ChordType.MINOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(3, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Mixolydian Vamp I–bVII–IV",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MAJOR),
+                TemplateEntry(6, ChordType.MAJOR),
+                TemplateEntry(3, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Andalusian Cadence i–VII–VI–V",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MINOR),
+                TemplateEntry(6, ChordType.MAJOR),
+                TemplateEntry(5, ChordType.MAJOR),
+                TemplateEntry(4, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Dorian Vamp i–IV",
+            entries = listOf(
+                TemplateEntry(0, ChordType.MINOR),
+                TemplateEntry(3, ChordType.MAJOR),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Jazz Turnaround ii–V–I–vi",
+            entries = listOf(
+                TemplateEntry(1, ChordType.MIN7),
+                TemplateEntry(4, ChordType.DOM7),
+                TemplateEntry(0, ChordType.MAJ7),
+                TemplateEntry(5, ChordType.MIN7),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Minor ii–V–i",
+            entries = listOf(
+                TemplateEntry(1, ChordType.MIN7B5),
+                TemplateEntry(4, ChordType.DOM7),
+                TemplateEntry(0, ChordType.MIN7),
+            )
+        ),
+        ProgressionTemplate(
+            name = "Jazz Blues 12-bar",
+            entries = listOf(
+                TemplateEntry(0, ChordType.DOM7),
+                TemplateEntry(3, ChordType.DOM7),
+                TemplateEntry(0, ChordType.DOM7),
+                TemplateEntry(0, ChordType.DOM7),
+                TemplateEntry(3, ChordType.DOM7),
+                TemplateEntry(3, ChordType.DOM7),
+                TemplateEntry(0, ChordType.DOM7),
+                TemplateEntry(5, ChordType.DOM7),
+                TemplateEntry(1, ChordType.MIN7),
+                TemplateEntry(4, ChordType.DOM7),
+                TemplateEntry(0, ChordType.DOM7),
+                TemplateEntry(4, ChordType.DOM7),
+            )
+        ),
     )
 }
