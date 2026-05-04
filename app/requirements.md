@@ -2,7 +2,7 @@
 
 A guitar training tool for learning scales, diatonic chord voicings, chord progressions, and improvisation techniques.
 
-A bottom navigation bar (icon-only, no text labels) switches between six modes: **Scales**, **Chords**, **Progression**, **Metronome**, **Exercises**, and **Help**.
+A bottom navigation bar (icon-only, no text labels) switches between seven modes: **Scales**, **Chords**, **Progression**, **Metronome**, **Exercises**, **Ear Training**, and **Help**.
 
 ---
 
@@ -24,15 +24,16 @@ When expanded, the panel shows two cards (both collapse and expand together):
 
 1. **Hero banner** — a 180 dp tall image card with the text "Master Your Fretboard" and "Visualise scales and diatonic chords" overlaid at the bottom.
 
-2. **Root & Scale card** — a side-by-side layout:
-   - **Left**: A 160 dp Circle of Fifths wheel (same component as the Chords screen). Tap any segment to select that note as the scale root.
-   - **Right**: Mode filter chips in a wrapping flow row. Available modes: Major, Minor, Harmonic Minor, Melodic Minor, Dorian, Phrygian, Lydian, Mixolydian, Locrian.
+2. **Root & Scale card** — orientation-aware:
+   - **Portrait**: stacked vertically — a 220 dp Circle of Fifths centred on top, with a full-width FlowRow of mode chips wrapping over multiple rows below.
+   - **Landscape**: side-by-side — a 160 dp Circle of Fifths on the left, with mode chips in a wrapping FlowRow filling the remaining width on the right.
+   - Available modes: Major, Minor, Dorian, Phrygian, Lydian, Mixolydian, Locrian, Harmonic Minor, Melodic Minor, Major Pentatonic, Minor Pentatonic, Blues.
 
 ### Fretboard
 
 Below the expandable panel, a "Fretboard" heading shows the currently selected note and mode (e.g. "Highlighting: C Major").
 
-A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII) by default, or note names when the label toggle is active. Each scale degree is drawn in a distinct theme colour: I → tertiary, II → primary, III → secondary, IV → tertiaryContainer, V → primaryContainer, VI → secondaryContainer, VII → error. Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
+A 19-fret visual fretboard shows every note in the selected scale, labelled with Roman numeral degrees (I–VII for diatonic modes; only the available degrees for pentatonic/blues) by default, or note names when the label toggle is active. Each scale degree is drawn in a distinct theme colour: I → tertiary, II → primary, III → secondary, IV → tertiaryContainer, V → primaryContainer, VI → secondaryContainer, VII → error. Pentatonic and Blues scales remap their degrees onto this palette so equivalent intervals share colours with the parent diatonic mode (the **b5** in the Blues scale uses the error colour). Inlay dots appear at frets 1, 3, 5, 7, 9, 12, 15, 17, 19.
 
 In left-handed mode the entire fretboard is mirrored: the nut moves to the right and fret numbering increases from right to left. Tap detection mirrors accordingly.
 
@@ -44,11 +45,13 @@ When the Scales screen is in fullscreen, the bottom navigation bar is hidden. Sw
 
 In fullscreen, swiping right from the left edge of the screen slides in a **Diatonic Chords** drawer (160 dp wide in landscape; 48 dp wide in portrait with rotated chips). Tapping a chord chip overlays the arpeggio and closes the drawer. Swipe the drawer left or tap outside it to dismiss without selecting.
 
-When a progression is playing, the current chord name is shown as an overlay on the fullscreen fretboard (top-centre in landscape; right-edge rotated in portrait).
+When a progression is playing, the current chord name is shown as an overlay on the fullscreen fretboard (top-centre in landscape; right-edge rotated in portrait). On the final beat of the current chord — when the next-chord preview activates — the overlay also shows the next chord name to the right of the current one, separated by a forward arrow (e.g. "C Maj → G Maj"); the next chord is rendered slightly smaller and at reduced opacity inside the same translucent pill.
 
 ### Diatonic chord sidebar
 
 To the left of the fretboard a scrollable column (120 dp wide, 216 dp tall) lists the 7 diatonic chords for the current scale as filter chips (e.g. "I: C Maj", "II: D Min"). Tapping a chip highlights the full 1-3-5-7 arpeggio of that diatonic chord across the entire fretboard; each arpeggio note is coloured by its scale degree using the same colour scheme as the plain scale view, and labelled with its interval (R, 3, 5, 7…). Tapping the active chip again clears the overlay.
+
+The sidebar (and the fullscreen Diatonic Chords drawer) is hidden when a non-diatonic scale is selected — Major Pentatonic, Minor Pentatonic, or Blues. Switching to such a scale also clears any active arpeggio selection.
 
 ### Chord voicing bottom sheet
 
@@ -60,7 +63,7 @@ Tapping any highlighted scale note opens a **bottom sheet** titled "[Note] — c
 - Dim, Dim7, Aug, Sus2, Sus4
 - HalfDim, Min/Maj7, 6, 9, 6/9, 13, Maj13
 
-Voicings that are diatonic to the current scale are marked with an info icon. Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). Tapping the active voicing chip deselects it.
+Voicings that are diatonic to the current scale are marked with an info icon (no voicings are flagged diatonic for pentatonic/blues scales). Selecting a voicing closes the sheet and overlays the chord tones on the fretboard in colour with degree labels (R, 3, 5, b7…). Tapping the active voicing chip deselects it.
 
 ### Fretboard title row controls
 
@@ -128,7 +131,7 @@ When a progression is playing, switching to the Scales tab shows the active chor
 
 ### Templates
 
-A **Templates** button in the Progression header opens a bottom sheet of named chord sequence templates. Tapping a template name shows a preview of the chord names it would generate in the current key (derived from the Scales screen's selected note and mode). **Load** replaces the current progression; **Append** adds the template chords to the end.
+A **Templates** button in the Progression header opens a bottom sheet of named chord sequence templates. Tapping a template name shows a preview of the chord names it would generate in the current key (derived from the Scales screen's selected note and mode). **Load** replaces the current progression; **Append** adds the template chords to the end. Templates resolved against a non-diatonic mode (Major Pentatonic, Minor Pentatonic, Blues) fall back to the parallel major or minor key for chord generation.
 
 Built-in templates:
 
@@ -203,11 +206,75 @@ When expanded, numbered steps and an optional italic tip are shown below a divid
 
 ---
 
+## Ear Training
+
+Three listen-and-pick drills for sharpening the user's ear. All audio is generated by the same Karplus-Strong synthesiser used elsewhere in the app.
+
+### Drill selector
+
+Filter chips at the top of the screen switch between the three drills:
+
+- **Interval** — two notes play; identify the interval between them.
+- **Scale Degree** — the root plays, then a degree of the major scale; identify which degree (I–VII) was heard.
+- **Chord Quality** — a chord voicing plays; identify its quality.
+
+Switching drills resets the score, streak, and current question.
+
+### Score panel
+
+Below the drill chips a row shows:
+
+- "Score X / Y" — correct answers over total attempts.
+- A coloured percentage immediately to the right of the score, prefixed with a colon (e.g. "Score 18 / 22 : 81%"). While the attempt count is below 20 the percentage is rendered in a darker grey neutral; once 20 or more attempts have been made the percentage turns green when ≥ 80 % and red when < 80 %.
+- A second line "Streak N · Best M" tracking the current correct streak and the best streak this session.
+- A **Reset** text button on the right clears the session.
+
+### Question card
+
+An outlined card shows a one-line prompt for the active drill, then two buttons in a row:
+
+- **Replay** (filled tonal, with a play-arrow icon) — replays the current question. Disabled until a question has been started.
+- **Start** / **Next question** (filled primary) — generates and plays a new question. Pressing this also auto-collapses the Settings panel below.
+
+Below the buttons the result of the most recent answer is shown: "Correct" in the primary colour, or "Try again — listen carefully" in the error colour, until the next question is generated.
+
+### Answer chips
+
+Once a question is active, the answer choices appear as filter chips in a wrapping FlowRow:
+
+- **Interval** — labels for the active interval pool (m2, M2, m3, M3, P4, TT, P5, m6, M6, m7, M7, P8).
+- **Scale Degree** — fixed labels I, II, III, IV, V, VI, VII.
+- **Chord Quality** — labels for the active quality pool (Major, Minor, Dim, Aug, Maj7, Min7, Dom7, HalfDim).
+
+After submitting an answer, chips are disabled and recoloured:
+
+- The picked correct chip turns bright green (`#22C55E`) with white text.
+- A picked wrong chip turns bright red (`#DC2626`) with white text, and the correct chip is shown in dark green (`#166534`) with white text.
+- All other chips remain unchanged but disabled.
+
+### Settings panel
+
+A collapsible **Settings** card sits below the answer chips. The header has a **Show / Hide** text button. The settings change with the active drill:
+
+- **Interval drill**:
+  - A **Playback** label and a **Clear** text button (clears both pools).
+  - A row of multi-select playback chips — **Ascending**, **Descending**, **Harmonic** — defaulting to all selected. The drill picks one mode at random per question and replays use the same mode.
+  - An **Interval pool** FlowRow toggles which intervals (m2 through P8) are available.
+  - The Start / Next question action is a no-op if either the interval pool or the playback set is empty.
+- **Scale Degree drill**: a single FlowRow of root-note chips selects the major-scale root used for the drill (default C). The drill always uses the major scale.
+- **Chord Quality drill**:
+  - A **Quality pool** label with a **Clear** text button.
+  - A FlowRow toggles which qualities are in the pool. The Start / Next action is a no-op if the pool is empty.
+
+The Settings panel collapses automatically when **Start** / **Next question** is pressed.
+
+---
+
 ## Help
 
 A scrollable help screen with a search bar at the top. Typing filters sections by title and keywords; an empty-state message is shown when no sections match.
 
-Content mirrors the README Usage Guide (excluding the build instructions), organised into sections: an intro paragraph, Scales, Fretboard Options, Chord Voicings, Arpeggio Overlays, Fullscreen Mode, Chords, Progression (including Templates, Saved Progressions, and Playback subsections), Metronome, and Exercises. Screenshots from the `drawable-nodpi` resource folder are embedded inline. Key terms are rendered in bold.
+Content mirrors the README Usage Guide (excluding the build instructions), organised into sections: an intro paragraph, Scales (including a Pentatonic and Blues subsection), Fretboard Options, Chord Voicings, Arpeggio Overlays, Fullscreen Mode, Chords, Progression (including Templates, Saved Progressions, and Playback subsections), Metronome, Exercises, and Ear Training. Screenshots from the `drawable-nodpi` resource folder are embedded inline. Key terms are rendered in bold.
 
 The Scales section includes a degree colour legend — a row of seven labelled chips (I–VII) each filled with its corresponding scale degree colour — so users can cross-reference the fretboard colours without leaving the help screen.
 
