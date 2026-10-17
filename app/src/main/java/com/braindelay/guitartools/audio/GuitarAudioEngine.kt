@@ -5,14 +5,25 @@ import android.media.AudioFormat
 import android.media.AudioTrack
 import com.braindelay.guitartools.music.ChordVoicing
 import com.braindelay.guitartools.music.Note
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.PI
 import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sin
+import kotlin.random.Random
 
 object GuitarAudioEngine {
 
     private const val SAMPLE_RATE = 44100
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    private val clickSamples by lazy { generateClick(accentuated = false) }
+    private val accentClickSamples by lazy { generateClick(accentuated = true) }
 
     // MIDI note numbers for open strings: low E2, A2, D3, G3, B3, high E4
     private val OPEN_MIDI = intArrayOf(40, 45, 50, 55, 59, 64)
@@ -24,7 +35,7 @@ object GuitarAudioEngine {
     private fun karplusStrong(freq: Float, durationMs: Int = 1500): ShortArray {
         val bufSize = (SAMPLE_RATE / freq).toInt().coerceAtLeast(2)
         val totalSamples = SAMPLE_RATE * durationMs / 1000
-        val ring = FloatArray(bufSize) { Math.random().toFloat() * 2f - 1f }
+        val ring = FloatArray(bufSize) { Random.nextFloat() * 2f - 1f }
         var pos = 0
         return ShortArray(totalSamples) {
             val s = ring[pos]
@@ -59,11 +70,11 @@ object GuitarAudioEngine {
         }
     }
 
-    private fun playPcm(samples: ShortArray) {
+    private suspend fun playPcm(samples: ShortArray) {
         if (samples.isEmpty()) return
         val bufBytes = samples.size * 2
-        try {
-            val at = AudioTrack.Builder()
+        val at = try {
+            AudioTrack.Builder()
                 .setAudioAttributes(
                     AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -80,42 +91,45 @@ object GuitarAudioEngine {
                 .setBufferSizeInBytes(bufBytes)
                 .setTransferMode(AudioTrack.MODE_STATIC)
                 .build()
+        } catch (_: Exception) {
+            return
+        }
+        try {
             at.write(samples, 0, samples.size)
             at.play()
-            Thread {
-                Thread.sleep(samples.size * 1000L / SAMPLE_RATE + 100)
-                at.stop()
-                at.release()
-            }.start()
+            delay(samples.size * 1000L / SAMPLE_RATE + 100)
+            at.stop()
         } catch (_: Exception) {
+        } finally {
+            at.release()
         }
     }
 
     fun playNote(note: Note, octave: Int = 3) {
-        Thread {
+        scope.launch {
             val midi = (octave + 1) * 12 + note.semitone
             playPcm(karplusStrong(freqFromMidi(midi)))
-        }.start()
+        }
     }
 
     fun playVoicing(voicing: ChordVoicing) {
-        Thread {
+        scope.launch {
             val tracks = (0..5).mapNotNull { s ->
                 val fret = voicing.stringFrets[s] ?: return@mapNotNull null
                 karplusStrong(freqFromMidi(midiFromPosition(s, fret)))
             }
             playPcm(mix(tracks))
-        }.start()
+        }
     }
 
     fun playMidis(midis: List<Int>) {
-        Thread {
+        scope.launch {
             val tracks = midis.map { karplusStrong(freqFromMidi(it)) }
             playPcm(mix(tracks))
-        }.start()
+        }
     }
 
     fun playClick(accentuated: Boolean = false) {
-        Thread { playPcm(generateClick(accentuated)) }.start()
+        scope.launch { playPcm(if (accentuated) accentClickSamples else clickSamples) }
     }
 }

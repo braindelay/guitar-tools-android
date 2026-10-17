@@ -6,15 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -75,7 +73,6 @@ import com.braindelay.guitartools.music.Scale
 import com.braindelay.guitartools.music.ScaleViewModel
 import com.braindelay.guitartools.music.StandardChordLibrary
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressionScreen(
     vm: ProgressionViewModel = viewModel(),
@@ -91,11 +88,11 @@ fun ProgressionScreen(
 
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     if (isLandscape) {
         Row(Modifier
             .fillMaxSize()
-            .padding(top = topInset + 8.dp)) {
+            .statusBarsPadding()
+            .padding(top = 8.dp)) {
             ChordPicker(
                 selectedNote = selectedNote,
                 selectedChordType = selectedChordType,
@@ -115,7 +112,8 @@ fun ProgressionScreen(
     } else {
         Column(Modifier
             .fillMaxSize()
-            .padding(top = topInset + 8.dp)) {
+            .statusBarsPadding()
+            .padding(top = 8.dp)) {
             ChordPicker(
                 selectedNote = selectedNote,
                 selectedChordType = selectedChordType,
@@ -135,7 +133,6 @@ fun ProgressionScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ProgressionList(
     vm: ProgressionViewModel,
@@ -496,7 +493,6 @@ private fun TemplatesBottomSheet(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChordPicker(
     selectedNote: Note?,

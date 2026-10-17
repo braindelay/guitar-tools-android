@@ -6,7 +6,6 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -182,7 +181,6 @@ private val exercises = listOf(
     ),
 )
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExercisesScreen() {
     var filterDifficulty by remember { mutableStateOf<Difficulty?>(null) }

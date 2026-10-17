@@ -5,14 +5,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -80,7 +78,6 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
     }
 
     val isPortrait = LocalConfiguration.current.orientation != Configuration.ORIENTATION_LANDSCAPE
-    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
     val chordListContent: @Composable (Modifier) -> Unit = { modifier ->
         Column(
@@ -321,7 +318,8 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
     if (isPortrait) {
         Column(modifier = Modifier
             .fillMaxSize()
-            .padding(top = topInset + 8.dp)) {
+            .statusBarsPadding()
+            .padding(top = 8.dp)) {
             CircleOfFifthsView(
                 selectedNote = selectedNote,
                 onNoteSelected = { selectedNote = it },
@@ -340,7 +338,8 @@ fun ChordScreen(progressionVm: ProgressionViewModel = viewModel()) {
     } else {
         Row(modifier = Modifier
             .fillMaxSize()
-            .padding(top = topInset + 8.dp)) {
+            .statusBarsPadding()
+            .padding(top = 8.dp)) {
             Column(
                 modifier = Modifier
                     .weight(0.38f)

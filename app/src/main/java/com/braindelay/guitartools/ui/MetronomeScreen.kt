@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -54,7 +52,6 @@ import com.braindelay.guitartools.music.MetronomeViewModel
 
 @Composable
 fun MetronomeScreen(vm: MetronomeViewModel = viewModel()) {
-    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     if (isLandscape) {
@@ -62,7 +59,8 @@ fun MetronomeScreen(vm: MetronomeViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .padding(top = topInset + 8.dp, bottom = 12.dp),
+                .statusBarsPadding()
+                .padding(top = 8.dp, bottom = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Column(
@@ -104,7 +102,8 @@ fun MetronomeScreen(vm: MetronomeViewModel = viewModel()) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
-                .padding(top = topInset + 16.dp, bottom = 24.dp),
+                .statusBarsPadding()
+                .padding(top = 16.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {

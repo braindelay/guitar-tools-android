@@ -153,7 +153,6 @@ class ProgressionViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     override fun onCleared() {
-        super.onCleared()
         stopPlayback()
     }
 }

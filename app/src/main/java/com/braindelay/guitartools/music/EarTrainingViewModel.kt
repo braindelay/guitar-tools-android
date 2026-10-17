@@ -213,7 +213,6 @@ class EarTrainingViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         playJob?.cancel()
     }
 }

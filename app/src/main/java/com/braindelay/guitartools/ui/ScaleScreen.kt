@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -81,7 +80,7 @@ import com.braindelay.guitartools.music.Mode
 import com.braindelay.guitartools.music.ScaleViewModel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean = false) {
     vm.scale
@@ -399,8 +398,10 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             sheetState = chordSheetState
         ) {
             val rootNote = vm.noteAt(selectedPos)
+            // Scrollable so the chip list still fits when the sheet is taller than a landscape screen
             Column(
                 modifier = Modifier
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)

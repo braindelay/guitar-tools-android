@@ -2,17 +2,14 @@ package com.braindelay.guitartools.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -46,10 +43,8 @@ import com.braindelay.guitartools.music.EarTrainingViewModel
 import com.braindelay.guitartools.music.IntervalMode
 import com.braindelay.guitartools.music.Note
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
-    val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     var settingsExpanded by remember { mutableStateOf(false) }
 
     Column(
@@ -57,7 +52,8 @@ fun EarTrainingScreen(vm: EarTrainingViewModel = viewModel()) {
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
-            .padding(top = topInset + 12.dp, bottom = 24.dp),
+            .statusBarsPadding()
+            .padding(top = 12.dp, bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
@@ -243,7 +239,6 @@ private fun promptText(drill: EarDrill): String = when (drill) {
     EarDrill.CHORD_QUALITY -> "A chord will play. Identify its quality."
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun IntervalSettings(vm: EarTrainingViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -286,7 +281,6 @@ private fun IntervalSettings(vm: EarTrainingViewModel) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ScaleDegreeSettings(vm: EarTrainingViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -312,7 +306,6 @@ private fun ScaleDegreeSettings(vm: EarTrainingViewModel) {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ChordQualitySettings(vm: EarTrainingViewModel) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

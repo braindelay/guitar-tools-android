@@ -66,11 +66,14 @@ class MetronomeViewModel : ViewModel() {
         _currentBeat = 0
         playJob = viewModelScope.launch {
             var beatIndex = 0
+            var nextBeatNanos = System.nanoTime()
             while (isActive) {
                 _currentBeat = beatIndex % _beatsPerBar
-                _beatStartNanos = System.nanoTime()
+                _beatStartNanos = nextBeatNanos
                 if (!_isMuted) GuitarAudioEngine.playClick(accentuated = _currentBeat == 0)
-                delay(60_000L / _bpm)
+                // Schedule from absolute beat times so loop overhead doesn't accumulate as drift
+                nextBeatNanos = maxOf(nextBeatNanos + 60_000_000_000L / _bpm, System.nanoTime())
+                delay((nextBeatNanos - System.nanoTime()) / 1_000_000L)
                 beatIndex++
             }
         }
@@ -88,7 +91,6 @@ class MetronomeViewModel : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         stop()
     }
 }
