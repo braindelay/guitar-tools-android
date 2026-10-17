@@ -352,7 +352,14 @@ private fun SectionBlock(id: String) {
                 listOf(
                     "**Drag the slider** to set BPM (20–300). The Italian tempo name (Largo, Andante, Allegro…) updates automatically.",
                     "Use **−5 / −1 / +1 / +5** for precise nudges.",
-                    "Tap **Tap Tempo** in rhythm to derive the BPM from your playing. Three or more taps average out to a stable tempo."
+                    "Tap **Tap Tempo** in rhythm to derive the BPM from your playing. The BPM updates from the second tap and averages your last eight taps; pause for more than 2.5 seconds to start a fresh count."
+                )
+            )
+            SubHeader("Playback")
+            BulletList(
+                listOf(
+                    "Press **Start** to begin clicking and **Stop** to end. The downbeat (beat 1) plays an accented click.",
+                    "In landscape, the BPM controls sit on the left and a large **Tap Tempo** button fills the right, above the playback controls."
                 )
             )
             SubHeader("Beat Display")

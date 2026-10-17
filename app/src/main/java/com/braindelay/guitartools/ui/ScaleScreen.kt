@@ -71,6 +71,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.braindelay.guitartools.R
@@ -398,19 +399,24 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
             sheetState = chordSheetState
         ) {
             val rootNote = vm.noteAt(selectedPos)
-            // Scrollable so the chip list still fits when the sheet is taller than a landscape screen
+            val rotateSheet = isFullscreen && isPortrait
+            val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+            // Rotated: lay the whole sheet out as landscape and turn it as one block, so it
+            // matches the natural-landscape layout (title top-left, chips below).
+            // Otherwise scrollable so the chip list still fits on a short landscape screen.
             Column(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
+                    .then(
+                        if (rotateSheet) Modifier.rotateSheetToLandscape(screenHeight)
+                        else Modifier.verticalScroll(rememberScrollState())
+                    )
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val rotateSheet = isFullscreen && isPortrait
                 Text(
                     "${rootNote.displayName} — choose chord type",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier
+                    style = MaterialTheme.typography.titleMedium
                 )
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -432,7 +438,6 @@ fun ScaleScreen(vm: ScaleViewModel = viewModel(), isProgressionPlaying: Boolean 
                                     }
                                 }
                             },
-                            modifier = if (rotateSheet) Modifier.rotateWithLayout(90f) else Modifier,
                             leadingIcon = if (isDiatonic) {
                                 { Icon(Icons.Default.Info, null, Modifier.size(14.dp)) }
                             } else null,
@@ -640,6 +645,30 @@ private fun Modifier.rotateWithLayout(degrees: Float): Modifier = this.layout { 
         ) { rotationZ = degrees }
     }
 }
+
+// Lays content out at landscape width (the portrait screen height) and rotates it 90° CW
+// as one block, aligned to the portrait right edge, which is the player's visual top.
+private fun Modifier.rotateSheetToLandscape(screenHeight: Dp): Modifier =
+    this.layout { measurable, constraints ->
+        val landscapeWidth =
+            if (constraints.hasBoundedHeight) constraints.maxHeight else screenHeight.roundToPx()
+        // Fixed width: if the content were allowed to shrink-wrap, its rotated height would
+        // feed back into the sheet's constraints and the chips would re-wrap every frame.
+        val placeable = measurable.measure(
+            Constraints(
+                minWidth = landscapeWidth,
+                maxWidth = landscapeWidth,
+                maxHeight = constraints.maxWidth
+            )
+        )
+        val width = if (constraints.hasBoundedWidth) constraints.maxWidth else placeable.height
+        layout(width, placeable.width) {
+            placeable.placeWithLayer(
+                x = width - placeable.height - (placeable.width - placeable.height) / 2,
+                y = (placeable.width - placeable.height) / 2,
+            ) { rotationZ = 90f }
+        }
+    }
 
 private fun Modifier.rotatePortraitToLandscape(): Modifier =
     this.layout { measurable, constraints ->
