@@ -92,7 +92,7 @@ private val helpSections = listOf(
     ),
     HelpSection(
         "metronome_screen", "Metronome",
-        "metronome bpm tempo tap tap-tempo beats per bar time signature beat dots click mute start stop"
+        "metronome bpm tempo tap tap-tempo beats per bar time signature click mute start stop"
     ),
     HelpSection(
         "exercises_screen", "Exercises",
@@ -358,8 +358,8 @@ private fun SectionBlock(id: String) {
             SubHeader("Beat Display")
             BulletList(
                 listOf(
-                    "Animated dots show each beat. The **downbeat (beat 1)** pulses in a distinct colour.",
-                    "Choose 1–4 **beats per bar** with the filter chips below the dots, or use **−1** / **+1** to go from 1 up to 12.",
+                    "The circle next to the BPM fills **clockwise from the top** over each bar, emptying again on the downbeat.",
+                    "Use **−1** / **+1** to set the **beats per bar** (1–12).",
                     "Toggle **Muted** to keep the visual pulse without audible clicks — useful when playing quietly."
                 )
             )

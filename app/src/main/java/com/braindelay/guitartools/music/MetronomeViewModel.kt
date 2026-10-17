@@ -2,6 +2,7 @@ package com.braindelay.guitartools.music
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -22,6 +23,10 @@ class MetronomeViewModel : ViewModel() {
 
     private var _currentBeat by mutableIntStateOf(0)
     val currentBeat: Int get() = _currentBeat
+
+    private var _beatStartNanos by mutableLongStateOf(0L)
+    /** [System.nanoTime] at which [currentBeat] started. */
+    val beatStartNanos: Long get() = _beatStartNanos
 
     private var _isPlaying by mutableStateOf(false)
     val isPlaying: Boolean get() = _isPlaying
@@ -63,6 +68,7 @@ class MetronomeViewModel : ViewModel() {
             var beatIndex = 0
             while (isActive) {
                 _currentBeat = beatIndex % _beatsPerBar
+                _beatStartNanos = System.nanoTime()
                 if (!_isMuted) GuitarAudioEngine.playClick(accentuated = _currentBeat == 0)
                 delay(60_000L / _bpm)
                 beatIndex++
