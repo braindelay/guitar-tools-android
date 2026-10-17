@@ -20,7 +20,7 @@ android {
         applicationId = "com.braindelay.guitartools"
         minSdk = 24
         targetSdk = 37
-        versionCode = 23
+        versionCode = 24
         versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
