@@ -359,7 +359,7 @@ private fun SectionBlock(id: String) {
             BulletList(
                 listOf(
                     "Animated dots show each beat. The **downbeat (beat 1)** pulses in a distinct colour.",
-                    "Choose 2–8 **beats per bar** with the filter chips below the dots.",
+                    "Choose 1–4 **beats per bar** with the filter chips below the dots, or use **−1** / **+1** to go from 1 up to 12.",
                     "Toggle **Muted** to keep the visual pulse without audible clicks — useful when playing quietly."
                 )
             )

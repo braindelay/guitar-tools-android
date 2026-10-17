@@ -37,7 +37,7 @@ class MetronomeViewModel : ViewModel() {
     }
 
     fun setBeatsPerBar(value: Int) {
-        _beatsPerBar = value
+        _beatsPerBar = value.coerceIn(1, 12)
     }
 
     fun toggleMute() {
